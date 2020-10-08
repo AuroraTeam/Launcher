@@ -1,0 +1,25 @@
+{
+  "name": "aurora-launcher",
+  "version": "0.0.1-dev",
+  "description": "Launcher for Minecraft",
+  "main": "./src/main/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AuroraTeam/Launcher.git"
+  },
+  "author": "AuroraTeam",
+  "contributors": [
+    "JoCat (https://github.com/JoCat)"
+  ],
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/AuroraTeam/Launcher/issues"
+  },
+  "homepage": "https://github.com/AuroraTeam/Launcher#readme",
+  "devDependencies": {
+    "electron": "^10.1.3"
+  }
+}
