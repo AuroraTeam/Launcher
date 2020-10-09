@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 const { title } = require('../../config.json')
@@ -12,7 +12,7 @@ function createMainWindow() {
   const window = new BrowserWindow({
     width: 900,
     height: 550,
-    // frame: false,
+    frame: false,
     resizable: false,
     maximizable: false,
     title: title,
@@ -70,4 +70,14 @@ app.on('activate', () => {
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
   mainWindow = createMainWindow()
+})
+
+ipcMain.on('window-hide', () => {
+  console.log(1)
+  mainWindow?.minimize()
+})
+
+ipcMain.on('window-close', () => {
+  console.log(2)
+  mainWindow?.close()
 })
