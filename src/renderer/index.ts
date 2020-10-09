@@ -1,7 +1,7 @@
 import Vue from 'vue'
-import App from './App.vue'
+import Login from './scenes/Login.vue'
 
 new Vue({
     el: '#app',
-    render: h => h(App)
+    render: h => h(Login)
 })

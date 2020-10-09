@@ -22,11 +22,14 @@
         -webkit-app-region: no-drag;
         display: flex;
         align-items: center;
+        justify-content: center;
         width: 24px;
         height: 24px;
         background-color: transparent;
         border: 0;
         outline: 0;
+        padding: 0;
+        cursor: pointer;
     }
     .hide {
         margin-left: auto;
