@@ -6,8 +6,8 @@ module.exports = {
     devtool: 'source-map',
     entry: path.resolve(__dirname, 'src', 'main', 'index.ts'),
     output: {
-        path: path.resolve(__dirname, 'build'),
-        filename: 'main.js'
+        path: path.resolve(__dirname, 'build', 'main'),
+        filename: 'index.js'
     },
     resolve: {
         extensions: [ '.ts' ],
