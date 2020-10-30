@@ -4,9 +4,9 @@
         <div class="block">
             <strong>Aurora Launcher</strong>
             <p>Введите логин и пароль,<br> чтобы продолжить</p>
-            <form action="">
-                <input type="text" placeholder="Логин">
-                <input type="password" placeholder="Пароль">
+            <form @submit.prevent="test()">
+                <input type="text" placeholder="Логин" v-model="login">
+                <input type="password" placeholder="Пароль" v-model="password">
                 <button>Войти</button>
             </form>
         </div>
@@ -20,6 +20,17 @@ import TitleBar from '../assets/components/TitleBar.vue'
 export default Vue.extend({
     components: {
         TitleBar: TitleBar
+    },
+    data() {
+        return {
+            login: '',
+            password: ''
+        }
+    },
+    methods: {
+        test() {
+            console.log(this.login)
+        }
     }
 })
 </script>
@@ -63,7 +74,7 @@ h1 {
     }
     p {
         margin: 33px 0;
-        font-size: 14px;
+        font-size: 13px;
         line-height: 16px;
         text-align: center;
         font-family: 'Roboto', sans-serif;
@@ -81,7 +92,7 @@ h1 {
         border-radius: 17px;
         background-color: transparent;
         text-align: center;
-        font-size: 14px;
+        font-size: 13px;
         font-family: 'Roboto', sans-serif;
         outline: 0;
         color: #fff;

@@ -73,11 +73,9 @@ app.on('ready', () => {
 })
 
 ipcMain.on('window-hide', () => {
-  console.log(1)
   mainWindow?.minimize()
 })
 
 ipcMain.on('window-close', () => {
-  console.log(2)
   mainWindow?.close()
 })
