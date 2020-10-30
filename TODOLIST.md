@@ -1,0 +1,1 @@
+- [ ] настройка webpack loaders
