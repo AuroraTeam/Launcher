@@ -1,1 +1,1 @@
-- [ ] настройка webpack loaders
+- [ ] настройка [webpack loaders](https://webpack.js.org/loaders/) [немного в electron-webpack](https://github.com/electron-userland/electron-webpack/blob/master/packages/electron-webpack/src/targets/RendererTarget.ts)

@@ -17,7 +17,8 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                loader: "ts-loader"
+                loader: "ts-loader",
+                options: { appendTsSuffixTo: [/\.vue$/] }
             },
             {
                 test: /\.vue$/,
@@ -43,7 +44,7 @@ module.exports = {
                 loader: 'html-loader',
             },
             {
-                test: /\.(png|jpe?g|gif)$/i,
+                test: /\.(png|jpe?g|gif|svg)$/i,
                 loader: 'file-loader',
             },
             {

@@ -1,8 +1,17 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "module": "CommonJS",
+        "target": "es2017",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "inlineSources": true,
         "sourceMap": true,
-        "outDir": "./build"
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "newLine": "lf",
+        "noEmitOnError": true
     }
 }

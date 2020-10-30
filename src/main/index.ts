@@ -3,7 +3,7 @@ import * as path from 'path'
 import { format as formatUrl } from 'url'
 const { title } = require('../../config.json')
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+// const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow : BrowserWindow | null
