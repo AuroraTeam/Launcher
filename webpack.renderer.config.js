@@ -1,10 +1,12 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlMinimizerPlugin = require('html-minimizer-webpack-plugin');
 
 module.exports = {
     target: 'electron-renderer',
     mode: 'production',
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     entry: path.resolve(__dirname, 'src', 'renderer', 'index.ts'),
     output: {
         path: path.resolve(__dirname, 'build', 'renderer'),
@@ -46,7 +48,7 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader',
-                    'less-loader',
+                    'less-loader'
                 ],
             },
             {
@@ -54,24 +56,28 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader',
-                    'stylus-loader',
+                    'stylus-loader'
                 ],
-            },
-            { // TODO Под вопросом
-                test: /\.html$/i,
-                loader: 'html-loader',
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/i,
-                loader: 'file-loader',
-                options: {
-                    outputPath: 'images', // кхъ
-                    // name: '[name].[ext]', // кхъ
-                },
+                loader: 'file-loader'
             },
         ]
     },
     plugins: [
-        new VueLoaderPlugin()
-    ]
+        new VueLoaderPlugin(),
+        new CopyWebpackPlugin({
+            patterns: [
+                './src/renderer/index.html',
+                './src/renderer/assets/images/logo.png'
+            ]
+        })
+    ],
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new HtmlMinimizerPlugin(),
+        ]
+    }
 }
