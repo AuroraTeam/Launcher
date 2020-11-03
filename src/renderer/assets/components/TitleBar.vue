@@ -48,16 +48,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { ipcRenderer } from 'electron'
+import LauncherWindow from '../../scripts/window'
 
 export default Vue.extend({
     methods: {
-        hide: () => {
-            ipcRenderer.send('window-hide')
-        },
-        close: () => {
-            ipcRenderer.send('window-close')
-        }
+        hide: LauncherWindow.hideWindow,
+        close: LauncherWindow.closeWindow
     }
 })
 </script>

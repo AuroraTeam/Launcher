@@ -4,7 +4,7 @@
         <div class="block">
             <strong>Aurora Launcher</strong>
             <p>Введите логин и пароль,<br> чтобы продолжить</p>
-            <form @submit.prevent="test()">
+            <form @submit.prevent="auth()">
                 <input type="text" placeholder="Логин" v-model="login">
                 <input type="password" placeholder="Пароль" v-model="password">
                 <button>Войти</button>
@@ -16,6 +16,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import TitleBar from '../assets/components/TitleBar.vue'
+import LauncherAuth from '../scripts/auth'
 
 export default Vue.extend({
     components: {
@@ -28,8 +29,8 @@ export default Vue.extend({
         }
     },
     methods: {
-        test() {
-            console.log(this.login)
+        auth() {
+            LauncherAuth.auth(this.login, this.password)
         }
     }
 })

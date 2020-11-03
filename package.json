@@ -4,10 +4,11 @@
   "description": "Launcher for Minecraft",
   "main": "build/main/index.js",
   "scripts": {
-    "dev": "npm run build && npm run start",
+    "dev": "npm run build && npm run start:dev",
     "build": "webpack",
-    "start": "electron .",
-    "clear": "rimraf build",
+    "start:dev": "cross-env DEV=true electron .",
+    "start:prod": "electron .",
+    "clear": "rimraf build aurora-launcher-win32-x64",
     "pack": "electron-packager build"
   },
   "repository": {
@@ -24,7 +25,9 @@
   },
   "homepage": "https://github.com/AuroraTeam/Launcher#readme",
   "devDependencies": {
+    "aurora-api": "^0.1.0",
     "copy-webpack-plugin": "^6.2.1",
+    "cross-env": "^7.0.2",
     "css-loader": "^5.0.0",
     "electron": "^10.1.5",
     "electron-packager": "^15.1.0",
