@@ -1,5 +1,11 @@
 <template>
     <div class="titlebar">
+        <button v-if="historyBackBtn.show" @click="historyBack">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.84 6.92V8.92H3.84L9.34 14.42L7.92 15.84L0 7.92L7.92 0L9.34 1.42L3.84 6.92H15.84Z" fill="white"/>
+            </svg>
+        </button>
+        <div class="title" v-if="title.show">{{ title.text }}</div>
         <button class="hide" @click="hide()">
             <svg width="14" height="2" viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M14 2H0V0H14V2Z" fill="white"/>
@@ -17,6 +23,7 @@
 .titlebar {
     padding: 8px;
     display: flex;
+    align-items: center;
     -webkit-app-region: drag;
     button {
         -webkit-app-region: no-drag;
@@ -43,6 +50,9 @@
             fill: #EB5757;
         }
     }
+    .title {
+        margin-left: 13px;
+    }
 }
 </style>
 
@@ -51,9 +61,25 @@ import Vue from 'vue'
 import LauncherWindow from '../../scripts/window'
 
 export default Vue.extend({
+    data() {
+        return {
+            historyBackBtn: {
+                show: false
+            },
+            title: {
+                show: true,
+                text: 'AuroraLauncher dev build v0.0.1'
+            },
+            user: {
+                show: false,
+                username: 'Test'
+            }
+        }
+    },
     methods: {
         hide: LauncherWindow.hideWindow,
-        close: LauncherWindow.closeWindow
+        close: LauncherWindow.closeWindow,
+        historyBack() { this.$router.back() }
     }
 })
 </script>

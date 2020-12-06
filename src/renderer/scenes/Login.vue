@@ -15,13 +15,16 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import TitleBar from '../assets/components/TitleBar.vue'
 import LauncherAuth from '../scripts/auth'
 
+interface AuthResult {
+    status: boolean,
+    code: number,
+    message: string,
+    login: string
+}
+
 export default Vue.extend({
-    components: {
-        TitleBar: TitleBar
-    },
     data() {
         return {
             login: '',
@@ -29,8 +32,14 @@ export default Vue.extend({
         }
     },
     methods: {
-        auth() {
-            LauncherAuth.auth(this.login, this.password)
+        async auth() {
+            const auth: AuthResult = await LauncherAuth.auth(this.login, this.password)
+            if (auth.status === true) {
+                localStorage.setItem('username', auth.login)
+                this.$router.push('test')
+            } else {
+                alert(`Error: ${auth.code} ${auth.message}`)
+            }
         }
     }
 })

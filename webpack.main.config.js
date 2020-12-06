@@ -10,7 +10,7 @@ module.exports = {
         filename: 'index.js'
     },
     resolve: {
-        extensions: [ '.ts' ],
+        extensions: [ '.js', '.ts' ],
     },
     module: {
         rules: [

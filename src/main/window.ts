@@ -66,6 +66,7 @@ export default class LauncherWindow {
         window.webContents.on('did-frame-finish-load', () => {
             if (process.env.DEV) {
                 window.webContents.openDevTools()
+                
             }
         })
 

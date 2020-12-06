@@ -13,7 +13,7 @@ module.exports = {
         filename: 'index.js'
     },
     resolve: {
-        extensions: ['.ts', '.vue'],
+        extensions: [ '.js', '.ts', '.vue' ],
     },
     module: {
         rules: [
