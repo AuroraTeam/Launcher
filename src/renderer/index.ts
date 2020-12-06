@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import BaseLayout from './assets/components/BaseLayout.vue'
-import Login from './scenes/Login.vue'
-import Test from './scenes/Test.vue'
+import BaseLayout from './runtime/components/BaseLayout.vue'
+import Login from './runtime/scenes/Login.vue'
+import Test from './runtime/scenes/Test.vue'
 
 const routes = [
     { path: '/', component: Login },

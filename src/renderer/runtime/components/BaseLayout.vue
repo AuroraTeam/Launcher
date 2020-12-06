@@ -9,6 +9,8 @@
 import Vue from 'vue'
 import TitleBar from './TitleBar.vue'
 
+import '../assets/sass/main.sass'
+
 export default Vue.extend({
     components: {
         TitleBar

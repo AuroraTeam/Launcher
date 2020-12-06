@@ -1,3 +1,10 @@
 {
-    "title": "Aurora Launcher"
+    "window": {
+        "width": 900,
+        "height": 550,
+        "frame": false,
+        "resizable": false,
+        "maximizable": false,
+        "title": "Aurora Launcher"
+    }
 }

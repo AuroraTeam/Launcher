@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
-const { title } = require('../../config.json')
+const windowConfig = require('../../../config.json')
 
 export default class LauncherWindow {
     mainWindow: BrowserWindow | null = null
@@ -9,7 +9,10 @@ export default class LauncherWindow {
     constructor() {
         this.init()
     }
-    
+
+    /**
+     * Launcher initialization
+     */
     init() {
         // quit application when all windows are closed
         app.on('window-all-closed', () => {
@@ -26,57 +29,63 @@ export default class LauncherWindow {
             }
         })
         
-        // create main BrowserWindow when electron is ready
+        // create main window when electron is ready
         app.on('ready', () => {
             this.mainWindow = this.createMainWindow()
         })
 
+        // hide the main window when the minimize button is pressed
         ipcMain.on('window-hide', () => {
             this.mainWindow?.minimize()
         })
 
+        // close the main window when the close button is pressed
         ipcMain.on('window-close', () => {
             this.mainWindow?.close()
         })
     }
-    
+
+    /**
+     * Create launcher window
+     */
     createMainWindow() {
-        const window = new BrowserWindow({
-            width: 900,
-            height: 550,
-            frame: false,
-            resizable: false,
-            maximizable: false,
-            title: title,
+        // creating and configuring a window
+        const launcherWindow = new BrowserWindow({
+            width: windowConfig.width || 900,
+            height: windowConfig.height || 550,
+            frame: windowConfig.frame || false,
+            resizable: windowConfig.resizable || false,
+            maximizable: windowConfig.maximizable || false,
+            title: windowConfig.title || "Aurora Launcher",
             webPreferences: {
                 nodeIntegration: true
             }
         })
 
-        window.loadURL(formatUrl({
+        // loading renderer code (runtime)
+        launcherWindow.loadURL(formatUrl({
             pathname: path.join(__dirname, '..', 'renderer', 'index.html'),
             protocol: 'file',
             slashes: true
         }))
 
-        window.on('closed', () => {
+        launcherWindow.on('closed', () => {
             this.mainWindow = null
         })
 
-        window.webContents.on('did-frame-finish-load', () => {
-            if (process.env.DEV) {
-                window.webContents.openDevTools()
-                
-            }
+        // open developer tools when using development mode
+        launcherWindow.webContents.on('did-frame-finish-load', () => {
+            if (process.env.DEV || false) launcherWindow.webContents.openDevTools()
         })
 
-        window.webContents.on('devtools-opened', () => {
-            window.focus()
+        // focus on development tools when opening
+        launcherWindow.webContents.on('devtools-opened', () => {
+            launcherWindow.focus()
             setImmediate(() => {
-                window.focus()
+                launcherWindow.focus()
             })
         })
 
-        return window
+        return launcherWindow
     }
 }

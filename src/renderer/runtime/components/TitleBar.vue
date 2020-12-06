@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import LauncherWindow from '../../scripts/window'
+import { ipcRenderer } from 'electron'
 
 export default Vue.extend({
     data() {
@@ -77,8 +77,8 @@ export default Vue.extend({
         }
     },
     methods: {
-        hide: LauncherWindow.hideWindow,
-        close: LauncherWindow.closeWindow,
+        hide() { ipcRenderer.send('window-hide') },
+        close() { ipcRenderer.send('window-close') },
         historyBack() { this.$router.back() }
     }
 })

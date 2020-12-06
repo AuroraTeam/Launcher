@@ -1,6 +1,5 @@
 <template>
     <div>
-        <TitleBar/>
         <div class="block">
             <strong>Aurora Launcher</strong>
             <p>Введите логин и пароль,<br> чтобы продолжить</p>
@@ -15,7 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import LauncherAuth from '../scripts/auth'
+import LauncherAuth from '../../scripts/LauncherAuth'
 
 interface AuthResult {
     status: boolean,
@@ -44,20 +43,6 @@ export default Vue.extend({
     }
 })
 </script>
-
-<style lang="sass">
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap')
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap')
-
-body
-    background: url('../assets/images/waves.png') no-repeat, url('../assets/images/background.png')
-    font-family: 'Comfortaa', cursive
-    color: #fff
-    margin: 0
-
-*
-    box-sizing: border-box
-</style>
 
 <style lang="sass" scoped>
 h1
