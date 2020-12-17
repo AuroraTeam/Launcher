@@ -17,7 +17,6 @@ import Vue from 'vue'
 import LauncherAuth from '../../scripts/LauncherAuth'
 
 interface AuthResult {
-    status: boolean,
     code: number,
     message: string,
     login: string
@@ -33,15 +32,15 @@ export default Vue.extend({
     methods: {
         async auth() {
             const auth: AuthResult = await LauncherAuth.auth(this.login, this.password)
-            if (auth.status === true) {
-                localStorage.setItem('username', auth.login)
-                this.$router.push('test')
-            } else {
+            if (auth.code !== undefined) {
                 this.$swal({
                     title: 'Error!',
                     text: auth.message,
                     icon: 'error'
                 })
+            } else {
+                localStorage.setItem('username', auth.login)
+                this.$router.push('test')
             }
         }
     }
