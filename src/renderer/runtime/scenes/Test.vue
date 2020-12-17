@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Game from '../../scripts/game'
+import Game from '../../scripts/Game'
 
 export default Vue.extend({
     data() {

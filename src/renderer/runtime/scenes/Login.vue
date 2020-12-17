@@ -37,7 +37,11 @@ export default Vue.extend({
                 localStorage.setItem('username', auth.login)
                 this.$router.push('test')
             } else {
-                alert(`Error: ${auth.code} ${auth.message}`)
+                this.$swal({
+                    title: 'Error!',
+                    text: auth.message,
+                    icon: 'error'
+                })
             }
         }
     }

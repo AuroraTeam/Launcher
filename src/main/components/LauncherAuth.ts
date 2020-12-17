@@ -1,4 +1,4 @@
-import { Response, ResponseError } from "aurora-api"
+import { Response } from "aurora-api"
 import { ipcMain, IpcMainInvokeEvent } from "electron"
 import { App } from ".."
 
@@ -8,18 +8,15 @@ export default class LauncherAuth {
     }
 
     async auth(_e: IpcMainInvokeEvent, login: string, password: string) {
-        const auth = await App.api?.api?.send('auth', {login, password})
-
-        if ((auth as ResponseError).code !== undefined) {
+        try {
+            const { data } = await App.api?.api?.send('auth', {login, password}) as AuthResponse
             return {
-                status: false,
-                code: (auth as ResponseError).code,
-                message: (auth as ResponseError).message
+                login: data.login
             }
-        } else {
+        } catch (error) {
             return {
-                status: true,
-                login: (auth as AuthResponse).data.login
+                code: error.code,
+                message: error.message
             }
         }
     }

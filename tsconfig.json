@@ -13,5 +13,8 @@
         "experimentalDecorators": true,
         "newLine": "lf",
         "noEmitOnError": true
-    }
+    },
+    "types": [
+        "vue-sweetalert2"
+    ],
 }
