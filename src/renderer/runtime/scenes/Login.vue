@@ -19,7 +19,8 @@ import LauncherAuth from '../../scripts/LauncherAuth'
 interface AuthResult {
     code: number,
     message: string,
-    login: string
+    login: string,
+    userUUID: string
 }
 
 export default Vue.extend({
@@ -40,6 +41,7 @@ export default Vue.extend({
                 })
             } else {
                 localStorage.setItem('username', auth.login)
+                localStorage.setItem('userUUID', auth.userUUID)
                 this.$router.push('test')
             }
         }

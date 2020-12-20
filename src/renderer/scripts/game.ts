@@ -5,16 +5,17 @@ export default class Game {
      * Start the game
      * @param csl Print to console wrapper
      */
-    static async start(csl: (string: string) => void) {
+    static async start(profile: any, csl: (string: string) => void) {
         // Захардкорено на время тестов
         ipcRenderer.send('startGame', {
-            clientVersion: '1.16.4',
-            clientDir: 'client1.16.4-fabric',
-            assetsDir: 'assets1.16.4',
-            username: 'JCat',
-            userUUID: '00000000-0000-0000-0000-000000000000',
+            clientVersion: profile.version,
+            clientDir: profile.clientDir,
+            assetsDir: profile.assetsDir,
+            username: localStorage.getItem('username'),
+            userUUID: localStorage.getItem('userUUID'),
             accessToken: '00000000-0000-0000-0000-000000000000',
-            mainClass: 'net.fabricmc.loader.launch.knot.KnotClient',
+            mainClass: profile.mainClass,
+            clientArgs: profile.clientArgs,
         } as ClientArgs)
 
         ipcRenderer.on('textToConsole', (_e, string: string) => {
