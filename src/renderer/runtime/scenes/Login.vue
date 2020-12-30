@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import LauncherAuth from '../../scripts/LauncherAuth'
+import LauncherAuth from '@scripts/LauncherAuth'
 
 interface AuthResult {
     code: number,

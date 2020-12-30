@@ -12,7 +12,11 @@
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "newLine": "lf",
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "baseUrl": "src",
+        "paths": {
+            "@scripts/*": ["renderer/scripts/*"]
+        }
     },
     "types": [
         "vue-sweetalert2"

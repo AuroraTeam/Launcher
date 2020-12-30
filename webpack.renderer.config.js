@@ -14,6 +14,9 @@ module.exports = {
     },
     resolve: {
         extensions: [ '.js', '.ts', '.vue' ],
+        alias: {
+            "@scripts": path.resolve(__dirname, 'src/renderer/scripts')
+        }
     },
     module: {
         rules: [
