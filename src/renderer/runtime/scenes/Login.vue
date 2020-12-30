@@ -17,10 +17,10 @@ import Vue from 'vue'
 import LauncherAuth from '@scripts/LauncherAuth'
 
 interface AuthResult {
-    code: number,
-    message: string,
+    error: string,
     login: string,
     userUUID: string
+    accessToken: string
 }
 
 export default Vue.extend({
@@ -32,18 +32,26 @@ export default Vue.extend({
     },
     methods: {
         async auth() {
+            // Валидацию можно делать как хошш))
+            if (this.login.length < 6) return this.showError('Логин должен быть не менее 6-ти символов')
+            if (this.password.length < 6) return this.showError('Пароль должен быть не менее 6-ти символов')
+
             const auth: AuthResult = await LauncherAuth.auth(this.login, this.password)
-            if (auth.code !== undefined) {
-                this.$swal({
-                    title: 'Error!',
-                    text: auth.message,
-                    icon: 'error'
-                })
+            if (auth.error !== undefined) {
+                this.showError(auth.error)
             } else {
                 localStorage.setItem('username', auth.login)
                 localStorage.setItem('userUUID', auth.userUUID)
+                localStorage.setItem('accessToken', auth.accessToken)
                 this.$router.push('test')
             }
+        },
+        showError(message: string) {
+            this.$swal({
+                title: 'Error!',
+                text: message,
+                icon: 'error'
+            })
         }
     }
 })

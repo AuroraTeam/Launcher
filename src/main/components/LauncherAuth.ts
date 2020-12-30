@@ -10,13 +10,11 @@ export default class LauncherAuth {
     async auth(_e: IpcMainInvokeEvent, login: string, password: string) {
         try {
             const { data } = await App.api?.api?.send('auth', {login, password}) as AuthResponse
-            return {
-                login: data.login
-            }
+            return data
         } catch (error) {
+            console.log(`Ошибка №${error.code}: ${error.message}`)
             return {
-                code: error.code,
-                message: error.message
+                error: error.message
             }
         }
     }
