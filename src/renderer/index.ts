@@ -6,16 +6,17 @@ import '@sweetalert2/theme-dark/dark.scss'
 
 import BaseLayout from './runtime/components/BaseLayout.vue'
 import Login from './runtime/scenes/Login.vue'
-import Test from './runtime/scenes/Test.vue'
+import ServersList from './runtime/scenes/ServersList.vue'
 
 const routes = [
     { path: '/', component: Login },
-    { path: '/test', component: Test }
+    { path: '/server-list', component: ServersList }
 ]
 
 Vue.use(VueRouter)
 Vue.use(VueSweetalert2)
-new Vue({
+
+export const Launcher = new Vue({
     el: '#app',
     router: new VueRouter({ routes }),
     render: h => h(BaseLayout)

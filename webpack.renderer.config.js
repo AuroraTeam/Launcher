@@ -15,6 +15,8 @@ module.exports = {
     resolve: {
         extensions: [ '.js', '.ts', '.vue' ],
         alias: {
+            "@Launcher": path.resolve(__dirname, 'src/renderer/index.ts'),
+            "@runtime": path.resolve(__dirname, 'src/renderer/runtime'),
             "@scripts": path.resolve(__dirname, 'src/renderer/scripts')
         }
     },
@@ -74,6 +76,7 @@ module.exports = {
             patterns: [
                 './src/renderer/index.html',
                 './src/renderer/runtime/assets/images/logo.png',
+                './src/renderer/runtime/assets/js/skinview3d/steve.png',
                 {from: './src/package.json', to: '..'}
             ]
         })

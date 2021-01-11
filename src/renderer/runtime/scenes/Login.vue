@@ -15,6 +15,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import LauncherAuth from '@scripts/LauncherAuth'
+import { Launcher } from '@Launcher'
 
 interface AuthResult {
     error: string,
@@ -33,17 +34,19 @@ export default Vue.extend({
     methods: {
         async auth() {
             // Валидацию можно делать как хошш))
-            if (this.login.length < 6) return this.showError('Логин должен быть не менее 6-ти символов')
-            if (this.password.length < 6) return this.showError('Пароль должен быть не менее 6-ти символов')
+            if (this.login.length < 4) return this.showError('Логин должен быть не менее 4-ёх символов')
+            if (this.password.length < 8) return this.showError('Пароль должен быть не менее 8-ми символов')
 
             const auth: AuthResult = await LauncherAuth.auth(this.login, this.password)
             if (auth.error !== undefined) {
                 this.showError(auth.error)
             } else {
+                Launcher.$emit('setUser', auth.login)
+                Launcher.$emit('showUser')
                 localStorage.setItem('username', auth.login)
                 localStorage.setItem('userUUID', auth.userUUID)
                 localStorage.setItem('accessToken', auth.accessToken)
-                this.$router.push('test')
+                this.$router.push('server-list')
             }
         },
         showError(message: string) {
@@ -108,7 +111,6 @@ h1
         border-radius: 17px
         background: linear-gradient(88.14deg, #7F47DD 0%, #2575FC 100%)
         font-size: 16px
-        font-family: 'Comfortaa', cursive
         outline: 0
         color: #fff
         box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.25)
