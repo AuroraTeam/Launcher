@@ -1,6 +1,6 @@
 import Starter from "../game/Starter"
-import LauncherAuth from "../components/LauncherAuth"
-import ServerList from "../components/ServerList"
+import LauncherAuth from "../runtime/components/LauncherAuth"
+import ServerList from "../runtime/components/ServerList"
 
 export default class RuntimeManager {
     constructor() {

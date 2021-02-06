@@ -1,6 +1,6 @@
 import { Response } from "aurora-api"
 import { ipcMain, IpcMainInvokeEvent } from "electron"
-import { App } from ".."
+import { App } from "../.."
 
 export default class LauncherAuth {
     constructor() {
