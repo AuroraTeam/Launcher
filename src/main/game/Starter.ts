@@ -4,6 +4,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { spawn } from 'child_process'
 import { App } from ".."
+import { gte } from "semver"
 
 interface ClientArgs {
     clientVersion: string
@@ -18,54 +19,51 @@ interface ClientArgs {
     mainClass: string
 }
 
+// TODO Ещё больше рефактора
+
 export default class Starter {
     constructor() {
-        ipcMain.on('startGame', this.start)
+        ipcMain.on('startGame', (event, clientArgs) => this.start(event, clientArgs))
     }
 
     async start(event: IpcMainEvent, clientArgs: ClientArgs) {
-        const gameArgs = [
-            "--username",
-            `${clientArgs.username}`,
-            "--version",
-            `${clientArgs.clientVersion}`,
-            "--gameDir",
-            `${path.resolve(__dirname, clientArgs.clientDir)}`,
-            "--assetsDir",
-            `${path.resolve(__dirname, clientArgs.assetsDir)}`,
-            "--assetIndex",
-            `${clientArgs.clientVersion}`,
-            "--uuid",
-            `${clientArgs.userUUID}`,
-            "--accessToken",
-            `${clientArgs.accessToken}`,
-            "--userType",
-            'mojang',
-            "--versionType",
-            // `${version_type}`,
-            'AuroraLauncher v0.1.0',
-        ]
+        const clientDir = path.resolve(__dirname, 'clients', clientArgs.clientDir)
+        const assetsDir = path.resolve(__dirname, 'assets', clientArgs.assetsDir)
 
-        const librariesDirectory = path.resolve(__dirname, clientArgs.clientDir, 'libraries');
-        const nativesDirectory = path.resolve(__dirname, clientArgs.clientDir, 'natives');
+        const gameArgs: string[] = []
 
-        const classpath = Starter.scanDir(librariesDirectory);
-        classpath.push(path.resolve(__dirname, clientArgs.clientDir, 'minecraft.jar'));
+        if (gte(clientArgs.clientVersion, '1.6.0')) {
+            this.gameLauncher(gameArgs, clientArgs, clientDir, assetsDir)
+        } else {
+            this.gameLauncherLegacy(gameArgs, clientArgs, clientDir, assetsDir)
+        }
+
+        const librariesDirectory = path.resolve(clientDir, 'libraries')
+        const nativesDirectory = path.resolve(clientDir, 'natives')
+
+        const classpath = Starter.scanDir(librariesDirectory)
+        classpath.push(path.resolve(clientDir, 'minecraft.jar'))
         if (clientArgs.clientClassPath !== undefined) {
             clientArgs.clientClassPath.forEach((fileName) => {
-                classpath.push(path.resolve(__dirname, clientArgs.clientDir, fileName));
+                classpath.push(path.resolve(clientDir, fileName))
             })
         }
 
-        const jvmArgs = [
-            `-Djava.library.path=${nativesDirectory}`,
-            ...clientArgs.jvmArgs || [],
-            "-cp",
-            `${classpath.join(';')}`,
-            clientArgs.mainClass,
-            ...clientArgs.clientArgs || [],
-            ...gameArgs
-        ]
+        const jvmArgs = []
+
+        jvmArgs.push(`-Djava.library.path=${nativesDirectory}`)
+
+        if (clientArgs.jvmArgs?.length > 0) {
+            jvmArgs.push(...clientArgs.jvmArgs)
+        }
+
+        jvmArgs.push("-cp", classpath.join(path.delimiter))
+        jvmArgs.push(clientArgs.mainClass)
+
+        if (clientArgs.clientArgs?.length > 0) {
+            jvmArgs.push(...clientArgs.clientArgs)
+        }
+        jvmArgs.push(...gameArgs)
 
         const gameProccess = spawn('java', jvmArgs)
 
@@ -94,5 +92,39 @@ export default class Starter {
             list.push(dir)
         }
         return list
+    }
+
+    gameLauncher(gameArgs: string[], clientArgs: ClientArgs, clientDir: string, assetsDir: string) {
+        gameArgs.push('--username', clientArgs.username)
+        gameArgs.push('--version', clientArgs.clientVersion)
+        gameArgs.push("--gameDir", clientDir)
+        gameArgs.push("--assetsDir", assetsDir)
+
+        if (gte(clientArgs.clientVersion, '1.7.2')) {
+            gameArgs.push("--uuid", clientArgs.accessToken)
+            gameArgs.push("--accessToken", clientArgs.userUUID)
+        } else {
+            gameArgs.push("--session", clientArgs.accessToken)
+        }
+
+        if (gte(clientArgs.clientVersion, '1.7.3')) {
+            gameArgs.push("--assetIndex", clientArgs.clientVersion)
+        }
+
+        if (gte(clientArgs.clientVersion, '1.7.3')) {
+            gameArgs.push("--userType", "mojang")
+        }
+
+        if (gte(clientArgs.clientVersion, '1.9.0')) {
+            gameArgs.push("--versionType", "AuroraLauncher v0.1.0")
+        }
+    }
+
+    gameLauncherLegacy(gameArgs: string[], clientArgs: ClientArgs, clientDir: string, assetsDir: string) {
+        gameArgs.push(clientArgs.username)
+        gameArgs.push(clientArgs.accessToken)
+        gameArgs.push("--version", clientArgs.clientVersion)
+        gameArgs.push("--gameDir", clientDir)
+        gameArgs.push("--assetsDir", assetsDir)
     }
 }
