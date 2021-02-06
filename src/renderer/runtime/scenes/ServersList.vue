@@ -75,18 +75,17 @@ import ServerList from '@scripts/ServerList'
 export default Vue.extend({
     data() {
         return {
-            profiles: [],
-            selectedProfile: {}
+            profiles: []
         }
     },
     methods: {
         selectProfile(profile: object) {
-            this.selectedProfile = profile
+            localStorage.setItem('selectedProfile', JSON.stringify(profile))
+            this.$router.push('server-panel')
         }
     },
     async mounted() {
         this.profiles = await ServerList.getProfiles()
-        this.selectedProfile = this.profiles[0]
 
         const skinview3d = require('../assets/js/skinview3d/skinview3d.bundle')
         const skinViewer = new skinview3d.SkinViewer({

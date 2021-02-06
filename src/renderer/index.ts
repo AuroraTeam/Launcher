@@ -7,10 +7,12 @@ import '@sweetalert2/theme-dark/dark.scss'
 import BaseLayout from './runtime/components/BaseLayout.vue'
 import Login from './runtime/scenes/Login.vue'
 import ServersList from './runtime/scenes/ServersList.vue'
+import ServerPanel from './runtime/scenes/ServerPanel.vue'
 
 const routes = [
     { path: '/', component: Login },
-    { path: '/server-list', component: ServersList }
+    { path: '/server-list', component: ServersList },
+    { path: '/server-panel', component: ServerPanel }
 ]
 
 Vue.use(VueRouter)
