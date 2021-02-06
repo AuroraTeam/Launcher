@@ -6,5 +6,8 @@
         "resizable": false,
         "maximizable": false,
         "title": "Aurora Launcher"
+    },
+    "api": {
+        "url": "ws://localhost:1370"
     }
 }
