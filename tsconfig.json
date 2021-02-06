@@ -15,6 +15,7 @@
         "noEmitOnError": true,
         "baseUrl": "src",
         "paths": {
+            "@config": ["config.json"],
             "@Launcher": ["renderer/index.ts"],
             "@runtime/*": ["renderer/runtime/*"],
             "@scripts/*": ["renderer/scripts/*"]

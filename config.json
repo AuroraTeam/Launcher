@@ -5,6 +5,7 @@
         "frame": false,
         "resizable": false,
         "maximizable": false,
+        "fullscreenable": false,
         "title": "Aurora Launcher"
     },
     "api": {

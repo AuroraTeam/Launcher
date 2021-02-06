@@ -11,6 +11,9 @@ module.exports = {
     },
     resolve: {
         extensions: [ '.js', '.ts' ],
+        alias: {
+            "@config": path.resolve(__dirname, 'config.json')
+        }
     },
     module: {
         rules: [

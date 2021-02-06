@@ -1,19 +1,15 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
-const windowConfig = require('../../../config.json')
+const windowConfig = require('@config').window
 
 export default class LauncherWindow {
     mainWindow: BrowserWindow | null = null
 
-    constructor() {
-        this.init()
-    }
-
     /**
      * Launcher initialization
      */
-    init() {
+    constructor() {
         // quit application when all windows are closed
         app.on('window-all-closed', () => {
             // on macOS it is common for applications to stay open until the user explicitly quits
@@ -56,6 +52,7 @@ export default class LauncherWindow {
             frame: windowConfig.frame || false,
             resizable: windowConfig.resizable || false,
             maximizable: windowConfig.maximizable || false,
+            fullscreenable: windowConfig.fullscreenable || false,
             title: windowConfig.title || "Aurora Launcher",
             webPreferences: {
                 nodeIntegration: true
