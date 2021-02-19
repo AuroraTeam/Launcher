@@ -101,22 +101,22 @@ export default class Starter {
         gameArgs.push("--assetsDir", assetsDir)
 
         if (gte(clientArgs.clientVersion, '1.7.2')) {
-            gameArgs.push("--uuid", clientArgs.accessToken)
-            gameArgs.push("--accessToken", clientArgs.userUUID)
+            gameArgs.push("--uuid", clientArgs.userUUID)
+            gameArgs.push("--accessToken", clientArgs.accessToken)
+
+            if (gte(clientArgs.clientVersion, '1.7.3')) {
+                gameArgs.push("--assetIndex", clientArgs.clientVersion)
+            }
+
+            if (gte(clientArgs.clientVersion, '1.7.4')) {
+                gameArgs.push("--userType", "mojang")
+            }
+
+            if (gte(clientArgs.clientVersion, '1.9.0')) {
+                gameArgs.push("--versionType", "AuroraLauncher v0.1.0")
+            }
         } else {
             gameArgs.push("--session", clientArgs.accessToken)
-        }
-
-        if (gte(clientArgs.clientVersion, '1.7.3')) {
-            gameArgs.push("--assetIndex", clientArgs.clientVersion)
-        }
-
-        if (gte(clientArgs.clientVersion, '1.7.3')) {
-            gameArgs.push("--userType", "mojang")
-        }
-
-        if (gte(clientArgs.clientVersion, '1.9.0')) {
-            gameArgs.push("--versionType", "AuroraLauncher v0.1.0")
         }
     }
 

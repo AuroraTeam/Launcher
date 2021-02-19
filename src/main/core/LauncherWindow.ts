@@ -17,14 +17,14 @@ export default class LauncherWindow {
                 app.quit()
             }
         })
-        
+
         app.on('activate', () => {
             // on macOS it is common to re-create a window even after all windows have been closed
             if (this.mainWindow === null) {
                 this.mainWindow = this.createMainWindow()
             }
         })
-        
+
         // create main window when electron is ready
         app.on('ready', () => {
             this.mainWindow = this.createMainWindow()
@@ -54,6 +54,7 @@ export default class LauncherWindow {
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
             title: windowConfig.title || "Aurora Launcher",
+            icon: path.join(__dirname, '../renderer/logo.png'),
             webPreferences: {
                 nodeIntegration: true
             }
