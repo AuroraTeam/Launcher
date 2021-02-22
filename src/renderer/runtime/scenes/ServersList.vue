@@ -4,7 +4,7 @@
             <canvas id="skinContainer"></canvas>
         </div>
         <div class="serverList">
-            <button v-for="(el, i) in profiles" :key="i" @click="selectProfile(el)">
+            <button v-for="(el, i) in servers" :key="i" @click="selectProfile(el)">
                 <span class="title">{{ el.title }}</span>
                 <span class="online">10 / 100</span>
                 <div class="next">
@@ -75,7 +75,7 @@ import ServerList from '@scripts/ServerList'
 export default Vue.extend({
     data() {
         return {
-            profiles: []
+            servers: []
         }
     },
     methods: {
@@ -85,7 +85,7 @@ export default Vue.extend({
         }
     },
     async mounted() {
-        this.profiles = await ServerList.getProfiles()
+        this.servers = await ServerList.getServers()
 
         const skinview3d = require('../assets/js/skinview3d/skinview3d.bundle')
         const skinViewer = new skinview3d.SkinViewer({

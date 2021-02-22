@@ -2,15 +2,15 @@ import { Response } from "aurora-api"
 import { ipcMain, IpcMainInvokeEvent } from "electron"
 import { App } from "../.."
 
-export default class ServerList {
+export default class ServerPanel {
     constructor() {
-        ipcMain.handle('getServers', this.getServers)
+        ipcMain.handle('getProfile', this.getProfile)
     }
 
-    async getServers(_e: IpcMainInvokeEvent) {
+    async getProfile(_e: IpcMainInvokeEvent, uuid: string) {
         try {
-            const { data } = await App.api?.api?.send('servers') as Response & { data: { servers: any[] } }
-            return data.servers
+            const { data } = await App.api?.api?.send('profile', {uuid}) as Response & { data: { profile: any[] } }
+            return data.profile
         } catch (error) {
             return {
                 code: error.code,

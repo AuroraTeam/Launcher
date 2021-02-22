@@ -37,12 +37,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import Game from '@scripts/Game'
+import ServerPanel from '@scripts/ServerPanel'
 
 export default Vue.extend({
     data() {
         return {
             console: '',
-            selectedProfile: JSON.parse(localStorage.getItem('selectedProfile') as string),
+            selectedProfile: {},
             username: localStorage.getItem('username')
         }
     },
@@ -53,6 +54,12 @@ export default Vue.extend({
         textToConsole(string: string) {
             this.console += string
         }
+    },
+    async mounted() {
+        const profileUUID = JSON.parse(localStorage.getItem('selectedProfile') as string).profileUUID
+        console.log(this.selectedProfile)
+        this.selectedProfile = await ServerPanel.getProfile(profileUUID)
+        console.log(this.selectedProfile)
     }
 })
 </script>

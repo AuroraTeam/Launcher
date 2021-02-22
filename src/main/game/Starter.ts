@@ -23,7 +23,13 @@ interface ClientArgs {
 
 export default class Starter {
     constructor() {
-        ipcMain.on('startGame', (event, clientArgs) => this.start(event, clientArgs))
+        ipcMain.on('startGame', (event, clientArgs) => this.startChain(event, clientArgs))
+    }
+
+    async startChain(event: IpcMainEvent, clientArgs: ClientArgs) {
+        await this.download(event, clientArgs)
+        await this.hash(event, clientArgs)
+        await this.start(event, clientArgs)
     }
 
     async start(event: IpcMainEvent, clientArgs: ClientArgs) {
@@ -81,6 +87,14 @@ export default class Starter {
             event.reply('stopGame')
             console.log('game stop')
         });
+    }
+
+    download(event: IpcMainEvent, clientArgs: ClientArgs) {
+        return
+    }
+
+    hash(event: IpcMainEvent, clientArgs: ClientArgs) {
+        return
     }
 
     static scanDir(dir: string, list: string[] = []): string[] {
