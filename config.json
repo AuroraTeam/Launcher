@@ -9,6 +9,7 @@
         "title": "Aurora Launcher"
     },
     "api": {
-        "url": "ws://localhost:1370"
+        "url": "ws://localhost:1370",
+        "fileUrl": "http://localhost:1370"
     }
 }

@@ -18,4 +18,8 @@ export default class APIManager {
             console.log(error)
         }
     }
+
+    public async send(type: string, data?: object) {
+        return await this.api?.send(type, data)
+    }
 }

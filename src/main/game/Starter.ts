@@ -5,6 +5,10 @@ import * as fs from 'fs'
 import { spawn } from 'child_process'
 import { App } from ".."
 import { gte } from "semver"
+import { Request } from "aurora-api"
+import { StorageHelper } from "../helpers/StorageHelper"
+import { HttpHelper } from "../helpers/HttpHelper"
+const api = require('@config').api
 
 interface ClientArgs {
     // Auth params
@@ -27,7 +31,7 @@ interface ClientArgs {
     clientArgs: string[]
 }
 
-// TODO Ещё больше рефактора
+// TODO БООООООЛЬШЕ, КОД ПОГРЯЗ В ГОВНЕ!!!
 
 export default class Starter {
     constructor() {
@@ -35,7 +39,6 @@ export default class Starter {
     }
 
     async startChain(event: IpcMainEvent, clientArgs: ClientArgs) {
-        await this.download(event, clientArgs)
         await this.hash(event, clientArgs)
         await this.start(event, clientArgs)
     }
@@ -57,11 +60,11 @@ export default class Starter {
 
         const classpath = Starter.scanDir(librariesDirectory)
         classpath.push(path.resolve(clientDir, 'minecraft.jar'))
-        if (clientArgs.classPath !== undefined) {
-            clientArgs.classPath.forEach((fileName) => {
-                classpath.push(path.resolve(clientDir, fileName))
-            })
-        }
+        // if (clientArgs.classPath !== undefined) {
+        //     clientArgs.classPath.forEach((fileName) => {
+        //         classpath.push(path.resolve(clientDir, fileName))
+        //     })
+        // }
 
         const jvmArgs = []
 
@@ -97,12 +100,30 @@ export default class Starter {
         });
     }
 
-    download(event: IpcMainEvent, clientArgs: ClientArgs) {
-        return
+    async download(dir: string, type: "assets" | "client") {
+        const hashes = await App.api.send("updates", { dir })
+        let parentDir = type == "assets" ? StorageHelper.assetsDir : StorageHelper.clientsDir
+
+        for (const hash of ((hashes as Request).data as {hashes: any[]}).hashes) {
+            const file = await HttpHelper.downloadFile(new URL(hash.path.replace('\\', '/'), api.fileUrl))
+            fs.mkdirSync(path.join(parentDir, path.dirname(hash.path)), { recursive: true })
+            fs.copyFileSync(file, path.join(parentDir, hash.path))
+        }
     }
 
-    hash(event: IpcMainEvent, clientArgs: ClientArgs) {
-        return
+    async hash(_event: IpcMainEvent, clientArgs: ClientArgs) {
+        if (!fs.existsSync(path.resolve(StorageHelper.assetsDir, clientArgs.assetsDir))) {
+            await this.download(clientArgs.assetsDir, 'assets')
+        } else {
+            // Здесь должен быть код, который будет проверять хеш файлов
+        }
+
+        if (!fs.existsSync(path.resolve(StorageHelper.clientsDir, clientArgs.clientDir))) {
+            await this.download(clientArgs.clientDir, 'client')
+        } else {
+            // И здесь тоже
+        }
+        return // Проверка хешей файлов, подобую хрень ещё нужно в дирвотчер кинуть
     }
 
     static scanDir(dir: string, list: string[] = []): string[] {
