@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     target: 'electron-main',
-    mode: 'production',
+    mode: 'development',
     devtool: 'inline-source-map',
     entry: path.resolve(__dirname, 'src', 'main', 'index.ts'),
     output: {

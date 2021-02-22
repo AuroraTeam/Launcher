@@ -5,7 +5,7 @@ const HtmlMinimizerPlugin = require('html-minimizer-webpack-plugin');
 
 module.exports = {
     target: 'electron-renderer',
-    mode: 'production',
+    mode: 'development',
     devtool: 'inline-source-map',
     entry: path.resolve(__dirname, 'src', 'renderer', 'index.ts'),
     output: {

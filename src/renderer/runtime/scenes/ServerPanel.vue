@@ -3,7 +3,7 @@
         <h1>Привет {{username}}</h1>
         <h2>Выбранный сервер: {{selectedServer.title}}</h2>
         <button @click="startGame">Играть</button>
-        <pre v-if="console.length > 0" class="console">{{ console }}</pre>
+        <pre v-show="console.length > 0" class="console">{{ console }}</pre>
     </div>
 </template>
 
@@ -30,7 +30,7 @@
         height: 280px
         padding: 10px
         margin: auto
-        border-radius: 7px
+        border-radius: 3px
         background-color: rgba(41, 41, 41, 0.9)
 </style>
 
@@ -54,6 +54,9 @@ export default Vue.extend({
         },
         textToConsole(string: string) {
             this.console += string
+            const consoleEl = document.querySelector('.console')!
+            // Если не оборачивать в setImmediate, то оно прокручивает не до конца
+            setImmediate(() => {consoleEl.scrollTop = consoleEl.scrollHeight})
         }
     },
     async mounted() {
