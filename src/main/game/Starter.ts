@@ -7,16 +7,24 @@ import { App } from ".."
 import { gte } from "semver"
 
 interface ClientArgs {
-    clientVersion: string
-    clientDir: string
-    assetsDir: string
+    // Auth params
     username: string
     userUUID: string
     accessToken: string
-    clientClassPath: string[]
+
+    // Client
+    version: string
+    clientDir: string
+
+    // Assets
+    assetsIndex: string
+    assetsDir: string
+
+    // Launch client
+    mainClass: string
+    classPath: string[]
     jvmArgs: string[]
     clientArgs: string[]
-    mainClass: string
 }
 
 // TODO Ещё больше рефактора
@@ -38,7 +46,7 @@ export default class Starter {
 
         const gameArgs: string[] = []
 
-        if (gte(clientArgs.clientVersion, '1.6.0')) {
+        if (gte(clientArgs.version, '1.6.0')) {
             this.gameLauncher(gameArgs, clientArgs, clientDir, assetsDir)
         } else {
             this.gameLauncherLegacy(gameArgs, clientArgs, clientDir, assetsDir)
@@ -49,8 +57,8 @@ export default class Starter {
 
         const classpath = Starter.scanDir(librariesDirectory)
         classpath.push(path.resolve(clientDir, 'minecraft.jar'))
-        if (clientArgs.clientClassPath !== undefined) {
-            clientArgs.clientClassPath.forEach((fileName) => {
+        if (clientArgs.classPath !== undefined) {
+            clientArgs.classPath.forEach((fileName) => {
                 classpath.push(path.resolve(clientDir, fileName))
             })
         }
@@ -110,23 +118,23 @@ export default class Starter {
 
     gameLauncher(gameArgs: string[], clientArgs: ClientArgs, clientDir: string, assetsDir: string) {
         gameArgs.push('--username', clientArgs.username)
-        gameArgs.push('--version', clientArgs.clientVersion)
+        gameArgs.push('--version', clientArgs.version)
         gameArgs.push("--gameDir", clientDir)
         gameArgs.push("--assetsDir", assetsDir)
 
-        if (gte(clientArgs.clientVersion, '1.7.2')) {
+        if (gte(clientArgs.version, '1.7.2')) {
             gameArgs.push("--uuid", clientArgs.userUUID)
             gameArgs.push("--accessToken", clientArgs.accessToken)
 
-            if (gte(clientArgs.clientVersion, '1.7.3')) {
-                gameArgs.push("--assetIndex", clientArgs.clientVersion)
+            if (gte(clientArgs.version, '1.7.3')) {
+                gameArgs.push("--assetIndex", clientArgs.assetsIndex)
             }
 
-            if (gte(clientArgs.clientVersion, '1.7.4')) {
+            if (gte(clientArgs.version, '1.7.4')) {
                 gameArgs.push("--userType", "mojang")
             }
 
-            if (gte(clientArgs.clientVersion, '1.9.0')) {
+            if (gte(clientArgs.version, '1.9.0')) {
                 gameArgs.push("--versionType", "AuroraLauncher v0.1.0")
             }
         } else {
@@ -137,7 +145,7 @@ export default class Starter {
     gameLauncherLegacy(gameArgs: string[], clientArgs: ClientArgs, clientDir: string, assetsDir: string) {
         gameArgs.push(clientArgs.username)
         gameArgs.push(clientArgs.accessToken)
-        gameArgs.push("--version", clientArgs.clientVersion)
+        gameArgs.push("--version", clientArgs.version)
         gameArgs.push("--gameDir", clientDir)
         gameArgs.push("--assetsDir", assetsDir)
     }

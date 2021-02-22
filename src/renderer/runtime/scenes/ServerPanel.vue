@@ -1,7 +1,7 @@
 <template>
     <div class="block-center">
         <h1>Привет {{username}}</h1>
-        <h2>Выбранный профиль: {{selectedProfile.title}}</h2>
+        <h2>Выбранный сервер: {{selectedServer.title}}</h2>
         <button @click="startGame">Играть</button>
         <pre v-if="console.length > 0" class="console">{{ console }}</pre>
     </div>
@@ -43,6 +43,7 @@ export default Vue.extend({
     data() {
         return {
             console: '',
+            selectedServer: JSON.parse(localStorage.getItem('selectedProfile') as string),
             selectedProfile: {},
             username: localStorage.getItem('username')
         }
@@ -56,10 +57,7 @@ export default Vue.extend({
         }
     },
     async mounted() {
-        const profileUUID = JSON.parse(localStorage.getItem('selectedProfile') as string).profileUUID
-        console.log(this.selectedProfile)
-        this.selectedProfile = await ServerPanel.getProfile(profileUUID)
-        console.log(this.selectedProfile)
+        this.selectedProfile = await ServerPanel.getProfile(this.selectedServer.profileUUID)
     }
 })
 </script>
