@@ -8,6 +8,7 @@ import { gte } from "semver"
 import { Request } from "aurora-api"
 import { StorageHelper } from "../helpers/StorageHelper"
 import { HttpHelper } from "../helpers/HttpHelper"
+import pMap from "p-map"
 const api = require('@config').api
 
 interface ClientArgs {
@@ -31,7 +32,7 @@ interface ClientArgs {
     clientArgs: string[]
 }
 
-// TODO БООООООЛЬШЕ, КОД ПОГРЯЗ В ГОВНЕ!!!
+// TODO БООООООЛЬШЕ РЕФАКТОРА, КОД ПОГРЯЗ В ГОВНЕ!!!
 
 export default class Starter {
     constructor() {
@@ -85,15 +86,15 @@ export default class Starter {
         const gameProccess = spawn('java', jvmArgs)
 
         gameProccess.stdout.on('data', (data: Buffer) => {
-            App.window?.mainWindow?.webContents.send('textToConsole', data.toString())
+            App.window.sendEvent('textToConsole', data.toString())
             console.log(data.toString())
         })
-        
+
         gameProccess.stderr.on('data', (data: Buffer) => {
-            App.window?.mainWindow?.webContents.send('textToConsole', data.toString())
+            App.window.sendEvent('textToConsole', data.toString())
             console.error(data.toString())
         })
-        
+
         gameProccess.on('close', () => {
             event.reply('stopGame')
             console.log('game stop')
@@ -103,12 +104,23 @@ export default class Starter {
     async download(dir: string, type: "assets" | "client") {
         const hashes = await App.api.send("updates", { dir })
         let parentDir = type == "assets" ? StorageHelper.assetsDir : StorageHelper.clientsDir
+        App.window.sendEvent('textToConsole', `Load ${type} files \n`)
 
-        for (const hash of ((hashes as Request).data as {hashes: any[]}).hashes) {
-            const file = await HttpHelper.downloadFile(new URL(hash.path.replace('\\', '/'), api.fileUrl))
-            fs.mkdirSync(path.join(parentDir, path.dirname(hash.path)), { recursive: true })
-            fs.copyFileSync(file, path.join(parentDir, hash.path))
-        }
+        const fileHashes = ((hashes as Request).data as {hashes: any[]}).hashes
+            .sort((a, b) => b.size - a.size)
+        const totalSize = fileHashes.reduce((p, c) => p + c.size, 0)
+        let loaded = 0
+
+        await pMap(fileHashes, async (hash) => {
+            const filePath = path.join(parentDir, hash.path)
+            fs.mkdirSync(path.dirname(filePath), { recursive: true })
+            await HttpHelper.downloadFile(new URL(hash.path.replace('\\', '/'), api.fileUrl), filePath)
+            App.window.sendEvent('textToConsole', `File ${hash.path} downloaded \n`)
+            App.window.sendEvent('loadProgress', {
+                total: totalSize,
+                loaded: loaded += hash.size
+            })
+        }, { concurrency: 4 })
     }
 
     async hash(_event: IpcMainEvent, clientArgs: ClientArgs) {

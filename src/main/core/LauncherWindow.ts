@@ -86,4 +86,8 @@ export default class LauncherWindow {
 
         return launcherWindow
     }
+
+    sendEvent(channel: string, ...args: any[]): void {
+        return this.mainWindow?.webContents.send(channel, ...args)
+    }
 }

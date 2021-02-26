@@ -3,6 +3,10 @@
         <h1>Привет {{username}}</h1>
         <h2>Выбранный сервер: {{selectedServer.title}}</h2>
         <button @click="startGame">Играть</button>
+        <div class="progress" v-show="showProgress">
+            <div class="progress-line"></div>
+        </div>
+        <div class="info" v-show="showProgress"></div>
         <pre v-show="console.length > 0" class="console">{{ console }}</pre>
     </div>
 </template>
@@ -27,22 +31,36 @@
     pre
         overflow: auto
         width: calc(100% - 20px)
-        height: 280px
+        height: 250px
         padding: 10px
         margin: auto
         border-radius: 3px
         background-color: rgba(41, 41, 41, 0.9)
+    .progress
+        width: 500px
+        height: 15px
+        background-color: rgba(8, 8, 8, 0.5)
+        border-radius: 10px
+        overflow: hidden
+        margin-bottom: 10px
+    .progress-line
+        width: 0
+        height: 100%
+        background-color: #2575FC
+        transition-duration: .5s
 </style>
 
 <script lang="ts">
 import Vue from 'vue'
 import Game from '@scripts/Game'
 import ServerPanel from '@scripts/ServerPanel'
+import { Launcher } from '@Launcher'
 
 export default Vue.extend({
     data() {
         return {
             console: '',
+            showProgress: false,
             selectedServer: JSON.parse(localStorage.getItem('selectedProfile') as string),
             selectedProfile: {},
             username: localStorage.getItem('username')
@@ -50,17 +68,38 @@ export default Vue.extend({
     },
     methods: {
         startGame() {
-            Game.start(this.selectedProfile, this.textToConsole)
+            Game.start(this.selectedProfile, this.textToConsole, this.progress)
         },
         textToConsole(string: string) {
             this.console += string
             const consoleEl = document.querySelector('.console')!
             // Если не оборачивать в setImmediate, то оно прокручивает не до конца
             setImmediate(() => {consoleEl.scrollTop = consoleEl.scrollHeight})
+        },
+        progress(data: any) {
+            const progressEl = document.querySelector('.progress-line') as HTMLElement
+            const total = data.total
+            const loaded = data.loaded
+            const percent = (loaded / total * 100)
+
+            progressEl.style.width = percent + "%"
+            this.showProgress = percent < 100
+
+            const infoEl = document.querySelector('.info') as HTMLElement
+            infoEl.innerHTML = `Загружено ${bytesToSize(loaded)} из ${bytesToSize(total)}`
         }
     },
     async mounted() {
         this.selectedProfile = await ServerPanel.getProfile(this.selectedServer.profileUUID)
+        Launcher.$emit('showHistoryBackBtn')
     }
 })
+
+function bytesToSize(bytes: number): string {
+    const sizes = ["Bytes", "KB", "MB"]
+    if (bytes === 0) return "n/a"
+    const i = Math.floor(Math.log(bytes) / Math.log(1024))
+    if (i === 0) return `${bytes} ${sizes[i]})`
+    return `${(bytes / 1024 ** i).toFixed(2)} ${sizes[i]}`
+}
 </script>
