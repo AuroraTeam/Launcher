@@ -5,12 +5,43 @@ on:
     branches: [ master ]
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get version value, set to env
+        run: echo "PACKAGE_VERSION=v$(awk -F\" '/"version":/ {print $4}' package.json)" >> $GITHUB_ENV
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.PACKAGE_VERSION }}
+          release_name: Aurora Launcher ${{ env.PACKAGE_VERSION }}
+
+      - name: Set upload url to env
+        run: echo "UPLOAD_URL=v$(${{ steps.create_release.outputs.upload_url }})" >> $GITHUB_ENV
+
+    outputs:
+      UPLOAD_URL: ${{ env.UPLOAD_URL }}
+
   build:
     runs-on: ${{ matrix.os }}
+    needs: release
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            build_os: "linux"
+          - os: windows-latest
+            build_os: "win32"
+          - os: macos-latest
+            build_os: "darwin"
 
     steps:
       - uses: actions/checkout@v2
@@ -19,9 +50,6 @@ jobs:
         uses: actions/setup-node@v2.1.2
         with:
           node-version: 14
-
-      - name: Get version value, set to env
-        run: echo "PACKAGE_VERSION=v$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
       - name: Download dependencies
         run: npm ci
@@ -36,25 +64,16 @@ jobs:
         uses: actions/upload-artifact@v2.2.0
         with:
           name: Launcher Testing
-          path: aurora-launcher-*
+          path: aurora-launcher-${{ matrix.build_os }}-x64
           if-no-files-found: error
           retention-days: 30
-
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.PACKAGE_VERSION }}
-          release_name: Aurora Launcher ${{ env.PACKAGE_VERSION }}
 
       - name: Upload release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./aurora-launcher-*
+          upload_url: ${{ needs.job1.outputs.UPLOAD_URL }}
+          asset_path: ./aurora-launcher-${{ matrix.build_os }}-x64
           asset_name: Launcher ${{ matrix.os }}
           asset_content_type: application/zip

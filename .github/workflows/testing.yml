@@ -10,7 +10,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            build_os: "linux"
+          - os: windows-latest
+            build_os: "win32"
+          - os: macos-latest
+            build_os: "darwin"
 
     steps:
       - uses: actions/checkout@v2
@@ -33,6 +39,6 @@ jobs:
         uses: actions/upload-artifact@v2.2.0
         with:
           name: Launcher Testing
-          path: aurora-launcher-*
+          path: aurora-launcher-${{ matrix.build_os }}-x64
           if-no-files-found: error
           retention-days: 30
