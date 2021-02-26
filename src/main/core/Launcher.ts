@@ -1,5 +1,5 @@
 import LauncherWindow from "./LauncherWindow"
-import APIManager from "./ApiManager"
+import APIManager from "./APIManager"
 import RuntimeManager from "./RuntimeManager"
 import { LogHelper } from "../helpers/LogHelper"
 import { StorageHelper } from "../helpers/StorageHelper"
