@@ -23,11 +23,8 @@ jobs:
           tag_name: ${{ env.PACKAGE_VERSION }}
           release_name: Aurora Launcher ${{ env.PACKAGE_VERSION }}
 
-      - name: Set upload url to env
-        run: echo "UPLOAD_URL=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV
-
     outputs:
-      upload_url: ${{ env.UPLOAD_URL }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
 
   build:
     runs-on: ${{ matrix.os }}
@@ -73,7 +70,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.job1.outputs.upload_url }}
+          upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./aurora-launcher-${{ matrix.build_os }}-x64
           asset_name: Launcher ${{ matrix.os }}
           asset_content_type: application/zip
