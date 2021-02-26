@@ -66,9 +66,10 @@ jobs:
           retention-days: 30
 
       - name: Create release archive
-        uses: montudor/action-zip@v0.1.1
+        uses: papeloto/action-zip@v1
         with:
-          args: zip -qq -r ${{ matrix.build_os }}.zip ./aurora-launcher-${{ matrix.build_os }}-x64
+          files: aurora-launcher-${{ matrix.build_os }}-x64
+          dest: ${{ matrix.build_os }}.zip
 
       - name: Upload release
         uses: actions/upload-release-asset@v1
@@ -77,5 +78,5 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./${{ matrix.build_os }}.zip
-          asset_name: Launcher ${{ matrix.os }}.zip
+          asset_name: Launcher_${{ matrix.os }}.zip
           asset_content_type: application/zip

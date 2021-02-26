@@ -38,7 +38,7 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.2.0
         with:
-          name: Launcher Testing ${{ matrix.build_os }}
+          name: Launcher_Testing_${{ matrix.build_os }}
           path: aurora-launcher-${{ matrix.build_os }}-x64
           if-no-files-found: error
           retention-days: 30
