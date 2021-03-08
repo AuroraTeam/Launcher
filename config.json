@@ -9,7 +9,7 @@
         "title": "Aurora Launcher"
     },
     "api": {
-        "url": "ws://test.aurora-launcher.ru",
-        "fileUrl": "http://test.aurora-launcher.ru"
+        "url": "ws://127.0.0.1:1370",
+        "fileUrl": "http://127.0.0.1:1370"
     }
 }

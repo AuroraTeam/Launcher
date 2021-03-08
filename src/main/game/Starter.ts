@@ -78,12 +78,14 @@ export default class Starter {
         jvmArgs.push("-cp", classpath.join(path.delimiter))
         jvmArgs.push(clientArgs.mainClass)
 
+        jvmArgs.push(...gameArgs)
         if (clientArgs.clientArgs?.length > 0) {
             jvmArgs.push(...clientArgs.clientArgs)
         }
-        jvmArgs.push(...gameArgs)
 
-        const gameProccess = spawn('java', jvmArgs)
+        const gameProccess = spawn('java', jvmArgs, {
+            cwd: clientDir
+        })
 
         gameProccess.stdout.on('data', (data: Buffer) => {
             App.window.sendEvent('textToConsole', data.toString())
