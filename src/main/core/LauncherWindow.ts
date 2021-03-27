@@ -3,6 +3,10 @@ import * as path from 'path'
 import { format as formatUrl } from 'url'
 const windowConfig = require('@config').window
 
+// Пока не обновили пакет и не завезли новые тайпинги - костылим через require)) 
+// import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer')
+
 export default class LauncherWindow {
     mainWindow: BrowserWindow | null = null
 
@@ -28,6 +32,13 @@ export default class LauncherWindow {
         // create main window when electron is ready
         app.on('ready', () => {
             this.mainWindow = this.createMainWindow()
+            if (process.env.DEV || false) {
+                installExtension(VUEJS_DEVTOOLS, {
+                    loadExtensionOptions: { allowFileAccess: true },
+                })
+                .then((name: any) => console.log(`Added Extension:  ${name}`))
+                .catch((err: any) => console.log('An error occurred: ', err));
+            }
         })
 
         // hide the main window when the minimize button is pressed
@@ -56,13 +67,19 @@ export default class LauncherWindow {
             title: windowConfig.title || "Aurora Launcher",
             icon: path.join(__dirname, '../renderer/logo.png'),
             webPreferences: {
-                nodeIntegration: true
+                nodeIntegration: true,
+                // TODO Пофиксить
+                // Временный фикс, подробнее:
+                // https://github.com/AuroraTeam/Launcher/issues/3
+                // https://github.com/electron/electron/issues/28034
+                // https://github.com/electron/electron/blob/master/docs/breaking-changes.md#default-changed-contextisolation-defaults-to-true
+                contextIsolation: false
             }
         })
 
         // loading renderer code (runtime)
         launcherWindow.loadURL(formatUrl({
-            pathname: path.join(__dirname, '..', 'renderer', 'index.html'),
+            pathname: path.join(__dirname, '../renderer/index.html'),
             protocol: 'file',
             slashes: true
         }))
