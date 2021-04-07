@@ -3,6 +3,7 @@
         <title-bar/>
         <!-- <router-view class="main inactive"/> -->
         <router-view class="main"/>
+        <video class="bgv" autoplay loop src="../assets/test.mp4"></video>
     </div>
 </template>
 
@@ -36,3 +37,14 @@ export default Vue.extend({
     }
 })
 </script>
+
+<style lang="sass" scoped>
+.bgv
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    z-index: -1
+    object-fit: none
+</style>

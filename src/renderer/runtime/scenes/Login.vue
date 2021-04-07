@@ -64,20 +64,16 @@ export default Vue.extend({
 h1
     text-align: center
 .block
-    width: 300px
-    height: 450px
-    background-color: #454BDF
-    border-radius: 10px
-    position: absolute
-    top: 50px
-    right: 50px
+    width: 310px
+    height: 100%
+    background-color: rgb(69 75 223 / 50%)
     box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.25)
     display: flex
     flex-direction: column
     align-items: center
+    justify-content: center
     strong
         font-size: 24px
-        margin-top: 140px
         text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
     p
         margin: 33px 0

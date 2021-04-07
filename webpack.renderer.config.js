@@ -13,7 +13,7 @@ module.exports = {
         filename: 'index.js'
     },
     resolve: {
-        extensions: [ '.js', '.ts', '.vue' ],
+        extensions: ['.js', '.ts', '.vue'],
         alias: {
             "@Launcher": path.resolve(__dirname, 'src/renderer/index.ts'),
             "@runtime": path.resolve(__dirname, 'src/renderer/runtime'),
@@ -72,8 +72,11 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(png|jpe?g|gif|svg)$/i,
-                loader: 'file-loader'
+                test: /\.(png|jpe?g|gif|svg|mp4)$/i,
+                loader: 'file-loader',
+                options: {
+                    esModule: false,
+                },
             },
         ]
     },
@@ -84,7 +87,7 @@ module.exports = {
                 './src/renderer/index.html',
                 './src/renderer/runtime/assets/images/logo.png',
                 './src/renderer/runtime/assets/js/skinview3d/steve.png',
-                {from: './src/package.json', to: '..'}
+                { from: './src/package.json', to: '..' }
             ]
         })
     ],

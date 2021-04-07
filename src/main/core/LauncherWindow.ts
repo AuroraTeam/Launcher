@@ -46,6 +46,10 @@ export default class LauncherWindow {
             this.mainWindow?.minimize()
         })
 
+        ipcMain.on('window-maximize', () => {
+            this.mainWindow?.isFullScreen() ? this.mainWindow?.setFullScreen(false) : this.mainWindow?.setFullScreen(true)
+        })
+
         // close the main window when the close button is pressed
         ipcMain.on('window-close', () => {
             this.mainWindow?.close()
@@ -60,6 +64,8 @@ export default class LauncherWindow {
         const launcherWindow = new BrowserWindow({
             width: windowConfig.width || 900,
             height: windowConfig.height || 550,
+            minWidth: windowConfig.width || 900,
+            minHeight: windowConfig.height || 550,
             frame: windowConfig.frame || false,
             resizable: windowConfig.resizable || false,
             maximizable: windowConfig.maximizable || false,

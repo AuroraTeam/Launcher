@@ -3,9 +3,9 @@
         "width": 900,
         "height": 550,
         "frame": false,
-        "resizable": false,
-        "maximizable": false,
-        "fullscreenable": false,
+        "resizable": true,
+        "maximizable": true,
+        "fullscreenable": true,
         "title": "Aurora Launcher"
     },
     "api": {

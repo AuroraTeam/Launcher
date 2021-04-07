@@ -20,6 +20,11 @@
                     <path d="M19 13H5V11H19V13Z" fill="white"/>
                 </svg>
             </button>
+            <button class="hide" @click="maximize()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="6" width="12" height="12" stroke="white" stroke-width="2"/>
+                </svg>
+            </button>
             <button class="close" @click="close()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13.46 12L19 17.54V19H17.54L12 13.46L6.46 19H5V17.54L10.54 12L5 6.46V5H6.46L12 10.54L17.54 5H19V6.46L13.46 12Z" fill="white"/>
@@ -42,6 +47,9 @@
     font-size: 16px;
     font-weight: bold;
     -webkit-app-region: drag;
+    position: absolute;
+    width: 100%;
+    background-color: rgb(24 24 24 / 20%);
     .right {
         margin-left: auto;
     }
@@ -52,8 +60,12 @@
         filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.25));
     }
     .hide {
+        margin-left: 7px;
         &:hover path {
             fill: #2F80ED;
+        }
+        &:hover rect {
+            stroke: #2F80ED;
         }
     }
     .close {
@@ -88,7 +100,7 @@ export default Vue.extend({
             },
             title: {
                 show: true,
-                text: 'AuroraLauncher dev build v0.0.1'
+                text: 'AuroraLauncher dev build v0.0.2'
             },
             user: {
                 show: false,
@@ -99,6 +111,7 @@ export default Vue.extend({
     methods: {
         hide() { ipcRenderer.send('window-hide') },
         close() { ipcRenderer.send('window-close') },
+        maximize() { ipcRenderer.send('window-maximize') },
         historyBack() { this.$router.back() },
     },
     mounted() {

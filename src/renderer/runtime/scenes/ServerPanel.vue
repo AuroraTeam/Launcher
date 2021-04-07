@@ -16,6 +16,7 @@
     display: flex
     align-items: center
     flex-direction: column
+    padding-top: 40px
     button
         width: 194px
         height: 35px
