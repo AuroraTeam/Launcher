@@ -91,7 +91,7 @@ export default Vue.extend({
         }
     },
     async mounted() {
-        this.selectedProfile = await ServerPanel.getProfile(this.selectedServer.profileUUID)
+        this.selectedProfile = JSON.parse(await ServerPanel.getProfile(this.selectedServer.profileUUID))
         Launcher.$emit('showHistoryBackBtn')
     }
 })
