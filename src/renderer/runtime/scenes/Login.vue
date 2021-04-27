@@ -19,7 +19,7 @@ import { Launcher } from '@Launcher'
 
 interface AuthResult {
     error: string,
-    login: string,
+    username: string,
     userUUID: string
     accessToken: string
 }
@@ -41,9 +41,9 @@ export default Vue.extend({
             if (auth.error !== undefined) {
                 this.showError(auth.error)
             } else {
-                Launcher.$emit('setUser', auth.login)
+                Launcher.$emit('setUser', auth.username)
                 Launcher.$emit('showUser')
-                localStorage.setItem('username', auth.login)
+                localStorage.setItem('username', auth.username)
                 localStorage.setItem('userUUID', auth.userUUID)
                 localStorage.setItem('accessToken', auth.accessToken)
                 this.$router.push('server-list')
