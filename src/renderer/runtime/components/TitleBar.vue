@@ -88,7 +88,7 @@ export default Vue.extend({
             },
             title: {
                 show: true,
-                text: 'AuroraLauncher dev build v0.0.1'
+                text: 'AuroraLauncher dev build v0.0.2'
             },
             user: {
                 show: false,

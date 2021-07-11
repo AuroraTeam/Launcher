@@ -1,8 +1,8 @@
 <template>
     <div class="block-center">
-        <h1>Привет {{username}}</h1>
-        <h2>Выбранный сервер: {{selectedServer.title}}</h2>
-        <button @click="startGame">Играть</button>
+        <h1>Привет {{ username }}</h1>
+        <h2>Выбранный сервер: {{ selectedServer.title }}</h2>
+        <button @click="startGame" :disabled="gameStarted">Играть</button>
         <div class="progress" v-show="showProgress">
             <div class="progress-line"></div>
         </div>
@@ -51,47 +51,64 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue'
-import Game from '@scripts/Game'
-import ServerPanel from '@scripts/ServerPanel'
-import { Launcher } from '@Launcher'
+import Vue from "vue"
+import Game from "@scripts/Game"
+import ServerPanel from "@scripts/ServerPanel"
+import { Launcher } from "@Launcher"
 
 export default Vue.extend({
     data() {
         return {
-            console: '',
+            console: "",
             showProgress: false,
-            selectedServer: JSON.parse(localStorage.getItem('selectedProfile') as string),
+            selectedServer: JSON.parse(
+                localStorage.getItem("selectedProfile") as string
+            ),
             selectedProfile: {},
-            username: localStorage.getItem('username')
+            username: localStorage.getItem("username"),
+            gameStarted: false
         }
     },
     methods: {
         startGame() {
-            Game.start(this.selectedProfile, this.textToConsole, this.progress)
+            this.gameStarted = true
+            Game.start(
+                this.selectedProfile,
+                this.textToConsole,
+                this.progress,
+                () => (this.gameStarted = false)
+            )
         },
         textToConsole(string: string) {
             this.console += string
-            const consoleEl = document.querySelector('.console')!
+            const consoleEl = document.querySelector(".console")!
             // Если не оборачивать в setImmediate, то оно прокручивает не до конца
-            setImmediate(() => {consoleEl.scrollTop = consoleEl.scrollHeight})
+            setImmediate(() => {
+                consoleEl.scrollTop = consoleEl.scrollHeight
+            })
         },
         progress(data: any) {
-            const progressEl = document.querySelector('.progress-line') as HTMLElement
+            const progressEl = document.querySelector(
+                ".progress-line"
+            ) as HTMLElement
             const total = data.total
             const loaded = data.loaded
-            const percent = (loaded / total * 100)
+            const percent = (loaded / total) * 100
 
             progressEl.style.width = percent + "%"
             this.showProgress = percent < 100
 
-            const infoEl = document.querySelector('.info') as HTMLElement
-            infoEl.innerHTML = `Загружено ${bytesToSize(loaded)} из ${bytesToSize(total)}`
+            const infoEl = document.querySelector(".info") as HTMLElement
+            infoEl.innerHTML = `Загружено ${bytesToSize(
+                loaded
+            )} из ${bytesToSize(total)}`
         }
     },
     async mounted() {
-        this.selectedProfile = JSON.parse(await ServerPanel.getProfile(this.selectedServer.profileUUID))
-        Launcher.$emit('showHistoryBackBtn')
+        this.selectedProfile = JSON.parse(
+            await ServerPanel.getProfile(this.selectedServer.profileUUID)
+        )
+        Launcher.$emit("showHistoryBackBtn")
     }
 })
 

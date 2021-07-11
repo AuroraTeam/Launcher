@@ -9,7 +9,6 @@ import { Request } from "aurora-api"
 import { StorageHelper } from "../helpers/StorageHelper"
 import { HttpHelper } from "../helpers/HttpHelper"
 import pMap from "p-map"
-import { LogHelper } from "main/helpers/LogHelper"
 const api = require("@config").api
 
 interface ClientArgs {
@@ -43,7 +42,11 @@ export default class Starter {
     }
 
     async startChain(event: IpcMainEvent, clientArgs: ClientArgs) {
-        await this.hash(event, clientArgs)
+        try {
+            await this.hash(event, clientArgs)
+        } catch (error) {
+            return event.reply("stopGame")
+        }
         await this.start(event, clientArgs)
     }
 
@@ -59,16 +62,24 @@ export default class Starter {
             this.gameLauncherLegacy(gameArgs, clientArgs, clientDir, assetsDir)
         }
 
-        const librariesDirectory = path.resolve(clientDir, 'libraries')
-        const nativesDirectory = path.resolve(clientDir, 'natives')
+        const librariesDirectory = path.join(clientDir, "libraries")
+        const nativesDirectory = path.join(clientDir, "natives")
 
-        const classpath = Starter.scanDir(librariesDirectory)
-        classpath.push(path.resolve(clientDir, 'minecraft.jar'))
-        // if (clientArgs.classPath !== undefined) {
-        //     clientArgs.classPath.forEach((fileName) => {
-        //         classpath.push(path.resolve(clientDir, fileName))
-        //     })
-        // }
+        const classpath: string[] = []
+        if (clientArgs.classPath !== undefined) {
+            clientArgs.classPath.forEach(fileName => {
+                const filePath = path.join(clientDir, fileName)
+                if (fs.statSync(filePath).isDirectory()) {
+                    classpath.push(...Starter.scanDir(librariesDirectory))
+                } else {
+                    classpath.push(filePath)
+                }
+            })
+        } else {
+            App.window.sendEvent("textToConsole", "classPath is empty")
+            console.error("classPath is empty")
+            return
+        }
 
         const jvmArgs = []
 
@@ -116,7 +127,13 @@ export default class Starter {
 
         const fileHashes = ((hashes as Request).data as {
             hashes: any[]
-        }).hashes.sort((a, b) => b.size - a.size)
+        }).hashes
+        if (!fileHashes) {
+            App.window.sendEvent("textToConsole", `${type} not found`)
+            console.error(`${type} not found`)
+            throw undefined
+        }
+        fileHashes.sort((a, b) => b.size - a.size)
         const totalSize = fileHashes.reduce((p, c) => p + c.size, 0)
         let loaded = 0
 
