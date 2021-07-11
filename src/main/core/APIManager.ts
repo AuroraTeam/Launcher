@@ -13,10 +13,6 @@ export default class APIManager {
         try {
             this.api = await new AuroraAPI().connect(apiConfig.url || 'ws://localhost:1370') as AuroraAPI
             App.window.sendEvent('apiConnectSuccess')
-            // Великие костыли
-            setInterval(async () => {
-                await this.send('ping')
-            }, 10000)
         } catch (error) {
             App.window.sendEvent('apiConnectError', 'Ошибка при подключении')
             console.log(error)
