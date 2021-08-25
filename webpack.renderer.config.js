@@ -13,23 +13,23 @@ module.exports = {
         filename: 'index.js'
     },
     resolve: {
-        extensions: [ '.js', '.ts', '.vue' ],
+        extensions: ['.js', '.ts', '.vue'],
         alias: {
-            "@Launcher": path.resolve(__dirname, 'src/renderer/index.ts'),
-            "@runtime": path.resolve(__dirname, 'src/renderer/runtime'),
-            "@scripts": path.resolve(__dirname, 'src/renderer/scripts')
+            '@Launcher': path.resolve(__dirname, 'src/renderer/index.ts'),
+            '@runtime': path.resolve(__dirname, 'src/renderer/runtime'),
+            '@scripts': path.resolve(__dirname, 'src/renderer/scripts')
         }
     },
     module: {
         rules: [
             {
                 test: /\.ts$/,
-                loader: "ts-loader",
+                loader: 'ts-loader',
                 options: { appendTsSuffixTo: [/\.vue$/] }
             },
             {
                 test: /\.vue$/,
-                loader: "vue-loader"
+                loader: 'vue-loader'
             },
             {
                 test: /\.s[ac]ss$/i,
@@ -39,42 +39,31 @@ module.exports = {
                     {
                         loader: 'sass-loader',
                         options: {
-                            sassOptions: (ctx) => {
-                                if (ctx.resourceQuery.includes('sass')) {
-                                    return { indentedSyntax: true }
+                            sassOptions: ({ resourceQuery }) => {
+                                if (resourceQuery.includes('sass')) {
+                                    return { indentedSyntax: true };
                                 }
                             }
                         }
                     }
-                ],
+                ]
             },
             {
                 test: /\.less$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'less-loader'
-                ],
+                use: ['style-loader', 'css-loader', 'less-loader']
             },
             {
                 test: /\.(styl(us)?)$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'stylus-loader'
-                ],
+                use: ['style-loader', 'css-loader', 'stylus-loader']
             },
             {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ],
+                use: ['style-loader', 'css-loader']
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/i,
-                loader: 'file-loader'
-            },
+                type: 'asset/resource'
+            }
         ]
     },
     plugins: [
@@ -84,14 +73,12 @@ module.exports = {
                 './src/renderer/index.html',
                 './src/renderer/runtime/assets/images/logo.png',
                 './src/renderer/runtime/assets/js/skinview3d/steve.png',
-                {from: './src/package.json', to: '..'}
+                { from: './src/package.json', to: '..' }
             ]
         })
     ],
     optimization: {
         minimize: true,
-        minimizer: [
-            new HtmlMinimizerPlugin(),
-        ]
+        minimizer: [new HtmlMinimizerPlugin()]
     }
-}
+};

@@ -10,17 +10,17 @@ module.exports = {
         filename: 'index.js'
     },
     resolve: {
-        extensions: [ '.js', '.ts' ],
+        extensions: ['.js', '.ts'],
         alias: {
-            "@config": path.resolve(__dirname, 'config.json')
+            '@config': path.resolve(__dirname, 'config.json')
         }
     },
     module: {
         rules: [
             {
                 test: /\.ts$/,
-                loader: "ts-loader"
+                loader: 'ts-loader'
             }
         ]
     }
-}
+};
