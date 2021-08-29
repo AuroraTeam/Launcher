@@ -1,162 +1,162 @@
-import { ipcMain, IpcMainEvent } from 'electron';
+import { ipcMain, IpcMainEvent } from "electron"
 
-import * as path from 'path';
-import * as fs from 'fs';
-import { spawn } from 'child_process';
-import { App } from '..';
-import { gte } from 'semver';
-import { Request } from 'aurora-api';
-import { StorageHelper } from '../helpers/StorageHelper';
-import { HttpHelper } from '../helpers/HttpHelper';
-import pMap from 'p-map';
-const api = require('../../../config.json').api;
+import * as path from "path"
+import * as fs from "fs"
+import { spawn } from "child_process"
+import { App } from ".."
+import { gte } from "semver"
+import { Request } from "aurora-api"
+import { StorageHelper } from "../helpers/StorageHelper"
+import { HttpHelper } from "../helpers/HttpHelper"
+import pMap from "p-map"
+const api = require("@config").api
 
 interface ClientArgs {
     // Auth params
-    username: string;
-    userUUID: string;
-    accessToken: string;
+    username: string
+    userUUID: string
+    accessToken: string
 
     // Client
-    version: string;
-    clientDir: string;
+    version: string
+    clientDir: string
 
     // Assets
-    assetsIndex: string;
-    assetsDir: string;
+    assetsIndex: string
+    assetsDir: string
 
     // Launch client
-    mainClass: string;
-    classPath: string[];
-    jvmArgs: string[];
-    clientArgs: string[];
+    mainClass: string
+    classPath: string[]
+    jvmArgs: string[]
+    clientArgs: string[]
 }
 
 // TODO БООООООЛЬШЕ РЕФАКТОРА, КОД ПОГРЯЗ В ГОВНЕ!!!
 
 export default class Starter {
     constructor() {
-        ipcMain.on('startGame', (event, clientArgs) =>
+        ipcMain.on("startGame", (event, clientArgs) =>
             this.startChain(event, clientArgs)
-        );
+        )
     }
 
     async startChain(event: IpcMainEvent, clientArgs: ClientArgs) {
         try {
-            await this.hash(event, clientArgs);
+            await this.hash(event, clientArgs)
         } catch (error) {
-            return event.reply('stopGame');
+            return event.reply("stopGame")
         }
-        await this.start(event, clientArgs);
+        await this.start(event, clientArgs)
     }
 
     async start(event: IpcMainEvent, clientArgs: ClientArgs) {
-        const clientDir = path.join(__dirname, 'clients', clientArgs.clientDir);
-        const assetsDir = path.join(__dirname, 'assets', clientArgs.assetsDir);
+        const clientDir = path.join(__dirname, "clients", clientArgs.clientDir)
+        const assetsDir = path.join(__dirname, "assets", clientArgs.assetsDir)
 
-        const gameArgs: string[] = [];
+        const gameArgs: string[] = []
 
-        if (gte(clientArgs.version, '1.6.0')) {
-            this.gameLauncher(gameArgs, clientArgs, clientDir, assetsDir);
+        if (gte(clientArgs.version, "1.6.0")) {
+            this.gameLauncher(gameArgs, clientArgs, clientDir, assetsDir)
         } else {
-            this.gameLauncherLegacy(gameArgs, clientArgs, clientDir, assetsDir);
+            this.gameLauncherLegacy(gameArgs, clientArgs, clientDir, assetsDir)
         }
 
-        const librariesDirectory = path.join(clientDir, 'libraries');
-        const nativesDirectory = path.join(clientDir, 'natives');
+        const librariesDirectory = path.join(clientDir, "libraries")
+        const nativesDirectory = path.join(clientDir, "natives")
 
-        const classpath: string[] = [];
+        const classpath: string[] = []
         if (clientArgs.classPath !== undefined) {
             clientArgs.classPath.forEach(fileName => {
-                const filePath = path.join(clientDir, fileName);
+                const filePath = path.join(clientDir, fileName)
                 if (fs.statSync(filePath).isDirectory()) {
-                    classpath.push(...Starter.scanDir(librariesDirectory));
+                    classpath.push(...Starter.scanDir(librariesDirectory))
                 } else {
-                    classpath.push(filePath);
+                    classpath.push(filePath)
                 }
-            });
+            })
         } else {
-            App.window.sendEvent('textToConsole', 'classPath is empty');
-            console.error('classPath is empty');
-            return;
+            App.window.sendEvent("textToConsole", "classPath is empty")
+            console.error("classPath is empty")
+            return
         }
 
-        const jvmArgs = [];
+        const jvmArgs = []
 
-        jvmArgs.push(`-Djava.library.path=${nativesDirectory}`);
+        jvmArgs.push(`-Djava.library.path=${nativesDirectory}`)
 
         if (clientArgs.jvmArgs?.length > 0) {
-            jvmArgs.push(...clientArgs.jvmArgs);
+            jvmArgs.push(...clientArgs.jvmArgs)
         }
 
-        jvmArgs.push('-cp', classpath.join(path.delimiter));
-        jvmArgs.push(clientArgs.mainClass);
+        jvmArgs.push("-cp", classpath.join(path.delimiter))
+        jvmArgs.push(clientArgs.mainClass)
 
-        jvmArgs.push(...gameArgs);
+        jvmArgs.push(...gameArgs)
         if (clientArgs.clientArgs?.length > 0) {
-            jvmArgs.push(...clientArgs.clientArgs);
+            jvmArgs.push(...clientArgs.clientArgs)
         }
 
-        const gameProccess = spawn('java', jvmArgs, {
+        const gameProccess = spawn("java", jvmArgs, {
             cwd: clientDir
-        });
+        })
 
-        gameProccess.stdout.on('data', (data: Buffer) => {
-            App.window.sendEvent('textToConsole', data.toString());
-            console.log(data.toString());
-        });
+        gameProccess.stdout.on("data", (data: Buffer) => {
+            App.window.sendEvent("textToConsole", data.toString())
+            console.log(data.toString())
+        })
 
-        gameProccess.stderr.on('data', (data: Buffer) => {
-            App.window.sendEvent('textToConsole', data.toString());
-            console.error(data.toString());
-        });
+        gameProccess.stderr.on("data", (data: Buffer) => {
+            App.window.sendEvent("textToConsole", data.toString())
+            console.error(data.toString())
+        })
 
-        gameProccess.on('close', () => {
-            event.reply('stopGame');
-            console.log('game stop');
-        });
+        gameProccess.on("close", () => {
+            event.reply("stopGame")
+            console.log("game stop")
+        })
     }
 
-    async download(dir: string, type: 'assets' | 'client') {
-        const hashes = await App.api.send('updates', { dir });
+    async download(dir: string, type: "assets" | "client") {
+        const hashes = await App.api.send("updates", { dir })
         let parentDir =
-            type == 'assets'
+            type == "assets"
                 ? StorageHelper.assetsDir
-                : StorageHelper.clientsDir;
-        App.window.sendEvent('textToConsole', `Load ${type} files \n`);
+                : StorageHelper.clientsDir
+        App.window.sendEvent("textToConsole", `Load ${type} files \n`)
 
         const fileHashes = ((hashes as Request).data as {
-            hashes: any[];
-        }).hashes;
+            hashes: any[]
+        }).hashes
         if (!fileHashes) {
-            App.window.sendEvent('textToConsole', `${type} not found`);
-            console.error(`${type} not found`);
-            throw undefined;
+            App.window.sendEvent("textToConsole", `${type} not found`)
+            console.error(`${type} not found`)
+            throw undefined
         }
-        fileHashes.sort((a, b) => b.size - a.size);
-        const totalSize = fileHashes.reduce((p, c) => p + c.size, 0);
-        let loaded = 0;
+        fileHashes.sort((a, b) => b.size - a.size)
+        const totalSize = fileHashes.reduce((p, c) => p + c.size, 0)
+        let loaded = 0
 
         await pMap(
             fileHashes,
             async hash => {
-                const filePath = path.join(parentDir, hash.path);
-                fs.mkdirSync(path.dirname(filePath), { recursive: true });
+                const filePath = path.join(parentDir, hash.path)
+                fs.mkdirSync(path.dirname(filePath), { recursive: true })
                 await HttpHelper.downloadFile(
-                    new URL(hash.path.replace('\\', '/'), api.fileUrl),
+                    new URL(hash.path.replace("\\", "/"), api.fileUrl),
                     filePath
-                );
+                )
                 App.window.sendEvent(
-                    'textToConsole',
+                    "textToConsole",
                     `File ${hash.path} downloaded \n`
-                );
-                App.window.sendEvent('loadProgress', {
+                )
+                App.window.sendEvent("loadProgress", {
                     total: totalSize,
                     loaded: loaded += hash.size
-                });
+                })
             },
             { concurrency: 4 }
-        );
+        )
     }
 
     async hash(_event: IpcMainEvent, clientArgs: ClientArgs) {
@@ -165,7 +165,7 @@ export default class Starter {
                 path.resolve(StorageHelper.assetsDir, clientArgs.assetsDir)
             )
         ) {
-            await this.download(clientArgs.assetsDir, 'assets');
+            await this.download(clientArgs.assetsDir, "assets")
         } else {
             // Здесь должен быть код, который будет проверять хеш файлов
         }
@@ -175,22 +175,22 @@ export default class Starter {
                 path.resolve(StorageHelper.clientsDir, clientArgs.clientDir)
             )
         ) {
-            await this.download(clientArgs.clientDir, 'client');
+            await this.download(clientArgs.clientDir, "client")
         } else {
             // И здесь тоже
         }
-        return; // Проверка хешей файлов, подобую хрень ещё нужно в дирвотчер кинуть
+        return // Проверка хешей файлов, подобую хрень ещё нужно в дирвотчер кинуть
     }
 
     static scanDir(dir: string, list: string[] = []): string[] {
         if (fs.statSync(dir).isDirectory()) {
             for (const fdir of fs.readdirSync(dir)) {
-                this.scanDir(path.resolve(dir, fdir), list);
+                this.scanDir(path.resolve(dir, fdir), list)
             }
         } else {
-            list.push(dir);
+            list.push(dir)
         }
-        return list;
+        return list
     }
 
     gameLauncher(
@@ -199,28 +199,28 @@ export default class Starter {
         clientDir: string,
         assetsDir: string
     ) {
-        gameArgs.push('--username', clientArgs.username);
-        gameArgs.push('--version', clientArgs.version);
-        gameArgs.push('--gameDir', clientDir);
-        gameArgs.push('--assetsDir', assetsDir);
+        gameArgs.push("--username", clientArgs.username)
+        gameArgs.push("--version", clientArgs.version)
+        gameArgs.push("--gameDir", clientDir)
+        gameArgs.push("--assetsDir", assetsDir)
 
-        if (gte(clientArgs.version, '1.7.2')) {
-            gameArgs.push('--uuid', clientArgs.userUUID);
-            gameArgs.push('--accessToken', clientArgs.accessToken);
+        if (gte(clientArgs.version, "1.7.2")) {
+            gameArgs.push("--uuid", clientArgs.userUUID)
+            gameArgs.push("--accessToken", clientArgs.accessToken)
 
-            if (gte(clientArgs.version, '1.7.3')) {
-                gameArgs.push('--assetIndex', clientArgs.assetsIndex);
+            if (gte(clientArgs.version, "1.7.3")) {
+                gameArgs.push("--assetIndex", clientArgs.assetsIndex)
             }
 
-            if (gte(clientArgs.version, '1.7.4')) {
-                gameArgs.push('--userType', 'mojang');
+            if (gte(clientArgs.version, "1.7.4")) {
+                gameArgs.push("--userType", "mojang")
             }
 
-            if (gte(clientArgs.version, '1.9.0')) {
-                gameArgs.push('--versionType', 'AuroraLauncher v0.1.0');
+            if (gte(clientArgs.version, "1.9.0")) {
+                gameArgs.push("--versionType", "AuroraLauncher v0.1.0")
             }
         } else {
-            gameArgs.push('--session', clientArgs.accessToken);
+            gameArgs.push("--session", clientArgs.accessToken)
         }
     }
 
@@ -230,10 +230,10 @@ export default class Starter {
         clientDir: string,
         assetsDir: string
     ) {
-        gameArgs.push(clientArgs.username);
-        gameArgs.push(clientArgs.accessToken);
-        gameArgs.push('--version', clientArgs.version);
-        gameArgs.push('--gameDir', clientDir);
-        gameArgs.push('--assetsDir', assetsDir);
+        gameArgs.push(clientArgs.username)
+        gameArgs.push(clientArgs.accessToken)
+        gameArgs.push("--version", clientArgs.version)
+        gameArgs.push("--gameDir", clientDir)
+        gameArgs.push("--assetsDir", assetsDir)
     }
 }

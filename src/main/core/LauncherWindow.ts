@@ -1,11 +1,14 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import * as path from 'path';
-const windowConfig = require('../../../config.json').window;
+import { app, BrowserWindow, ipcMain } from 'electron'
+import * as path from 'path'
+import { format as formatUrl } from 'url'
+const windowConfig = require('@config').window
 
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+// Пока не обновили пакет и не завезли новые тайпинги - костылим через require)) 
+// import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer')
 
 export default class LauncherWindow {
-    mainWindow: BrowserWindow | null = null;
+    mainWindow: BrowserWindow | null = null
 
     /**
      * Launcher initialization
@@ -15,42 +18,38 @@ export default class LauncherWindow {
         app.on('window-all-closed', () => {
             // on macOS it is common for applications to stay open until the user explicitly quits
             if (process.platform !== 'darwin') {
-                app.quit();
+                app.quit()
             }
-        });
+        })
 
         app.on('activate', () => {
             // on macOS it is common to re-create a window even after all windows have been closed
             if (this.mainWindow === null) {
-                this.mainWindow = this.createMainWindow();
+                this.mainWindow = this.createMainWindow()
             }
-        });
+        })
 
         // create main window when electron is ready
         app.on('ready', () => {
-            this.mainWindow = this.createMainWindow();
+            this.mainWindow = this.createMainWindow()
             if (process.env.DEV || false) {
                 installExtension(VUEJS_DEVTOOLS, {
-                    loadExtensionOptions: { allowFileAccess: true }
+                    loadExtensionOptions: { allowFileAccess: true },
                 })
-                    .then((name: any) =>
-                        console.log(`Added Extension:  ${name}`)
-                    )
-                    .catch((err: any) =>
-                        console.log('An error occurred: ', err)
-                    );
+                .then((name: any) => console.log(`Added Extension:  ${name}`))
+                .catch((err: any) => console.log('An error occurred: ', err));
             }
-        });
+        })
 
         // hide the main window when the minimize button is pressed
         ipcMain.on('window-hide', () => {
-            this.mainWindow?.minimize();
-        });
+            this.mainWindow?.minimize()
+        })
 
         // close the main window when the close button is pressed
         ipcMain.on('window-close', () => {
-            this.mainWindow?.close();
-        });
+            this.mainWindow?.close()
+        })
     }
 
     /**
@@ -65,7 +64,7 @@ export default class LauncherWindow {
             resizable: windowConfig.resizable || false,
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
-            title: windowConfig.title || 'Aurora Launcher',
+            title: windowConfig.title || "Aurora Launcher",
             icon: path.join(__dirname, '../renderer/logo.png'),
             webPreferences: {
                 nodeIntegration: true,
@@ -76,39 +75,36 @@ export default class LauncherWindow {
                 // https://github.com/electron/electron/blob/master/docs/breaking-changes.md#default-changed-contextisolation-defaults-to-true
                 contextIsolation: false
             }
-        });
+        })
 
         // loading renderer code (runtime)
-        if (process.env.DEV || false) {
-            launcherWindow.loadURL('http://localhost:8080');
-        } else {
-            launcherWindow.loadFile(
-                path.join(__dirname, '../renderer/index.html')
-            );
-        }
+        launcherWindow.loadURL(formatUrl({
+            pathname: path.join(__dirname, '../renderer/index.html'),
+            protocol: 'file',
+            slashes: true
+        }))
 
         launcherWindow.on('closed', () => {
-            this.mainWindow = null;
-        });
+            this.mainWindow = null
+        })
 
         // open developer tools when using development mode
         launcherWindow.webContents.on('did-frame-finish-load', () => {
-            if (process.env.DEV || false)
-                launcherWindow.webContents.openDevTools();
-        });
+            if (process.env.DEV || false) launcherWindow.webContents.openDevTools()
+        })
 
         // focus on development tools when opening
         launcherWindow.webContents.on('devtools-opened', () => {
-            launcherWindow.focus();
+            launcherWindow.focus()
             setImmediate(() => {
-                launcherWindow.focus();
-            });
-        });
+                launcherWindow.focus()
+            })
+        })
 
-        return launcherWindow;
+        return launcherWindow
     }
 
     sendEvent(channel: string, ...args: any[]): void {
-        return this.mainWindow?.webContents.send(channel, ...args);
+        return this.mainWindow?.webContents.send(channel, ...args)
     }
 }
