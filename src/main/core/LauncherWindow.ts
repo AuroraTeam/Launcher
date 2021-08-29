@@ -59,6 +59,7 @@ export default class LauncherWindow {
     createMainWindow() {
         // creating and configuring a window
         const launcherWindow = new BrowserWindow({
+            show: false, // Use 'ready-to-show' event to show window
             width: windowConfig.width || 900,
             height: windowConfig.height || 550,
             frame: windowConfig.frame || false,
@@ -91,8 +92,16 @@ export default class LauncherWindow {
             this.mainWindow = null;
         });
 
-        // open developer tools when using development mode
-        launcherWindow.webContents.on('did-frame-finish-load', () => {
+        /**
+         * If you install `show: true` then it can cause issues when trying to close the window.
+         * Use `show: false` and listener events `ready-to-show` to fix these issues.
+         *
+         * @see https://github.com/electron/electron/issues/25012
+         */
+        launcherWindow.on('ready-to-show', () => {
+            launcherWindow?.show();
+
+            // open developer tools when using development mode
             if (process.env.DEV || false)
                 launcherWindow.webContents.openDevTools();
         });
