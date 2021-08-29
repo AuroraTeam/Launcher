@@ -1,6 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import { format as formatUrl } from 'url';
 const windowConfig = require('../../../config.json').window;
 
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
@@ -80,13 +79,13 @@ export default class LauncherWindow {
         });
 
         // loading renderer code (runtime)
-        launcherWindow.loadURL(
-            formatUrl({
-                pathname: path.join(__dirname, '../renderer/index.html'),
-                protocol: 'file',
-                slashes: true
-            })
-        );
+        if (process.env.DEV || false) {
+            launcherWindow.loadURL('http://localhost:8080');
+        } else {
+            launcherWindow.loadFile(
+                path.join(__dirname, '../renderer/index.html')
+            );
+        }
 
         launcherWindow.on('closed', () => {
             this.mainWindow = null;
