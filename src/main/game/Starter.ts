@@ -143,7 +143,10 @@ export default class Starter {
                 const filePath = path.join(parentDir, hash.path);
                 fs.mkdirSync(path.dirname(filePath), { recursive: true });
                 await HttpHelper.downloadFile(
-                    new URL(hash.path.replace('\\', '/'), api.fileUrl),
+                    new URL(
+                        `files/${hash.path.replace('\\', '/')}`,
+                        api.fileUrl
+                    ),
                     filePath
                 );
                 App.window.sendEvent(
@@ -217,7 +220,7 @@ export default class Starter {
             }
 
             if (gte(clientArgs.version, '1.9.0')) {
-                gameArgs.push('--versionType', 'AuroraLauncher v0.1.0');
+                gameArgs.push('--versionType', 'AuroraLauncher v0.0.3');
             }
         } else {
             gameArgs.push('--session', clientArgs.accessToken);
