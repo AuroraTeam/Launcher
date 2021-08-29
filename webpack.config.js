@@ -1,4 +1,4 @@
-const mainConfig = require('./webpack.main.config')
-const rendererConfig = require('./webpack.renderer.config')
+const mainConfig = require('./webpack.main.config');
+const rendererConfig = require('./webpack.renderer.config');
 
-module.exports = [mainConfig, rendererConfig]
+module.exports = [/*mainConfig,*/ rendererConfig];
