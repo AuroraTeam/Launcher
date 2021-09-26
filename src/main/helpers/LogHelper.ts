@@ -1,71 +1,73 @@
-import * as fs from "fs"
-import { format } from "util"
+import * as fs from 'fs';
+import { format } from 'util';
 
-import { StorageHelper } from "./StorageHelper"
+import { StorageHelper } from './StorageHelper';
 
 export class LogHelper {
-    static readonly isDevEnabled = process.argv.includes("--dev")
-    static readonly isDebugEnabled = process.argv.includes("--debug") || process.argv.includes("--dev")
+    static readonly isDevEnabled = process.argv.includes('--dev');
+    static readonly isDebugEnabled =
+        process.argv.includes('--debug') || process.argv.includes('--dev');
 
     static debug(msg: any, ...args: any): void {
-        if (!this.isDebugEnabled) return
-        this.log(LogLevel.DEBUG, msg, ...args)
+        if (!this.isDebugEnabled) return;
+        this.log(LogLevel.DEBUG, msg, ...args);
     }
 
     static dev(msg: any, ...args: any): void {
-        if (!this.isDevEnabled) return
-        this.log(LogLevel.DEV, msg, ...args)
+        if (!this.isDevEnabled) return;
+        this.log(LogLevel.DEV, msg, ...args);
     }
 
     static error(msg: any, ...args: any): void {
-        this.log(LogLevel.ERROR, msg, ...args)
+        this.log(LogLevel.ERROR, msg, ...args);
     }
 
     static fatal(msg: any, ...args: any): void {
-        this.log(LogLevel.FATAL, msg, ...args)
-        process.exit(1)
+        this.log(LogLevel.FATAL, msg, ...args);
+        process.exit(1);
     }
 
     static info(msg: any, ...args: any): void {
-        this.log(LogLevel.INFO, msg, ...args)
+        this.log(LogLevel.INFO, msg, ...args);
     }
 
     static raw(msg: any, ...args: any): void {
-        this.log(LogLevel.RAW, msg, ...args)
+        this.log(LogLevel.RAW, msg, ...args);
     }
 
     static warn(msg: any, ...args: any): void {
-        this.log(LogLevel.WARN, msg, ...args)
+        this.log(LogLevel.WARN, msg, ...args);
     }
 
     private static log(level: LogLevel, msg: any, ...args: any) {
-        if (level === LogLevel.RAW) return this.rawLog(msg, ...args)
+        if (level === LogLevel.RAW) return this.rawLog(msg, ...args);
 
+        // Может отсутствовать локаль?
         const date = new Date()
-            .toLocaleString("ru", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
+            .toLocaleString('ru', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             })
-            .replace(/-/g, ".")
+            .replace(/-/g, '.');
 
-        this.rawLog(`${date} [${level.toUpperCase()}] ${msg}`, ...args)
+        this.rawLog(`${date} [${level.toUpperCase()}] ${msg}`, ...args);
     }
 
     private static rawLog(msg: any, ...args: any) {
-        fs.appendFileSync(StorageHelper.logFile, format(msg, ...args) + "\n")
+        fs.appendFileSync(StorageHelper.logFile, format(msg, ...args) + '\n');
     }
 }
 
 enum LogLevel {
-    DEBUG = "debug",
-    DEV = "dev",
-    ERROR = "error",
-    FATAL = "fatal",
-    INFO = "info",
-    RAW = "raw",
-    WARN = "warn",
+    DEBUG = 'debug',
+    DEV = 'dev',
+    ERROR = 'error',
+    FATAL = 'fatal',
+    INFO = 'info',
+    RAW = 'raw',
+    WARN = 'warn'
 }

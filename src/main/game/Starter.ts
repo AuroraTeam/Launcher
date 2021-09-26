@@ -4,12 +4,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { spawn } from 'child_process';
 import { App } from '..';
-import { gte } from 'semver';
+import { gte, lte } from 'semver';
 import { Request } from 'aurora-api';
 import { StorageHelper } from '../helpers/StorageHelper';
 import { HttpHelper } from '../helpers/HttpHelper';
 import pMap from 'p-map';
-const api = require('../../../config.json').api;
+import { ConfigHelper } from 'main/helpers/ConfigHelper';
 
 interface ClientArgs {
     // Auth params
@@ -83,6 +83,11 @@ export default class Starter {
 
         const jvmArgs = [];
 
+        // Убрать костыль
+        jvmArgs.push(
+            '-javaagent:../../authlib-injector.jar=http://localhost:1370'
+        );
+
         jvmArgs.push(`-Djava.library.path=${nativesDirectory}`);
 
         if (clientArgs.jvmArgs?.length > 0) {
@@ -145,7 +150,7 @@ export default class Starter {
                 await HttpHelper.downloadFile(
                     new URL(
                         `files/${hash.path.replace('\\', '/')}`,
-                        api.fileUrl
+                        ConfigHelper.getConfig().api.web
                     ),
                     filePath
                 );
@@ -207,12 +212,17 @@ export default class Starter {
         gameArgs.push('--gameDir', clientDir);
         gameArgs.push('--assetsDir', assetsDir);
 
+        // TODO проверить версии не соответствующие semver формату
         if (gte(clientArgs.version, '1.7.2')) {
             gameArgs.push('--uuid', clientArgs.userUUID);
             gameArgs.push('--accessToken', clientArgs.accessToken);
 
             if (gte(clientArgs.version, '1.7.3')) {
                 gameArgs.push('--assetIndex', clientArgs.assetsIndex);
+
+                if (lte(clientArgs.version, '1.9.0')) {
+                    gameArgs.push('--userProperties', '{}');
+                }
             }
 
             if (gte(clientArgs.version, '1.7.4')) {

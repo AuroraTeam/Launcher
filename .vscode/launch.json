@@ -3,18 +3,17 @@
     "configurations": [
         {
             "name": "Debug",
-            "type": "node",
+            "type": "pwa-node",
             "request": "launch",
+            "runtimeArgs": [
+                "run-script",
+                "dev"
+            ],
+            "runtimeExecutable": "npm",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "program": "${workspaceFolder}/build/main/index.js",
-            "console": "integratedTerminal",
-            "preLaunchTask": "npm: build",
-            "env": {
-                "DEV": "true"
-            }
+            "console": "integratedTerminal"
         }
     ]
 }

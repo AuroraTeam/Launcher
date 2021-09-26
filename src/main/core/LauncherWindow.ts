@@ -1,11 +1,13 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-const windowConfig = require('../../../config.json').window;
 
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import { ConfigHelper } from 'main/helpers/ConfigHelper';
+
+const windowConfig = ConfigHelper.getConfig().window;
 
 export default class LauncherWindow {
-    mainWindow: BrowserWindow | null = null;
+    mainWindow?: BrowserWindow;
 
     /**
      * Launcher initialization
@@ -14,16 +16,13 @@ export default class LauncherWindow {
         // quit application when all windows are closed
         app.on('window-all-closed', () => {
             // on macOS it is common for applications to stay open until the user explicitly quits
-            if (process.platform !== 'darwin') {
-                app.quit();
-            }
+            if (process.platform !== 'darwin') app.quit();
         });
 
         app.on('activate', () => {
             // on macOS it is common to re-create a window even after all windows have been closed
-            if (this.mainWindow === null) {
+            if (this.mainWindow === null)
                 this.mainWindow = this.createMainWindow();
-            }
         });
 
         // create main window when electron is ready
@@ -34,7 +33,7 @@ export default class LauncherWindow {
                     loadExtensionOptions: { allowFileAccess: true }
                 })
                     .then((name: any) =>
-                        console.log(`Added Extension:  ${name}`)
+                        console.log(`Added Extension: ${name}`)
                     )
                     .catch((err: any) =>
                         console.log('An error occurred: ', err)
@@ -89,7 +88,7 @@ export default class LauncherWindow {
         }
 
         launcherWindow.on('closed', () => {
-            this.mainWindow = null;
+            this.mainWindow = undefined;
         });
 
         /**
@@ -118,6 +117,6 @@ export default class LauncherWindow {
     }
 
     sendEvent(channel: string, ...args: any[]): void {
-        return this.mainWindow?.webContents.send(channel, ...args);
+        this.mainWindow?.webContents.send(channel, ...args);
     }
 }
