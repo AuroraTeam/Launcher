@@ -7,7 +7,11 @@ export default class LauncherAuth {
         ipcMain.handle('auth', this.auth);
     }
 
-    async auth(_e: IpcMainInvokeEvent, login: string, password: string) {
+    async auth(
+        _e: IpcMainInvokeEvent,
+        login: string,
+        password: string
+    ): Promise<object> {
         try {
             const { data } = <Response>(
                 await App.api.send('auth', { login, password })
@@ -17,7 +21,7 @@ export default class LauncherAuth {
             const e = <ResponseError>error; // Какого хрена TS?!
             console.log(`Ошибка №${e.code}: ${e.message}`);
             return {
-                error: e.message
+                error: e.message,
             };
         }
     }

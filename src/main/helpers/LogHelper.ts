@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as fs from 'fs';
 import { format } from 'util';
 
@@ -50,7 +51,7 @@ export class LogHelper {
                 day: '2-digit',
                 hour: '2-digit',
                 minute: '2-digit',
-                second: '2-digit'
+                second: '2-digit',
             })
             .replace(/-/g, '.');
 
@@ -69,5 +70,5 @@ enum LogLevel {
     FATAL = 'fatal',
     INFO = 'info',
     RAW = 'raw',
-    WARN = 'warn'
+    WARN = 'warn',
 }

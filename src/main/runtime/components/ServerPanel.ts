@@ -7,7 +7,10 @@ export default class ServerPanel {
         ipcMain.handle('getProfile', this.getProfile);
     }
 
-    async getProfile(_e: IpcMainInvokeEvent, uuid: string) {
+    async getProfile(
+        _e: IpcMainInvokeEvent,
+        uuid: string
+    ): Promise<any[] | object> {
         try {
             const { data } = <ProfileResponse>(
                 await App.api.send('profile', { uuid })
@@ -17,7 +20,7 @@ export default class ServerPanel {
             const e = <ResponseError>error; // Какого хрена TS?!
             return {
                 code: e.code,
-                message: e.message
+                message: e.message,
             };
         }
     }

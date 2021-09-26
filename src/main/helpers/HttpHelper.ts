@@ -19,10 +19,10 @@ export class HttpHelper {
             });
 
             handler
-                .get(url, res => {
+                .get(url, (res) => {
                     res.pipe(tempFile);
                 })
-                .on('error', err => {
+                .on('error', (err) => {
                     fs.unlinkSync(path);
                     reject(err);
                 });

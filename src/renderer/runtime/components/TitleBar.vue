@@ -117,16 +117,16 @@ export default Vue.extend({
     data() {
         return {
             historyBackBtn: {
-                show: false
+                show: false,
             },
             title: {
                 show: true,
-                text: 'AuroraLauncher dev build v0.0.3'
+                text: 'AuroraLauncher dev build v0.0.3',
             },
             user: {
                 show: false,
-                username: 'Test'
-            }
+                username: 'Test',
+            },
         };
     },
     methods: {
@@ -138,7 +138,7 @@ export default Vue.extend({
         },
         historyBack() {
             this.$router.back();
-        }
+        },
     },
     mounted() {
         setImmediate(() => {
@@ -167,6 +167,6 @@ export default Vue.extend({
                 this.user.username = s;
             });
         });
-    }
+    },
 });
 </script>

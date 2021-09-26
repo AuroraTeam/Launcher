@@ -1,4 +1,4 @@
-import { AuroraAPI } from 'aurora-api';
+import { AuroraAPI, Response, ResponseError } from 'aurora-api';
 import { ConfigHelper } from 'main/helpers/ConfigHelper';
 import { App } from '..';
 
@@ -9,13 +9,16 @@ export default class APIManager {
 
     constructor() {
         this.api.onOpen = () => App.window.sendEvent('apiConnectSuccess');
-        this.api.onError = e => {
+        this.api.onError = (e) => {
             App.window.sendEvent('apiConnectError', 'Ошибка при подключении');
             console.error(e);
         };
     }
 
-    public async send(type: string, data?: object) {
+    public async send(
+        type: string,
+        data?: object
+    ): Promise<Response | ResponseError> {
         return await this.api.send(type, data);
     }
 }

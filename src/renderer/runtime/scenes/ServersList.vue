@@ -4,12 +4,24 @@
             <canvas id="skinContainer"></canvas>
         </div>
         <div class="serverList">
-            <button v-for="(el, i) in servers" :key="i" @click="selectProfile(el)">
+            <button
+                v-for="(el, i) in servers"
+                :key="i"
+                @click="selectProfile(el)"
+            >
                 <span class="title">{{ el.title }}</span>
                 <span class="online">10 / 100</span>
                 <div class="next">
-                    <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0.16 9.08V7.08H12.16L6.66 1.58L8.08 0.16L16 8.08L8.08 16L6.66 14.58L12.16 9.08H0.16Z" fill="#fff"/>
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M0.16 9.08V7.08H12.16L6.66 1.58L8.08 0.16L16 8.08L8.08 16L6.66 14.58L12.16 9.08H0.16Z"
+                            fill="#fff"
+                        />
                     </svg>
                 </div>
             </button>
@@ -69,42 +81,42 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue'
-import ServerList from '@scripts/ServerList'
+import Vue from 'vue';
+import ServerList from '@scripts/ServerList';
 
 export default Vue.extend({
     data() {
         return {
-            servers: []
-        }
+            servers: [],
+        };
     },
     methods: {
         selectProfile(profile: object) {
-            localStorage.setItem('selectedProfile', JSON.stringify(profile))
-            this.$router.push('server-panel')
-        }
+            localStorage.setItem('selectedProfile', JSON.stringify(profile));
+            this.$router.push('server-panel');
+        },
     },
     async mounted() {
-        this.servers = await ServerList.getServers()
+        this.servers = await ServerList.getServers();
 
-        const skinview3d = require('../assets/js/skinview3d/skinview3d.bundle')
+        const skinview3d = require('../assets/js/skinview3d/skinview3d.bundle');
         const skinViewer = new skinview3d.SkinViewer({
             canvas: document.getElementById('skinContainer'),
             width: 180,
             height: 360,
             skin: './steve.png',
-        })
+        });
 
-        skinViewer.camera.position.x = -25
-        skinViewer.camera.position.y = 18
-        skinViewer.camera.position.z = 46
+        skinViewer.camera.position.x = -25;
+        skinViewer.camera.position.y = 18;
+        skinViewer.camera.position.z = 46;
 
-        let run = skinViewer.animations.add(skinview3d.WalkingAnimation)
-        run.speed = .75
+        let run = skinViewer.animations.add(skinview3d.WalkingAnimation);
+        run.speed = 0.75;
 
-        const control = skinview3d.createOrbitControls(skinViewer)
-        control.enableRotate = true
-        control.enableZoom = false
-    }
-})
+        const control = skinview3d.createOrbitControls(skinViewer);
+        control.enableRotate = true;
+        control.enableZoom = false;
+    },
+});
 </script>

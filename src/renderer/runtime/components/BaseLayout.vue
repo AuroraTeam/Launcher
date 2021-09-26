@@ -1,8 +1,8 @@
 <template>
     <div id="app">
-        <title-bar/>
+        <title-bar />
         <!-- <router-view class="main inactive"/> -->
-        <router-view class="main"/>
+        <router-view class="main" />
     </div>
 </template>
 
@@ -12,27 +12,27 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue'
-import { ipcRenderer } from 'electron'
-import TitleBar from './TitleBar.vue'
+import Vue from 'vue';
+import { ipcRenderer } from 'electron';
+import TitleBar from './TitleBar.vue';
 
-import '../assets/sass/main.sass'
+import '../assets/sass/main.sass';
 
 export default Vue.extend({
     components: {
-        TitleBar
+        TitleBar,
     },
     mounted() {
         ipcRenderer.on('apiConnectSuccess', (_e, message: string) => {
             // document.querySelector('.inactive')?.classList.remove('inactive')
-        })
+        });
         ipcRenderer.on('apiConnectError', (_e, message: string) => {
             this.$swal({
                 title: 'Error!',
                 text: message,
-                icon: 'error'
-            })
-        })
-    }
-})
+                icon: 'error',
+            });
+        });
+    },
+});
 </script>

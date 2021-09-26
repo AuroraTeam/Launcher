@@ -1,7 +1,7 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electron';
 
 export default class ServerPanel {
-    static async getProfile(uuid: string) {
-        return await ipcRenderer.invoke('getProfile', uuid)
+    static async getProfile(uuid: string): Promise<any> {
+        return await ipcRenderer.invoke('getProfile', uuid);
     }
 }

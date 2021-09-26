@@ -2,10 +2,17 @@
     <div>
         <div class="block">
             <strong>Aurora Launcher</strong>
-            <p>Введите логин и пароль,<br> чтобы продолжить</p>
+            <p>
+                Введите логин и пароль,<br />
+                чтобы продолжить
+            </p>
             <form @submit.prevent="auth()">
-                <input type="text" placeholder="Логин" v-model="login">
-                <input type="password" placeholder="Пароль" v-model="password">
+                <input type="text" placeholder="Логин" v-model="login" />
+                <input
+                    type="password"
+                    placeholder="Пароль"
+                    v-model="password"
+                />
                 <button>Войти</button>
             </form>
         </div>
@@ -13,51 +20,60 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import LauncherAuth from '@scripts/LauncherAuth'
-import { Launcher } from '@Launcher'
+import Vue from 'vue';
+import LauncherAuth from '@scripts/LauncherAuth';
+import { Launcher } from '@Launcher';
 
 interface AuthResult {
-    error: string,
-    username: string,
-    userUUID: string
-    accessToken: string
+    error: string;
+    username: string;
+    userUUID: string;
+    accessToken: string;
 }
 
 export default Vue.extend({
     data() {
         return {
             login: '',
-            password: ''
-        }
+            password: '',
+        };
     },
     methods: {
         async auth() {
             // Валидацию можно делать как хошш))
-            if (this.login.length < 4) return this.showError('Логин должен быть не менее 4-ёх символов')
-            if (this.password.length < 8) return this.showError('Пароль должен быть не менее 8-ми символов')
+            if (this.login.length < 4)
+                return this.showError(
+                    'Логин должен быть не менее 4-ёх символов'
+                );
+            if (this.password.length < 8)
+                return this.showError(
+                    'Пароль должен быть не менее 8-ми символов'
+                );
 
-            const auth: AuthResult = await LauncherAuth.auth(this.login, this.password)
+            const auth: AuthResult = await LauncherAuth.auth(
+                this.login,
+                this.password
+            );
             if (auth.error !== undefined) {
-                this.showError(auth.error)
+                this.showError(auth.error);
             } else {
-                Launcher.$emit('setUser', auth.username)
-                Launcher.$emit('showUser')
-                localStorage.setItem('username', auth.username)
-                localStorage.setItem('userUUID', auth.userUUID)
-                localStorage.setItem('accessToken', auth.accessToken)
-                this.$router.push('server-list')
+                Launcher.$emit('setUser', auth.username);
+                Launcher.$emit('showUser');
+                localStorage.setItem('username', auth.username);
+                localStorage.setItem('userUUID', auth.userUUID);
+                localStorage.setItem('accessToken', auth.accessToken);
+                this.$router.push('server-list');
             }
         },
         showError(message: string) {
             this.$swal({
                 title: 'Error!',
                 text: message,
-                icon: 'error'
-            })
-        }
-    }
-})
+                icon: 'error',
+            });
+        },
+    },
+});
 </script>
 
 <style lang="sass" scoped>

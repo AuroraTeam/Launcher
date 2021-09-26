@@ -30,7 +30,7 @@ export default class LauncherWindow {
             this.mainWindow = this.createMainWindow();
             if (process.env.DEV || false) {
                 installExtension(VUEJS_DEVTOOLS, {
-                    loadExtensionOptions: { allowFileAccess: true }
+                    loadExtensionOptions: { allowFileAccess: true },
                 })
                     .then((name: any) =>
                         console.log(`Added Extension: ${name}`)
@@ -55,7 +55,7 @@ export default class LauncherWindow {
     /**
      * Create launcher window
      */
-    createMainWindow() {
+    createMainWindow(): BrowserWindow {
         // creating and configuring a window
         const launcherWindow = new BrowserWindow({
             show: false, // Use 'ready-to-show' event to show window
@@ -74,8 +74,8 @@ export default class LauncherWindow {
                 // https://github.com/AuroraTeam/Launcher/issues/3
                 // https://github.com/electron/electron/issues/28034
                 // https://github.com/electron/electron/blob/master/docs/breaking-changes.md#default-changed-contextisolation-defaults-to-true
-                contextIsolation: false
-            }
+                contextIsolation: false,
+            },
         });
 
         // loading renderer code (runtime)

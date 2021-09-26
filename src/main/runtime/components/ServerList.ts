@@ -1,5 +1,5 @@
 import { Response, ResponseError } from 'aurora-api';
-import { ipcMain, IpcMainInvokeEvent } from 'electron';
+import { ipcMain } from 'electron';
 import { App } from '../..';
 
 export default class ServerList {
@@ -7,7 +7,7 @@ export default class ServerList {
         ipcMain.handle('getServers', this.getServers);
     }
 
-    async getServers(_e: IpcMainInvokeEvent) {
+    async getServers(): Promise<any[] | object> {
         try {
             const { data } = <ServerResponse>await App.api.send('servers');
             return data.servers;
@@ -15,7 +15,7 @@ export default class ServerList {
             const e = <ResponseError>error; // Какого хрена TS?!
             return {
                 code: e.code,
-                message: e.message
+                message: e.message,
             };
         }
     }

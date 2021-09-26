@@ -41,16 +41,20 @@ export default class Starter {
         );
     }
 
-    async startChain(event: IpcMainEvent, clientArgs: ClientArgs) {
+    async startChain(
+        event: IpcMainEvent,
+        clientArgs: ClientArgs
+    ): Promise<void> {
         try {
             await this.hash(event, clientArgs);
         } catch (error) {
-            return event.reply('stopGame');
+            event.reply('stopGame');
+            return;
         }
         await this.start(event, clientArgs);
     }
 
-    async start(event: IpcMainEvent, clientArgs: ClientArgs) {
+    async start(event: IpcMainEvent, clientArgs: ClientArgs): Promise<void> {
         const clientDir = path.join(__dirname, 'clients', clientArgs.clientDir);
         const assetsDir = path.join(__dirname, 'assets', clientArgs.assetsDir);
 
@@ -67,7 +71,7 @@ export default class Starter {
 
         const classpath: string[] = [];
         if (clientArgs.classPath !== undefined) {
-            clientArgs.classPath.forEach(fileName => {
+            clientArgs.classPath.forEach((fileName) => {
                 const filePath = path.join(clientDir, fileName);
                 if (fs.statSync(filePath).isDirectory()) {
                     classpath.push(...Starter.scanDir(librariesDirectory));
@@ -103,7 +107,7 @@ export default class Starter {
         }
 
         const gameProccess = spawn('java', jvmArgs, {
-            cwd: clientDir
+            cwd: clientDir,
         });
 
         gameProccess.stdout.on('data', (data: Buffer) => {
@@ -122,17 +126,19 @@ export default class Starter {
         });
     }
 
-    async download(dir: string, type: 'assets' | 'client') {
+    async download(dir: string, type: 'assets' | 'client'): Promise<void> {
         const hashes = await App.api.send('updates', { dir });
-        let parentDir =
+        const parentDir =
             type == 'assets'
                 ? StorageHelper.assetsDir
                 : StorageHelper.clientsDir;
         App.window.sendEvent('textToConsole', `Load ${type} files \n`);
 
-        const fileHashes = ((hashes as Request).data as {
-            hashes: any[];
-        }).hashes;
+        const fileHashes = (
+            (hashes as Request).data as {
+                hashes: any[];
+            }
+        ).hashes;
         if (!fileHashes) {
             App.window.sendEvent('textToConsole', `${type} not found`);
             console.error(`${type} not found`);
@@ -144,7 +150,7 @@ export default class Starter {
 
         await pMap(
             fileHashes,
-            async hash => {
+            async (hash) => {
                 const filePath = path.join(parentDir, hash.path);
                 fs.mkdirSync(path.dirname(filePath), { recursive: true });
                 await HttpHelper.downloadFile(
@@ -160,14 +166,14 @@ export default class Starter {
                 );
                 App.window.sendEvent('loadProgress', {
                     total: totalSize,
-                    loaded: loaded += hash.size
+                    loaded: (loaded += hash.size),
                 });
             },
             { concurrency: 4 }
         );
     }
 
-    async hash(_event: IpcMainEvent, clientArgs: ClientArgs) {
+    async hash(_event: IpcMainEvent, clientArgs: ClientArgs): Promise<void> {
         if (
             !fs.existsSync(
                 path.resolve(StorageHelper.assetsDir, clientArgs.assetsDir)
@@ -206,7 +212,7 @@ export default class Starter {
         clientArgs: ClientArgs,
         clientDir: string,
         assetsDir: string
-    ) {
+    ): void {
         gameArgs.push('--username', clientArgs.username);
         gameArgs.push('--version', clientArgs.version);
         gameArgs.push('--gameDir', clientDir);
@@ -242,7 +248,7 @@ export default class Starter {
         clientArgs: ClientArgs,
         clientDir: string,
         assetsDir: string
-    ) {
+    ): void {
         gameArgs.push(clientArgs.username);
         gameArgs.push(clientArgs.accessToken);
         gameArgs.push('--version', clientArgs.version);
