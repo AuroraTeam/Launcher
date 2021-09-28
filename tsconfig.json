@@ -19,9 +19,9 @@
             "@Launcher": ["renderer/index.ts"],
             "@runtime/*": ["renderer/runtime/*"],
             "@scripts/*": ["renderer/scripts/*"]
-        }
+        },
+        "types": [
+            "vue-sweetalert2"
+        ]
     },
-    "types": [
-        "vue-sweetalert2"
-    ],
 }

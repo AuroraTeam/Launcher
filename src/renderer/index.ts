@@ -1,9 +1,6 @@
-import 'source-map-support/register';
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueSweetalert2 from 'vue-sweetalert2';
-
-import '@sweetalert2/theme-dark/dark.scss';
 
 import BaseLayout from './runtime/components/BaseLayout.vue';
 import Login from './runtime/scenes/Login.vue';
