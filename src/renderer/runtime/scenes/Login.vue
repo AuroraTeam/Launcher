@@ -22,7 +22,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import LauncherAuth from '@scripts/LauncherAuth';
-import { Launcher } from '@Launcher';
 
 interface AuthResult {
     error: string;
@@ -57,8 +56,8 @@ export default Vue.extend({
             if (auth.error !== undefined) {
                 this.showError(auth.error);
             } else {
-                Launcher.$emit('setUser', auth.username);
-                Launcher.$emit('showUser');
+                this.$root.$emit('setUser', auth.username);
+                this.$root.$emit('showUser');
                 localStorage.setItem('username', auth.username);
                 localStorage.setItem('userUUID', auth.userUUID);
                 localStorage.setItem('accessToken', auth.accessToken);

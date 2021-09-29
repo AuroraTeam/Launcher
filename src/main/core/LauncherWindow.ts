@@ -68,6 +68,7 @@ export default class LauncherWindow {
             title: windowConfig.title || 'Aurora Launcher',
             icon: path.join(__dirname, '../renderer/logo.png'),
             webPreferences: {
+                preload: path.join(__dirname, '../preload/index.js'),
                 nodeIntegration: true,
                 // TODO Пофиксить
                 // Временный фикс, подробнее:
@@ -80,7 +81,7 @@ export default class LauncherWindow {
 
         // loading renderer code (runtime)
         if (process.env.DEV || false) {
-            launcherWindow.loadURL('http://localhost:8080');
+            launcherWindow.loadURL('http://localhost:3000');
         } else {
             launcherWindow.loadFile(
                 path.join(__dirname, '../renderer/index.html')

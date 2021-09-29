@@ -110,8 +110,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ipcRenderer } from 'electron';
-import { Launcher } from '@Launcher';
 
 export default Vue.extend({
     data() {
@@ -131,41 +129,39 @@ export default Vue.extend({
     },
     methods: {
         hide() {
-            ipcRenderer.send('window-hide');
+            window.ipcRenderer.send('window-hide');
         },
         close() {
-            ipcRenderer.send('window-close');
+            window.ipcRenderer.send('window-close');
         },
         historyBack() {
             this.$router.back();
         },
     },
     mounted() {
-        setImmediate(() => {
-            Launcher.$on('showHistoryBackBtn', () => {
-                this.historyBackBtn.show = true;
-            });
-            Launcher.$on('hideHistoryBackBtn', () => {
-                this.historyBackBtn.show = false;
-            });
-            Launcher.$on('showTitle', () => {
-                this.title.show = true;
-            });
-            Launcher.$on('hideTitle', () => {
-                this.title.show = false;
-            });
-            Launcher.$on('setTitle', (s: string) => {
-                this.title.text = s;
-            });
-            Launcher.$on('showUser', () => {
-                this.user.show = true;
-            });
-            Launcher.$on('hideUser', () => {
-                this.user.show = false;
-            });
-            Launcher.$on('setUser', (s: string) => {
-                this.user.username = s;
-            });
+        this.$root.$on('showHistoryBackBtn', () => {
+            this.historyBackBtn.show = true;
+        });
+        this.$root.$on('hideHistoryBackBtn', () => {
+            this.historyBackBtn.show = false;
+        });
+        this.$root.$on('showTitle', () => {
+            this.title.show = true;
+        });
+        this.$root.$on('hideTitle', () => {
+            this.title.show = false;
+        });
+        this.$root.$on('setTitle', (s: string) => {
+            this.title.text = s;
+        });
+        this.$root.$on('showUser', () => {
+            this.user.show = true;
+        });
+        this.$root.$on('hideUser', () => {
+            this.user.show = false;
+        });
+        this.$root.$on('setUser', (s: string) => {
+            this.user.username = s;
         });
     },
 });

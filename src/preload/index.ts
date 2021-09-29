@@ -1,1 +1,3 @@
-console.log('test preload');
+import { ipcRenderer } from 'electron';
+
+window.ipcRenderer = ipcRenderer;

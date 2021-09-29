@@ -1,5 +1,3 @@
-import { ipcRenderer } from 'electron';
-
 export default class Game {
     /**
      * Start the game
@@ -11,23 +9,23 @@ export default class Game {
         progress: (data: object) => void,
         callback: () => void
     ): Promise<void> {
-        ipcRenderer.send('startGame', {
+        window.ipcRenderer.send('startGame', {
             ...profile,
             username: localStorage.getItem('username'),
             userUUID: localStorage.getItem('userUUID'),
             accessToken: localStorage.getItem('accessToken'),
         });
 
-        ipcRenderer.on('textToConsole', (_e, string: string) => {
+        window.ipcRenderer.on('textToConsole', (_e, string: string) => {
             csl(string);
         });
 
-        ipcRenderer.on('loadProgress', (_e, data: object) => {
+        window.ipcRenderer.on('loadProgress', (_e, data: object) => {
             progress(data);
         });
 
-        ipcRenderer.once('stopGame', () => {
-            ipcRenderer.removeAllListeners('textToConsole');
+        window.ipcRenderer.once('stopGame', () => {
+            window.ipcRenderer.removeAllListeners('textToConsole');
             callback();
         });
     }

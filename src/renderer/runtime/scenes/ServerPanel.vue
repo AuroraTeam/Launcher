@@ -54,7 +54,6 @@
 import Vue from 'vue';
 import Game from '@scripts/Game';
 import ServerPanel from '@scripts/ServerPanel';
-import { Launcher } from '@Launcher';
 
 export default Vue.extend({
     data() {
@@ -108,7 +107,7 @@ export default Vue.extend({
         this.selectedProfile = JSON.parse(
             await ServerPanel.getProfile(this.selectedServer.profileUUID)
         );
-        Launcher.$emit('showHistoryBackBtn');
+        this.$root.$emit('showHistoryBackBtn');
     },
 });
 

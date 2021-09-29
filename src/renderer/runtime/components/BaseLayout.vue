@@ -13,7 +13,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ipcRenderer } from 'electron';
 import TitleBar from './TitleBar.vue';
 
 import '../assets/sass/main.sass';
@@ -23,10 +22,10 @@ export default Vue.extend({
         TitleBar,
     },
     mounted() {
-        ipcRenderer.on('apiConnectSuccess', (_e, message: string) => {
+        window.ipcRenderer.on('apiConnectSuccess', (_e, message: string) => {
             // document.querySelector('.inactive')?.classList.remove('inactive')
         });
-        ipcRenderer.on('apiConnectError', (_e, message: string) => {
+        window.ipcRenderer.on('apiConnectError', (_e, message: string) => {
             this.$swal({
                 title: 'Error!',
                 text: message,

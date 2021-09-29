@@ -2,6 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import VueSweetalert2 from 'vue-sweetalert2';
 
+import '@sweetalert2/theme-dark';
+
 import BaseLayout from './runtime/components/BaseLayout.vue';
 import Login from './runtime/scenes/Login.vue';
 import ServersList from './runtime/scenes/ServersList.vue';
