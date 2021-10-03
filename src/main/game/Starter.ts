@@ -9,7 +9,7 @@ import { Request } from 'aurora-api';
 import { StorageHelper } from '../helpers/StorageHelper';
 import { HttpHelper } from '../helpers/HttpHelper';
 import pMap from 'p-map';
-import { ConfigHelper } from 'main/helpers/ConfigHelper';
+import { api as apiConfig } from '@config';
 
 interface ClientArgs {
     // Auth params
@@ -156,7 +156,7 @@ export default class Starter {
                 await HttpHelper.downloadFile(
                     new URL(
                         `files/${hash.path.replace('\\', '/')}`,
-                        ConfigHelper.getConfig().api.web
+                        apiConfig.web
                     ),
                     filePath
                 );

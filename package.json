@@ -6,7 +6,7 @@
     "private": true,
     "scripts": {
         "dev": "concurrently -n main,preload -c blue.bold,yellow.bold \"npm:build:main\" \"npm:build:preload\" && concurrently \"vite\" \"npm:start:dev\" -k",
-        "build": "concurrently -n main,preload,renderer -c blue.bold,yellow.bold,magenta.bold \"npm:build:main\" \"npm:build:preload\" \"npm:build:renderer\"",
+        "build": "concurrently -n main,preload,renderer -c blue.bold,yellow.bold,magenta.bold \"npm:build:main\" \"npm:build:preload\" \"npm:build:renderer\" --kill-others-on-fail",
         "build:main": "esbuild src/main/index.ts --platform=node --bundle --outdir=build/main --sourcemap=inline --external:electron",
         "build:preload": "esbuild src/preload/index.ts --platform=node --bundle --outdir=build/preload --sourcemap=inline --external:electron",
         "build:renderer": "vite build",

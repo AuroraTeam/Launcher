@@ -2,9 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
-import { ConfigHelper } from 'main/helpers/ConfigHelper';
-
-const windowConfig = ConfigHelper.getConfig().window;
+import { window as windowConfig } from '@config';
 
 export default class LauncherWindow {
     mainWindow?: BrowserWindow;
@@ -69,13 +67,6 @@ export default class LauncherWindow {
             icon: path.join(__dirname, '../renderer/logo.png'),
             webPreferences: {
                 preload: path.join(__dirname, '../preload/index.js'),
-                nodeIntegration: true,
-                // TODO Пофиксить
-                // Временный фикс, подробнее:
-                // https://github.com/AuroraTeam/Launcher/issues/3
-                // https://github.com/electron/electron/issues/28034
-                // https://github.com/electron/electron/blob/master/docs/breaking-changes.md#default-changed-contextisolation-defaults-to-true
-                contextIsolation: false,
             },
         });
 

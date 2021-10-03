@@ -1,11 +1,9 @@
 import { AuroraAPI, Response, ResponseError } from 'aurora-api';
-import { ConfigHelper } from 'main/helpers/ConfigHelper';
+import { api as apiConfig } from '@config';
 import { App } from '..';
 
 export default class APIManager {
-    api = new AuroraAPI(
-        ConfigHelper.getConfig().api.ws || 'ws://localhost:1370'
-    );
+    api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370');
 
     constructor() {
         this.api.onOpen = () => App.window.sendEvent('apiConnectSuccess');
