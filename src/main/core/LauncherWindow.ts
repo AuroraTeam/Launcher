@@ -67,6 +67,7 @@ export default class LauncherWindow {
             icon: path.join(__dirname, '../renderer/logo.png'),
             webPreferences: {
                 preload: path.join(__dirname, '../preload/index.js'),
+                sandbox: true,
             },
         });
 
