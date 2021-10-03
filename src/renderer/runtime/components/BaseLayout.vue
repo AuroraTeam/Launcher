@@ -1,7 +1,6 @@
 <template>
     <div id="app">
         <title-bar />
-        <!-- <router-view class="main inactive"/> -->
         <router-view class="main" />
     </div>
 </template>
@@ -21,17 +20,19 @@ export default Vue.extend({
     components: {
         TitleBar,
     },
-    mounted() {
-        window.ipcRenderer.on('apiConnectSuccess', (_e, message: string) => {
-            // document.querySelector('.inactive')?.classList.remove('inactive')
-        });
-        window.ipcRenderer.on('apiConnectError', (_e, message: string) => {
-            this.$swal({
-                title: 'Error!',
-                text: message,
-                icon: 'error',
-            });
-        });
-    },
+    // TODO Придумать как нормально реализовать проверку подключения к апи
+    // mounted() {
+    //     window.launcherAPI.ipc.on('apiConnectSuccess', (_e) => {
+    //         console.log('apiConnectSuccess');
+    //     });
+    //     window.launcherAPI.ipc.on('apiConnectError', (_e, message: string) => {
+    //         console.log('apiConnectError');
+    //         this.$swal({
+    //             title: 'Error!',
+    //             text: message,
+    //             icon: 'error',
+    //         });
+    //     });
+    // },
 });
 </script>
