@@ -129,10 +129,10 @@ export default Vue.extend({
     },
     methods: {
         hide() {
-            window.ipcRenderer.send('window-hide');
+            window.launcherAPI.ipc.send('window-hide');
         },
         close() {
-            window.ipcRenderer.send('window-close');
+            window.launcherAPI.ipc.send('window-close');
         },
         historyBack() {
             this.$router.back();

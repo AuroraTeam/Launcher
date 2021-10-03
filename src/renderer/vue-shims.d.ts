@@ -3,5 +3,17 @@ declare module '*.vue' {
     export default Vue;
 }
 declare interface Window {
-    ipcRenderer: Electron.IpcRenderer;
+    launcherAPI: {
+        ipc: {
+            on(
+                channel: string,
+                listener: (
+                    event: Electron.IpcRendererEvent,
+                    ...args: any[]
+                ) => void
+            ): void;
+            send(channel: string, ...args: any[]): void;
+            invoke(channel: string, ...args: any[]): Promise<any>;
+        };
+    };
 }

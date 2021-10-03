@@ -1,3 +1,9 @@
-import { ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 
-window.ipcRenderer = ipcRenderer;
+contextBridge.exposeInMainWorld('launcherAPI', {
+    ipc: {
+        on: ipcRenderer.on,
+        send: ipcRenderer.send,
+        invoke: ipcRenderer.invoke,
+    },
+});
