@@ -3,6 +3,7 @@
     "version": "0.0.3-dev",
     "description": "Launcher for Minecraft",
     "main": "build/main/index.js",
+    "private": true,
     "scripts": {
         "dev": "npm run build:wor && concurrently \"vite\" \"npm:start:dev\" -k",
         "dev_webpack": "npm run build:wor && concurrently \"webpack serve --port 3000\" \"npm:start:dev\" -k",
@@ -78,6 +79,7 @@
         "esbuild": "^0.12.29",
         "p-map": "^5.1.0",
         "semver": "^7.3.5",
+        "skinview3d": "^2.1.0",
         "source-map-support": "^0.5.20",
         "webpack-dev-server": "^4.3.0"
     }

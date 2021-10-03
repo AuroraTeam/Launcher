@@ -83,6 +83,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import ServerList from '@scripts/ServerList';
+import { SkinViewer, WalkingAnimation, createOrbitControls } from 'skinview3d';
 
 export default Vue.extend({
     data() {
@@ -99,23 +100,22 @@ export default Vue.extend({
     async mounted() {
         this.servers = await ServerList.getServers();
 
-        const skinview3d = require('../assets/js/skinview3d/skinview3d.bundle');
-        const skinViewer = new skinview3d.SkinViewer({
-            canvas: document.getElementById('skinContainer'),
+        const skinViewer = new SkinViewer({
+            canvas: <HTMLCanvasElement>document.getElementById('skinContainer'),
             width: 180,
             height: 360,
-            skin: './steve.png',
+            skin: 'runtime/assets/images/steve.png',
         });
 
         skinViewer.camera.position.x = -25;
         skinViewer.camera.position.y = 18;
         skinViewer.camera.position.z = 46;
 
-        let run = skinViewer.animations.add(skinview3d.WalkingAnimation);
+        let run = skinViewer.animations.add(WalkingAnimation);
         run.speed = 0.75;
 
-        const control = skinview3d.createOrbitControls(skinViewer);
-        control.enableRotate = true;
+        const control = createOrbitControls(skinViewer);
+        control.enableRotate = false;
         control.enableZoom = false;
     },
 });
