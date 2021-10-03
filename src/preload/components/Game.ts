@@ -1,3 +1,5 @@
+import { ipcRenderer } from 'electron';
+
 export default class Game {
     /**
      * Start the game
@@ -9,23 +11,23 @@ export default class Game {
         progress: (data: object) => void,
         callback: () => void
     ): Promise<void> {
-        window.launcherAPI.ipc.send('startGame', {
+        ipcRenderer.send('startGame', {
             ...profile,
             username: localStorage.getItem('username'),
             userUUID: localStorage.getItem('userUUID'),
             accessToken: localStorage.getItem('accessToken'),
         });
 
-        window.launcherAPI.ipc.on('textToConsole', (_e, string: string) => {
+        ipcRenderer.on('textToConsole', (_e, string: string) => {
             csl(string);
         });
 
-        window.launcherAPI.ipc.on('loadProgress', (_e, data: object) => {
+        ipcRenderer.on('loadProgress', (_e, data: object) => {
             progress(data);
         });
 
-        window.launcherAPI.ipc.once('stopGame', () => {
-            window.launcherAPI.ipc.removeAllListeners('textToConsole');
+        ipcRenderer.once('stopGame', () => {
+            ipcRenderer.removeAllListeners('textToConsole');
             callback();
         });
     }

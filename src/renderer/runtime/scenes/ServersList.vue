@@ -82,13 +82,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import ServerList from '@scripts/ServerList';
 import { SkinViewer, WalkingAnimation, createOrbitControls } from 'skinview3d';
 
 export default Vue.extend({
     data() {
         return {
-            servers: [],
+            servers: [] as any[],
         };
     },
     methods: {
@@ -98,7 +97,7 @@ export default Vue.extend({
         },
     },
     async mounted() {
-        this.servers = await ServerList.getServers();
+        this.servers = await window.launcherAPI.api.getServers();
 
         const skinViewer = new SkinViewer({
             canvas: <HTMLCanvasElement>document.getElementById('skinContainer'),

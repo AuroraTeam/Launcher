@@ -21,7 +21,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LauncherAuth from '@scripts/LauncherAuth';
 
 interface AuthResult {
     error: string;
@@ -49,7 +48,7 @@ export default Vue.extend({
                     'Пароль должен быть не менее 8-ми символов'
                 );
 
-            const auth: AuthResult = await LauncherAuth.auth(
+            const auth: AuthResult = await window.launcherAPI.auth(
                 this.login,
                 this.password
             );

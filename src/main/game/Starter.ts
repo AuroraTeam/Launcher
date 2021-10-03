@@ -87,10 +87,10 @@ export default class Starter {
 
         const jvmArgs = [];
 
-        // Убрать костыль
-        jvmArgs.push(
-            '-javaagent:../../authlib-injector.jar=http://localhost:1370'
-        );
+        // // Убрать костыль
+        // jvmArgs.push(
+        //     '-javaagent:../../authlib-injector.jar=http://localhost:1370'
+        // );
 
         jvmArgs.push(`-Djava.library.path=${nativesDirectory}`);
 

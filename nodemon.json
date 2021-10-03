@@ -1,8 +1,0 @@
-{
-    "watch": ["src"],
-    "ext": "ts",
-    "ignore": ["src/renderer"],
-    "execMap": {
-        "ts": "ts-node"
-    }
-}

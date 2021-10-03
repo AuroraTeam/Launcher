@@ -52,8 +52,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import Game from '@scripts/Game';
-import ServerPanel from '@scripts/ServerPanel';
 
 export default Vue.extend({
     data() {
@@ -71,7 +69,7 @@ export default Vue.extend({
     methods: {
         startGame() {
             this.gameStarted = true;
-            Game.start(
+            window.launcherAPI.game.start(
                 this.selectedProfile,
                 this.textToConsole,
                 this.progress,
@@ -81,10 +79,10 @@ export default Vue.extend({
         textToConsole(string: string) {
             this.console += string;
             const consoleEl = document.querySelector('.console')!;
-            // Если не оборачивать в setImmediate, то оно прокручивает не до конца
-            setImmediate(() => {
+            // Если не оборачивать в setTimeout, то оно прокручивает не до конца
+            setTimeout(() => {
                 consoleEl.scrollTop = consoleEl.scrollHeight;
-            });
+            }, 1);
         },
         progress(data: any) {
             const progressEl = document.querySelector(
@@ -105,7 +103,9 @@ export default Vue.extend({
     },
     async mounted() {
         this.selectedProfile = JSON.parse(
-            await ServerPanel.getProfile(this.selectedServer.profileUUID)
+            await window.launcherAPI.api.getProfile(
+                this.selectedServer.profileUUID
+            )
         );
         this.$root.$emit('showHistoryBackBtn');
     },
