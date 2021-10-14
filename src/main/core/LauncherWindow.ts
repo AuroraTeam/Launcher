@@ -4,6 +4,8 @@ import * as path from 'path';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { window as windowConfig } from '@config';
 
+const isDev = process.env.DEV || false;
+
 export default class LauncherWindow {
     mainWindow?: BrowserWindow;
 
@@ -26,7 +28,7 @@ export default class LauncherWindow {
         // create main window when electron is ready
         app.on('ready', () => {
             this.mainWindow = this.createMainWindow();
-            if (process.env.DEV || false) {
+            if (isDev) {
                 installExtension(VUEJS_DEVTOOLS, {
                     loadExtensionOptions: { allowFileAccess: true },
                 })
@@ -64,7 +66,7 @@ export default class LauncherWindow {
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
             title: windowConfig.title || 'Aurora Launcher',
-            icon: path.join(__dirname, '../renderer/logo.png'),
+            // icon: path.join(__dirname, '../renderer/logo.png'),
             webPreferences: {
                 preload: path.join(__dirname, '../preload/index.js'),
                 sandbox: true,
@@ -72,7 +74,7 @@ export default class LauncherWindow {
         });
 
         // loading renderer code (runtime)
-        if (process.env.DEV || false) {
+        if (isDev) {
             launcherWindow.loadURL('http://localhost:3000');
         } else {
             launcherWindow.loadFile(
@@ -94,8 +96,7 @@ export default class LauncherWindow {
             launcherWindow?.show();
 
             // open developer tools when using development mode
-            if (process.env.DEV || false)
-                launcherWindow.webContents.openDevTools();
+            if (isDev) launcherWindow.webContents.openDevTools();
         });
 
         // focus on development tools when opening

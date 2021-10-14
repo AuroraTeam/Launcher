@@ -29,6 +29,46 @@
     </div>
 </template>
 
+<script lang="ts">
+import Vue from 'vue';
+import { SkinViewer, WalkingAnimation, createOrbitControls } from 'skinview3d';
+
+export default Vue.extend({
+    data() {
+        return {
+            servers: [] as any[],
+        };
+    },
+    methods: {
+        selectProfile(profile: object) {
+            localStorage.setItem('selectedProfile', JSON.stringify(profile));
+            this.$router.push('server-panel');
+        },
+    },
+    async mounted() {
+        this.servers = await window.launcherAPI.api.getServers();
+
+        const skinViewer = new SkinViewer({
+            canvas: <HTMLCanvasElement>document.getElementById('skinContainer'),
+            width: 180,
+            height: 360,
+            skin: 'runtime/assets/images/steve.png',
+        });
+
+        skinViewer.camera.position.x = -25;
+        skinViewer.camera.position.y = 18;
+        skinViewer.camera.position.z = 46;
+
+        let run = skinViewer.animations.add(WalkingAnimation);
+        run.speed = 0.75;
+
+        const control = createOrbitControls(skinViewer);
+        control.enableRotate = false;
+        control.enableZoom = false;
+    },
+});
+</script>
+
 <style lang="sass" scoped>
 .window
     display: flex
@@ -79,43 +119,3 @@
         align-items: center
         justify-content: center
 </style>
-
-<script lang="ts">
-import Vue from 'vue';
-import { SkinViewer, WalkingAnimation, createOrbitControls } from 'skinview3d';
-
-export default Vue.extend({
-    data() {
-        return {
-            servers: [] as any[],
-        };
-    },
-    methods: {
-        selectProfile(profile: object) {
-            localStorage.setItem('selectedProfile', JSON.stringify(profile));
-            this.$router.push('server-panel');
-        },
-    },
-    async mounted() {
-        this.servers = await window.launcherAPI.api.getServers();
-
-        const skinViewer = new SkinViewer({
-            canvas: <HTMLCanvasElement>document.getElementById('skinContainer'),
-            width: 180,
-            height: 360,
-            skin: 'runtime/assets/images/steve.png',
-        });
-
-        skinViewer.camera.position.x = -25;
-        skinViewer.camera.position.y = 18;
-        skinViewer.camera.position.z = 46;
-
-        let run = skinViewer.animations.add(WalkingAnimation);
-        run.speed = 0.75;
-
-        const control = createOrbitControls(skinViewer);
-        control.enableRotate = false;
-        control.enableZoom = false;
-    },
-});
-</script>
