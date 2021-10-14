@@ -69,7 +69,7 @@ export default Vue.extend({
     methods: {
         startGame() {
             this.gameStarted = true;
-            window.launcherAPI.game.start(
+            launcherAPI.game.start(
                 this.selectedProfile,
                 this.textToConsole,
                 this.progress,
@@ -103,9 +103,7 @@ export default Vue.extend({
     },
     async mounted() {
         this.selectedProfile = JSON.parse(
-            await window.launcherAPI.api.getProfile(
-                this.selectedServer.profileUUID
-            )
+            await launcherAPI.api.getProfile(this.selectedServer.profileUUID)
         );
         this.$root.$emit('showHistoryBackBtn');
     },

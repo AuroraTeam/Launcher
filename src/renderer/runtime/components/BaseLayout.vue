@@ -22,10 +22,10 @@ export default Vue.extend({
     },
     // TODO Придумать как нормально реализовать проверку подключения к апи
     // mounted() {
-    //     window.launcherAPI.ipc.on('apiConnectSuccess', (_e) => {
+    //     launcherAPI.ipc.on('apiConnectSuccess', (_e) => {
     //         console.log('apiConnectSuccess');
     //     });
-    //     window.launcherAPI.ipc.on('apiConnectError', (_e, message: string) => {
+    //     launcherAPI.ipc.on('apiConnectError', (_e, message: string) => {
     //         console.log('apiConnectError');
     //         this.$swal({
     //             title: 'Error!',

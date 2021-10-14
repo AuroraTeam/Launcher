@@ -48,7 +48,7 @@ export default Vue.extend({
                     'Пароль должен быть не менее 8-ми символов'
                 );
 
-            const auth: AuthResult = await window.launcherAPI.auth(
+            const auth: AuthResult = await launcherAPI.auth(
                 this.login,
                 this.password
             );

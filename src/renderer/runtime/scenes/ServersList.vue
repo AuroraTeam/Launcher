@@ -46,7 +46,7 @@ export default Vue.extend({
         },
     },
     async mounted() {
-        this.servers = await window.launcherAPI.api.getServers();
+        this.servers = await launcherAPI.api.getServers();
 
         const skinViewer = new SkinViewer({
             canvas: <HTMLCanvasElement>document.getElementById('skinContainer'),
