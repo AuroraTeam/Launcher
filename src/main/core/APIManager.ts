@@ -1,28 +1,30 @@
 import { AuroraAPI, Response, ResponseError } from 'aurora-api';
 import { api as apiConfig } from '@config';
 import { ipcMain } from 'electron';
-// import { App } from '..';
 
 export default class APIManager {
     api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370');
-
-    // TODO Придумать как нормально реализовать проверку подключения к апи
-    // constructor() {
-    //     this.api.onOpen = () => App.window.sendEvent('apiConnectSuccess');
-    //     this.api.onError = (e) => {
-    //         App.window.sendEvent('apiConnectError', 'Ошибка при подключении');
-    //         console.error(e);
-    //     };
-    // }
+    tryConnect = false;
 
     constructor() {
+        console.log(this.api.hasConnected());
+        this.api.onOpen = () => (this.tryConnect = true);
+        this.api.onError = () => (this.tryConnect = true);
+
         ipcMain.handle('auth', (_, login: string, password: string) =>
             this.auth(login, password)
         );
+        ipcMain.handle('getStatus', () => this.getStatus());
         ipcMain.handle('getServers', () => this.getServers());
         ipcMain.handle('getProfile', (_, uuid: string) =>
             this.getProfile(uuid)
         );
+    }
+
+    public getStatus(): 'connected' | 'failure' | 'connecting' {
+        if (this.api.hasConnected()) return 'connected';
+        if (this.tryConnect) return 'failure';
+        return 'connecting';
     }
 
     public async send(

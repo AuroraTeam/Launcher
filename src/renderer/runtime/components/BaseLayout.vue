@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <title-bar />
-        <router-view class="main" />
+        <router-view :class="`main ${inactive ? 'inactive' : ''}`" />
     </div>
 </template>
 
@@ -20,19 +20,27 @@ export default Vue.extend({
     components: {
         TitleBar,
     },
-    // TODO Придумать как нормально реализовать проверку подключения к апи
-    // mounted() {
-    //     launcherAPI.ipc.on('apiConnectSuccess', (_e) => {
-    //         console.log('apiConnectSuccess');
-    //     });
-    //     launcherAPI.ipc.on('apiConnectError', (_e, message: string) => {
-    //         console.log('apiConnectError');
-    //         this.$swal({
-    //             title: 'Error!',
-    //             text: message,
-    //             icon: 'error',
-    //         });
-    //     });
-    // },
+    data() {
+        return {
+            inactive: true,
+        };
+    },
+    // TODO Доработать
+    async mounted() {
+        switch (await launcherAPI.api.getStatus()) {
+            case 'connected':
+                this.inactive = false;
+                break;
+            case 'connecting':
+                break;
+            case 'failure':
+                console.log('apiConnectError');
+                this.$swal({
+                    title: 'Ошибка подключения!',
+                    text: 'Сервер не доступен',
+                    icon: 'error',
+                });
+        }
+    },
 });
 </script>

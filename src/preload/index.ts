@@ -16,6 +16,8 @@ export const api = {
     },
     auth: LauncherAuth.auth,
     api: {
+        getStatus: async (): Promise<'connected' | 'failure' | 'connecting'> =>
+            await ipcRenderer.invoke('getStatus'),
         getServers: ServerList.getServers,
         getProfile: ServerPanel.getProfile,
     },

@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="block">
+            <img src="../assets/images/logo.png" />
             <strong>Aurora Launcher</strong>
             <p>
                 Введите логин и пароль,<br />
@@ -89,12 +90,14 @@ h1
     display: flex
     flex-direction: column
     align-items: center
+    img
+        height: 160px
     strong
         font-size: 24px
-        margin-top: 140px
+        margin-top: 10px
         text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
     p
-        margin: 33px 0
+        margin: 20px 0
         font-size: 13px
         line-height: 16px
         text-align: center
