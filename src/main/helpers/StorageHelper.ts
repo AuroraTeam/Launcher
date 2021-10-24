@@ -1,30 +1,24 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import { existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
 
 export class StorageHelper {
-    // static storageDir: string = (process.env.DEV || false) ? __dirname : path.resolve(__dirname, '../game')
+    // static storageDir: string = (process.env.DEV || false) ? __dirname : join(__dirname, '../game')
     static storageDir: string = __dirname;
-    static assetsDir: string = path.resolve(StorageHelper.storageDir, 'assets');
-    static clientsDir: string = path.resolve(
-        StorageHelper.storageDir,
-        'clients'
-    );
-    static librariesDir: string = path.resolve(
-        StorageHelper.storageDir,
-        'libraries'
-    );
-    static logsDir: string = path.resolve(StorageHelper.storageDir, 'logs');
-    static tempDir: string = path.resolve(StorageHelper.storageDir, 'temp');
-    static logFile: string = path.resolve(
-        StorageHelper.logsDir,
-        'Launcher.log'
-    );
+    static assetsDir: string = join(StorageHelper.storageDir, 'assets');
+    static clientsDir: string = join(StorageHelper.storageDir, 'clients');
+    static librariesDir: string = join(StorageHelper.storageDir, 'libraries');
+    static logsDir: string = join(StorageHelper.storageDir, 'logs');
+    static tempDir: string = join(StorageHelper.storageDir, 'temp');
+    static logFile: string = join(StorageHelper.logsDir, 'Launcher.log');
 
     static createMissing(): void {
-        if (!fs.existsSync(this.assetsDir)) fs.mkdirSync(this.assetsDir);
-        if (!fs.existsSync(this.clientsDir)) fs.mkdirSync(this.clientsDir);
-        if (!fs.existsSync(this.librariesDir)) fs.mkdirSync(this.librariesDir);
-        if (!fs.existsSync(this.logsDir)) fs.mkdirSync(this.logsDir);
-        if (!fs.existsSync(this.tempDir)) fs.mkdirSync(this.tempDir);
+        if (!existsSync(this.assetsDir)) mkdirSync(this.assetsDir);
+        if (!existsSync(this.clientsDir)) mkdirSync(this.clientsDir);
+        if (!existsSync(this.librariesDir)) mkdirSync(this.librariesDir);
+        if (!existsSync(this.logsDir)) mkdirSync(this.logsDir);
+        if (!existsSync(this.tempDir)) mkdirSync(this.tempDir);
     }
 }
+
+// TODO delete logsDir, tempDir
+// TODO rework clients (assetsDir, clientsDir, librariesDir)

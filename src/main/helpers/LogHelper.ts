@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import * as fs from 'fs';
+import { appendFileSync } from 'fs';
 import { format } from 'util';
 
 import { StorageHelper } from './StorageHelper';
@@ -43,23 +43,20 @@ export class LogHelper {
     private static log(level: LogLevel, msg: any, ...args: any) {
         if (level === LogLevel.RAW) return this.rawLog(msg, ...args);
 
-        // Может отсутствовать локаль?
-        const date = new Date()
-            .toLocaleString('ru', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            })
-            .replace(/-/g, '.');
+        const date = new Date().toLocaleString('ru', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
 
         this.rawLog(`${date} [${level.toUpperCase()}] ${msg}`, ...args);
     }
 
     private static rawLog(msg: any, ...args: any) {
-        fs.appendFileSync(StorageHelper.logFile, format(msg, ...args) + '\n');
+        appendFileSync(StorageHelper.logFile, format(msg, ...args) + '\n');
     }
 }
 

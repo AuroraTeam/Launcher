@@ -1,31 +1,29 @@
-import * as fs from 'fs';
-import * as http from 'http';
-import * as https from 'https';
+import { createWriteStream, unlinkSync } from 'fs';
+import { get as httpGet } from 'http';
+import { get as httpsGet } from 'https';
 import { URL } from 'url';
 
 export class HttpHelper {
     /**
      * Скачивание файла
      * @param url - Объект Url, содержащий ссылку на файл
-     * @param path - Строка, содержащая путь файла для сохранения
+     * @param path - Строка, содержащая путь до сохраняемого файла
      * @returns Promise который вернёт true в случае успешного скачивания
      */
     static downloadFile(url: URL, path: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            const handler = url.protocol === 'https:' ? https : http;
-            const tempFile = fs.createWriteStream(path);
-            tempFile.on('close', () => {
+            const file = createWriteStream(path);
+            file.on('close', () => {
                 resolve(true);
             });
 
-            handler
-                .get(url, (res) => {
-                    res.pipe(tempFile);
-                })
-                .on('error', (err) => {
-                    fs.unlinkSync(path);
-                    reject(err);
-                });
+            const get = url.protocol === 'https:' ? httpsGet : httpGet;
+            get(url, (res) => {
+                res.pipe(file);
+            }).on('error', (err) => {
+                unlinkSync(path);
+                reject(err);
+            });
         });
     }
 }
