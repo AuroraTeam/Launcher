@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import * as path from 'path';
+import { join } from 'path';
 
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { window as windowConfig } from '@config';
@@ -7,26 +7,16 @@ import { window as windowConfig } from '@config';
 const isDev = process.env.DEV || false;
 
 export default class LauncherWindow {
-    mainWindow?: BrowserWindow;
+    private mainWindow?: BrowserWindow;
 
     /**
      * Launcher initialization
      */
     constructor() {
-        // quit application when all windows are closed
-        app.on('window-all-closed', () => {
-            // on macOS it is common for applications to stay open until the user explicitly quits
-            if (process.platform !== 'darwin') app.quit();
-        });
-
-        app.on('activate', () => {
-            // on macOS it is common to re-create a window even after all windows have been closed
-            if (this.mainWindow === null)
-                this.mainWindow = this.createMainWindow();
-        });
-
-        // create main window when electron is ready
-        app.on('ready', () => {
+        // This method will be called when Electron has finished
+        // initialization and is ready to create browser windows.
+        // Some APIs can only be used after this event occurs.
+        app.whenReady().then(() => {
             this.mainWindow = this.createMainWindow();
             if (isDev) {
                 installExtension(VUEJS_DEVTOOLS, {
@@ -39,6 +29,20 @@ export default class LauncherWindow {
                         console.log('An error occurred: ', err)
                     );
             }
+
+            app.on('activate', () => {
+                // On macOS it's common to re-create a window in the app when the
+                // dock icon is clicked and there are no other windows open.
+                if (BrowserWindow.getAllWindows().length === 0)
+                    this.mainWindow = this.createMainWindow();
+            });
+        });
+
+        // Quit when all windows are closed, except on macOS. There, it's common
+        // for applications and their menu bar to stay active until the user quits
+        // explicitly with Cmd + Q.
+        app.on('window-all-closed', () => {
+            if (process.platform !== 'darwin') app.quit();
         });
 
         // hide the main window when the minimize button is pressed
@@ -55,9 +59,9 @@ export default class LauncherWindow {
     /**
      * Create launcher window
      */
-    createMainWindow(): BrowserWindow {
+    private createMainWindow(): BrowserWindow {
         // creating and configuring a window
-        const launcherWindow = new BrowserWindow({
+        const mainWindow = new BrowserWindow({
             show: false, // Use 'ready-to-show' event to show window
             width: windowConfig.width || 900,
             height: windowConfig.height || 550,
@@ -66,23 +70,18 @@ export default class LauncherWindow {
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
             title: windowConfig.title || 'Aurora Launcher',
-            // icon: path.join(__dirname, '../renderer/logo.png'),
+            // icon: join(__dirname, '../renderer/logo.png'),
             webPreferences: {
-                preload: path.join(__dirname, '../preload/index.js'),
+                preload: join(__dirname, '../preload/index.js'),
                 sandbox: true,
             },
         });
 
         // loading renderer code (runtime)
-        if (isDev) {
-            launcherWindow.loadURL('http://localhost:3000');
-        } else {
-            launcherWindow.loadFile(
-                path.join(__dirname, '../renderer/index.html')
-            );
-        }
+        if (isDev) mainWindow.loadURL('http://localhost:3000');
+        else mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
 
-        launcherWindow.on('closed', () => {
+        mainWindow.on('closed', () => {
             this.mainWindow = undefined;
         });
 
@@ -92,25 +91,17 @@ export default class LauncherWindow {
          *
          * @see https://github.com/electron/electron/issues/25012
          */
-        launcherWindow.on('ready-to-show', () => {
-            launcherWindow?.show();
+        mainWindow.on('ready-to-show', () => {
+            mainWindow?.show();
 
             // open developer tools when using development mode
-            if (isDev) launcherWindow.webContents.openDevTools();
+            if (isDev) mainWindow.webContents.openDevTools();
         });
 
-        // focus on development tools when opening
-        launcherWindow.webContents.on('devtools-opened', () => {
-            launcherWindow.focus();
-            setImmediate(() => {
-                launcherWindow.focus();
-            });
-        });
-
-        return launcherWindow;
+        return mainWindow;
     }
 
-    sendEvent(channel: string, ...args: any[]): void {
+    public sendEvent(channel: string, ...args: any[]): void {
         this.mainWindow?.webContents.send(channel, ...args);
     }
 }
