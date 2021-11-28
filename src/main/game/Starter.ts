@@ -3,13 +3,13 @@ import { ipcMain, IpcMainEvent } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import { spawn } from 'child_process';
-import { App } from '..';
 import { gte, lte } from 'semver';
 import { Request } from 'aurora-api';
 import { StorageHelper } from '../helpers/StorageHelper';
 import { HttpHelper } from '../helpers/HttpHelper';
 import pMap from 'p-map';
 import { api as apiConfig } from '@config';
+import Launcher from 'main/core/Launcher';
 
 interface ClientArgs {
     // Auth params
@@ -33,15 +33,16 @@ interface ClientArgs {
 }
 
 // TODO БООООООЛЬШЕ РЕФАКТОРА, КОД ПОГРЯЗ В ГОВНЕ!!!
+// Я не знаю что делаю, ахахах (на самом деле у меня есть пару мыслей на счёт этого кода, реализую попозже)
 
 export default class Starter {
-    constructor() {
+    static setHandler(): void {
         ipcMain.on('startGame', (event, clientArgs) =>
-            this.startChain(event, clientArgs)
+            Starter.startChain(event, clientArgs)
         );
     }
 
-    async startChain(
+    static async startChain(
         event: IpcMainEvent,
         clientArgs: ClientArgs
     ): Promise<void> {
@@ -54,7 +55,10 @@ export default class Starter {
         await this.start(event, clientArgs);
     }
 
-    async start(event: IpcMainEvent, clientArgs: ClientArgs): Promise<void> {
+    static async start(
+        event: IpcMainEvent,
+        clientArgs: ClientArgs
+    ): Promise<void> {
         const clientDir = path.join(__dirname, 'clients', clientArgs.clientDir);
         const assetsDir = path.join(__dirname, 'assets', clientArgs.assetsDir);
 
@@ -80,7 +84,7 @@ export default class Starter {
                 }
             });
         } else {
-            App.window.sendEvent('textToConsole', 'classPath is empty');
+            Launcher.window.sendEvent('textToConsole', 'classPath is empty');
             console.error('classPath is empty');
             return;
         }
@@ -111,12 +115,12 @@ export default class Starter {
         });
 
         gameProccess.stdout.on('data', (data: Buffer) => {
-            App.window.sendEvent('textToConsole', data.toString());
+            Launcher.window.sendEvent('textToConsole', data.toString());
             console.log(data.toString());
         });
 
         gameProccess.stderr.on('data', (data: Buffer) => {
-            App.window.sendEvent('textToConsole', data.toString());
+            Launcher.window.sendEvent('textToConsole', data.toString());
             console.error(data.toString());
         });
 
@@ -126,13 +130,16 @@ export default class Starter {
         });
     }
 
-    async download(dir: string, type: 'assets' | 'client'): Promise<void> {
-        const hashes = await App.api.send('updates', { dir });
+    static async download(
+        dir: string,
+        type: 'assets' | 'client'
+    ): Promise<void> {
+        const hashes = await Launcher.api.send('updates', { dir });
         const parentDir =
             type == 'assets'
                 ? StorageHelper.assetsDir
                 : StorageHelper.clientsDir;
-        App.window.sendEvent('textToConsole', `Load ${type} files \n`);
+        Launcher.window.sendEvent('textToConsole', `Load ${type} files \n`);
 
         const fileHashes = (
             (hashes as Request).data as {
@@ -140,7 +147,7 @@ export default class Starter {
             }
         ).hashes;
         if (!fileHashes) {
-            App.window.sendEvent('textToConsole', `${type} not found`);
+            Launcher.window.sendEvent('textToConsole', `${type} not found`);
             console.error(`${type} not found`);
             throw undefined;
         }
@@ -160,11 +167,11 @@ export default class Starter {
                     ),
                     filePath
                 );
-                App.window.sendEvent(
+                Launcher.window.sendEvent(
                     'textToConsole',
                     `File ${hash.path} downloaded \n`
                 );
-                App.window.sendEvent('loadProgress', {
+                Launcher.window.sendEvent('loadProgress', {
                     total: totalSize,
                     loaded: (loaded += hash.size),
                 });
@@ -173,7 +180,10 @@ export default class Starter {
         );
     }
 
-    async hash(_event: IpcMainEvent, clientArgs: ClientArgs): Promise<void> {
+    static async hash(
+        _event: IpcMainEvent,
+        clientArgs: ClientArgs
+    ): Promise<void> {
         if (
             !fs.existsSync(
                 path.resolve(StorageHelper.assetsDir, clientArgs.assetsDir)
@@ -207,7 +217,7 @@ export default class Starter {
         return list;
     }
 
-    gameLauncher(
+    static gameLauncher(
         gameArgs: string[],
         clientArgs: ClientArgs,
         clientDir: string,
@@ -243,7 +253,7 @@ export default class Starter {
         }
     }
 
-    gameLauncherLegacy(
+    static gameLauncherLegacy(
         gameArgs: string[],
         clientArgs: ClientArgs,
         clientDir: string,

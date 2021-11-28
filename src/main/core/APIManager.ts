@@ -3,11 +3,10 @@ import { api as apiConfig } from '@config';
 import { ipcMain } from 'electron';
 
 export default class APIManager {
-    api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370');
-    tryConnect = false;
+    public readonly api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370');
+    private tryConnect = false;
 
     constructor() {
-        console.log(this.api.hasConnected());
         this.api.onOpen = () => (this.tryConnect = true);
         this.api.onError = () => (this.tryConnect = true);
 
