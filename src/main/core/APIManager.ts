@@ -2,6 +2,8 @@ import { AuroraAPI, Response, ResponseError } from 'aurora-api';
 import { api as apiConfig } from '@config';
 import { ipcMain } from 'electron';
 
+// TODO Подумать над реализацией корректной обработки запросов и отлова ошибок
+
 export default class APIManager {
     public readonly api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370');
     private tryConnect = false;
@@ -76,6 +78,12 @@ export default class APIManager {
             };
         }
     }
+
+    // TODO Доработать
+    public async getUpdates(dir: string): Promise<HashedFile[]> {
+        const { data } = <UpdatesResponse>await this.send('updates', { dir });
+        return data.hashes;
+    }
 }
 
 interface ServerResponse extends Response {
@@ -84,4 +92,14 @@ interface ServerResponse extends Response {
 
 interface ProfileResponse extends Response {
     data: { profile: any[] };
+}
+
+interface UpdatesResponse extends Response {
+    data: { hashes: HashedFile[] };
+}
+
+interface HashedFile {
+    path: string;
+    hashsum: string;
+    size: number;
 }
