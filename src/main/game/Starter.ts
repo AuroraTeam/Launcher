@@ -3,16 +3,12 @@ import { ipcMain, IpcMainEvent } from 'electron';
 import { join, delimiter } from 'path';
 import fs from 'fs';
 import { spawn } from 'child_process';
-import { gte, lte } from 'semver';
+import { coerce, gte, lte } from 'semver';
 import Launcher from 'main/core/Launcher';
 import ClientArgs from './IClientArgs';
 import Updater from './Updater';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import { LogHelper } from 'main/helpers/LogHelper';
-
-// TODO Проверить версии не соответствующие semver формату
-// UPD Можно прогонять версию перед сравнениями через semver.coerce()
-// Либо внести соглашение о формате версий (хотя хз)
 
 export default class Starter {
     static setHandler(): void {
@@ -41,14 +37,27 @@ export default class Starter {
         const clientDir = join(StorageHelper.clientsDir, clientArgs.clientDir);
         const assetsDir = join(StorageHelper.assetsDir, clientArgs.assetsDir);
 
+        const clientVersion = coerce(clientArgs.version);
+        if (clientVersion === null) {
+            Launcher.window.sendEvent(
+                'textToConsole',
+                'invalig client version'
+            );
+            LogHelper.error('invalig client version');
+            return;
+        }
+
         const gameArgs: string[] = [];
 
-        // TODO Проверить, можно ли вынести указание версии, папки клиента и ассетов сюда и не отъебнёт ли запуск на легаси
-        // (хотя параметры можно указать после блока if)
-        if (gte(clientArgs.version, '1.6.0')) {
-            this.gameLauncher(gameArgs, clientArgs, clientDir, assetsDir);
+        gameArgs.push('--version', clientArgs.version);
+        gameArgs.push('--gameDir', clientDir);
+        gameArgs.push('--assetsDir', assetsDir);
+
+        if (gte(clientVersion, '1.6.0')) {
+            this.gameLauncher(gameArgs, clientArgs, clientVersion.version);
         } else {
-            this.gameLauncherLegacy(gameArgs, clientArgs, clientDir, assetsDir);
+            gameArgs.push(clientArgs.username);
+            gameArgs.push(clientArgs.accessToken);
         }
 
         const librariesDirectory = join(clientDir, 'libraries');
@@ -125,48 +134,31 @@ export default class Starter {
     static gameLauncher(
         gameArgs: string[],
         clientArgs: ClientArgs,
-        clientDir: string,
-        assetsDir: string
+        clientVersion: string
     ): void {
         gameArgs.push('--username', clientArgs.username);
-        gameArgs.push('--version', clientArgs.version);
-        gameArgs.push('--gameDir', clientDir);
-        gameArgs.push('--assetsDir', assetsDir);
 
-        if (gte(clientArgs.version, '1.7.2')) {
+        if (gte(clientVersion, '1.7.2')) {
             gameArgs.push('--uuid', clientArgs.userUUID);
             gameArgs.push('--accessToken', clientArgs.accessToken);
 
-            if (gte(clientArgs.version, '1.7.3')) {
+            if (gte(clientVersion, '1.7.3')) {
                 gameArgs.push('--assetIndex', clientArgs.assetsIndex);
 
-                if (lte(clientArgs.version, '1.9.0')) {
+                if (lte(clientVersion, '1.9.0')) {
                     gameArgs.push('--userProperties', '{}');
                 }
             }
 
-            if (gte(clientArgs.version, '1.7.4')) {
+            if (gte(clientVersion, '1.7.4')) {
                 gameArgs.push('--userType', 'mojang');
             }
 
-            if (gte(clientArgs.version, '1.9.0')) {
+            if (gte(clientVersion, '1.9.0')) {
                 gameArgs.push('--versionType', 'AuroraLauncher v0.0.3');
             }
         } else {
             gameArgs.push('--session', clientArgs.accessToken);
         }
-    }
-
-    static gameLauncherLegacy(
-        gameArgs: string[],
-        clientArgs: ClientArgs,
-        clientDir: string,
-        assetsDir: string
-    ): void {
-        gameArgs.push(clientArgs.username);
-        gameArgs.push(clientArgs.accessToken);
-        gameArgs.push('--version', clientArgs.version);
-        gameArgs.push('--gameDir', clientDir);
-        gameArgs.push('--assetsDir', assetsDir);
     }
 }
