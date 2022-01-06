@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="block">
-            <img src="../assets/images/logo.png" />
-            <strong>Aurora Launcher</strong>
+            <img class="logo" src="../assets/images/logo.png" />
+            <div>Aurora Launcher</div>
             <p>
                 Введите логин и пароль,<br />
                 чтобы продолжить
@@ -81,7 +81,7 @@ h1
 .block
     width: 300px
     height: 450px
-    background-color: #454BDF
+    background-color: #454BDFdf
     border-radius: 10px
     position: absolute
     top: 50px
@@ -91,15 +91,18 @@ h1
     flex-direction: column
     align-items: center
     img
-        height: 160px
-    strong
+        height: 90px
+        margin-top: 34px
+        border-radius: 50%
+    div
         font-size: 24px
-        margin-top: 10px
+        margin-top: 20px
         text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
     p
-        margin: 20px 0
-        font-size: 13px
-        line-height: 16px
+        margin: 32px 0
+        font-size: 14px
+        line-height: 17px
+        text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
         text-align: center
         font-family: 'Roboto', sans-serif
     form
