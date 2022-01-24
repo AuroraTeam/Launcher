@@ -1,7 +1,7 @@
 <template>
     <div class="window">
         <div class="skinView">
-            <canvas ref="skinContainer"></canvas>
+            <SkinViewer />
         </div>
         <div class="serverList">
             <ServerButton
@@ -16,12 +16,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { SkinViewer, WalkingAnimation, createOrbitControls } from 'skinview3d';
 import ServerButton from '../components/ServerButton.vue';
+import SkinViewer from '../components/SkinViewer.vue';
 
 export default Vue.extend({
     components: {
         ServerButton,
+        SkinViewer,
     },
     data() {
         return {
@@ -44,24 +45,6 @@ export default Vue.extend({
                 maximum: 100,
             },
         }));
-
-        const skinViewer = new SkinViewer({
-            canvas: <HTMLCanvasElement>this.$refs.skinContainer,
-            width: 180,
-            height: 360,
-            skin: 'runtime/assets/images/steve.png',
-        });
-
-        skinViewer.camera.position.x = -25;
-        skinViewer.camera.position.y = 18;
-        skinViewer.camera.position.z = 46;
-
-        let run = skinViewer.animations.add(WalkingAnimation);
-        run.speed = 0.75;
-
-        const control = createOrbitControls(skinViewer);
-        control.enableRotate = false;
-        control.enableZoom = false;
     },
 });
 </script>
@@ -75,8 +58,6 @@ export default Vue.extend({
 .skinView
     display: flex
     justify-content: center
-    canvas:focus
-        outline: 0
 .serverList
     height: 400px
     margin: 36px 48px 74px 0
