@@ -5,12 +5,15 @@ import { StorageHelper } from '../helpers/StorageHelper';
 import Starter from 'main/game/Starter';
 
 export default class Launcher {
-    static readonly window = new LauncherWindow();
-    static readonly api = new APIManager();
+    public static readonly window = new LauncherWindow();
+    public static readonly api = new APIManager();
+    private static isInitialized = false;
 
     constructor() {
+        if (Launcher.isInitialized) return;
         Starter.setHandler();
         StorageHelper.createMissing();
         LogHelper.info('Launcher started');
+        Launcher.isInitialized = true;
     }
 }
