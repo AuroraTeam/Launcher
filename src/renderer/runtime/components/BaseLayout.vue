@@ -1,8 +1,8 @@
 <template>
-    <div id="app">
+    <main>
         <title-bar />
         <router-view :class="`main ${inactive ? 'inactive' : ''}`" />
-    </div>
+    </main>
 </template>
 
 <style lang="sass" scoped>

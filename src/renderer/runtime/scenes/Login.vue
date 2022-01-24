@@ -92,14 +92,15 @@ h1
     align-items: center
     img
         height: 90px
-        margin-top: 34px
+        margin-top: 35px
         border-radius: 50%
+        filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))
     div
         font-size: 24px
         margin-top: 20px
         text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
     p
-        margin: 32px 0
+        margin: 25px 0 30px
         font-size: 14px
         line-height: 17px
         text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
@@ -121,8 +122,11 @@ h1
         font-family: 'Roboto', sans-serif
         outline: 0
         color: #fff
-    input::placeholder
-        color: #fff
+        &::placeholder
+            color: #fff
+        &:hover, &:focus
+            &::placeholder
+                color: #ddd
     button
         width: 194px
         height: 35px
@@ -134,4 +138,6 @@ h1
         outline: 0
         color: #fff
         box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.25)
+        &:hover
+            box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25)
 </style>
