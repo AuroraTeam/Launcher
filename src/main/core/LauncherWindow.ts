@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
+import logo from '../../renderer/runtime/assets/images/logo.png';
 
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { window as windowConfig } from '@config';
@@ -70,7 +71,7 @@ export default class LauncherWindow {
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
             title: windowConfig.title || 'Aurora Launcher',
-            // icon: join(__dirname, '../renderer/logo.png'),
+            icon: join(__dirname, logo), // TODO Check no img (maybe use mainWindow.setIcon())
             webPreferences: {
                 preload: join(__dirname, '../preload/index.js'),
                 sandbox: true,
