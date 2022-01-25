@@ -19,7 +19,7 @@ Vue.use(VueRouter);
 Vue.use(VueSweetalert2);
 Vue.config.devtools = true;
 
-export const Launcher = new Vue({
+new Vue({
     el: '#app',
     router: new VueRouter({ routes }),
     render: (h) => h(BaseLayout),

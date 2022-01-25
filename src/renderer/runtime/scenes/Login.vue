@@ -1,22 +1,16 @@
 <template>
-    <div>
-        <div class="block">
-            <img class="logo" src="../assets/images/logo.png" />
-            <div>Aurora Launcher</div>
-            <p>
-                Введите логин и пароль,<br />
-                чтобы продолжить
-            </p>
-            <form @submit.prevent="auth()">
-                <input type="text" placeholder="Логин" v-model="login" />
-                <input
-                    type="password"
-                    placeholder="Пароль"
-                    v-model="password"
-                />
-                <button>Войти</button>
-            </form>
-        </div>
+    <div class="block">
+        <img class="logo" src="../assets/images/logo.png" />
+        <div>Aurora Launcher</div>
+        <p>
+            Введите логин и пароль,<br />
+            чтобы продолжить
+        </p>
+        <form @submit.prevent="auth()">
+            <input type="text" placeholder="Логин" v-model="login" />
+            <input type="password" placeholder="Пароль" v-model="password" />
+            <button>Войти</button>
+        </form>
     </div>
 </template>
 
@@ -58,9 +52,9 @@ export default Vue.extend({
             } else {
                 this.$root.$emit('setUser', auth.username);
                 this.$root.$emit('showUser');
-                localStorage.setItem('username', auth.username);
-                localStorage.setItem('userUUID', auth.userUUID);
-                localStorage.setItem('accessToken', auth.accessToken);
+                localStorage.setItem('username', auth.username); // @deprecated
+                localStorage.setItem('userUUID', auth.userUUID); // @deprecated
+                localStorage.setItem('accessToken', auth.accessToken); // @deprecated
                 this.$router.push('server-list');
             }
         },
