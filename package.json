@@ -32,7 +32,7 @@
     "copy-webpack-plugin": "^8.1.0",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.0",
-    "electron": "^12.0.2",
+    "electron": "^13.6.6",
     "electron-devtools-installer": "git+https://github.com/MarshallOfSound/electron-devtools-installer.git#9fad2da5a6961c80f83fc9d1ca601af59a1ae37a",
     "electron-packager": "^15.2.0",
     "file-loader": "^6.2.0",
