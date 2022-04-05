@@ -1,3 +1,45 @@
+<script setup lang="ts">
+// import Swal from 'sweetalert2';
+import { ref } from 'vue';
+
+interface AuthResult {
+    error: string;
+    username: string;
+    userUUID: string;
+    accessToken: string;
+}
+
+const login = ref('');
+const password = ref('');
+
+async function auth() {
+    //     // Валидацию можно делать как хошш))
+    //     if (this.login.length < 4)
+    //         return this.showError('Логин должен быть не менее 4-ёх символов');
+    //     if (this.password.length < 8)
+    //         return this.showError('Пароль должен быть не менее 8-ми символов');
+    //     const auth: AuthResult = await launcherAPI.auth(this.login, this.password);
+    //     if (auth.error !== undefined) {
+    //         this.showError(auth.error);
+    //     } else {
+    //         this.$root.$emit('setUser', auth.username);
+    //         this.$root.$emit('showUser');
+    //         localStorage.setItem('username', auth.username); // @deprecated
+    //         localStorage.setItem('userUUID', auth.userUUID); // @deprecated
+    //         localStorage.setItem('accessToken', auth.accessToken); // @deprecated
+    //         this.$router.push('server-list');
+    //     }
+}
+
+// function showError(message: string) {
+//     Swal.fire({
+//         title: 'Error!',
+//         text: message,
+//         icon: 'error',
+//     });
+// }
+</script>
+
 <template>
     <div class="block">
         <img class="logo" src="../assets/images/logo.png" />
@@ -13,61 +55,6 @@
         </form>
     </div>
 </template>
-
-<script lang="ts">
-import Vue from 'vue';
-
-interface AuthResult {
-    error: string;
-    username: string;
-    userUUID: string;
-    accessToken: string;
-}
-
-export default Vue.extend({
-    data() {
-        return {
-            login: '',
-            password: '',
-        };
-    },
-    methods: {
-        async auth() {
-            // Валидацию можно делать как хошш))
-            if (this.login.length < 4)
-                return this.showError(
-                    'Логин должен быть не менее 4-ёх символов'
-                );
-            if (this.password.length < 8)
-                return this.showError(
-                    'Пароль должен быть не менее 8-ми символов'
-                );
-
-            const auth: AuthResult = await launcherAPI.auth(
-                this.login,
-                this.password
-            );
-            if (auth.error !== undefined) {
-                this.showError(auth.error);
-            } else {
-                this.$root.$emit('setUser', auth.username);
-                this.$root.$emit('showUser');
-                localStorage.setItem('username', auth.username); // @deprecated
-                localStorage.setItem('userUUID', auth.userUUID); // @deprecated
-                localStorage.setItem('accessToken', auth.accessToken); // @deprecated
-                this.$router.push('server-list');
-            }
-        },
-        showError(message: string) {
-            this.$swal({
-                title: 'Error!',
-                text: message,
-                icon: 'error',
-            });
-        },
-    },
-});
-</script>
 
 <style lang="sass" scoped>
 h1
