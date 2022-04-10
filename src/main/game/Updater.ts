@@ -6,12 +6,12 @@ import pMap from 'p-map';
 import { join, dirname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { api as apiConfig } from '@config';
-import ClientArgs from './IClientArgs';
+import { ClientArgs } from './IClientArgs';
 import { LogHelper } from 'main/helpers/LogHelper';
 
 type DirType = 'Assets' | 'Client'; // Enum?
 
-export default class Updater {
+export class Updater {
     static async checkClient(
         _event: IpcMainEvent,
         clientArgs: ClientArgs

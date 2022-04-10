@@ -1,4 +1,4 @@
-export default interface ClientArgs {
+export interface ClientArgs {
     // Auth params
     username: string;
     userUUID: string;

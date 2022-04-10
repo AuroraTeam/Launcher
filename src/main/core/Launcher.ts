@@ -1,10 +1,10 @@
-import LauncherWindow from './LauncherWindow';
-import APIManager from './APIManager';
+import { LauncherWindow } from './LauncherWindow';
+import { APIManager } from './APIManager';
 import { LogHelper } from '../helpers/LogHelper';
 import { StorageHelper } from '../helpers/StorageHelper';
-import Starter from 'main/game/Starter';
+import { Starter } from 'main/game/Starter';
 
-export default class Launcher {
+export class Launcher {
     public static readonly window = new LauncherWindow();
     public static readonly api = new APIManager();
     private static isInitialized = false;

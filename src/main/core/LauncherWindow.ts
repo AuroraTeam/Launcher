@@ -7,7 +7,7 @@ import { window as windowConfig } from '@config';
 
 const isDev = process.env.DEV === 'true' || false;
 
-export default class LauncherWindow {
+export class LauncherWindow {
     private mainWindow?: BrowserWindow;
 
     /**

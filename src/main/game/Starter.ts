@@ -4,13 +4,13 @@ import { join, delimiter } from 'path';
 import fs from 'fs';
 import { spawn } from 'child_process';
 import { coerce, gte, lte } from 'semver';
-import Launcher from 'main/core/Launcher';
-import ClientArgs from './IClientArgs';
-import Updater from './Updater';
+import { Launcher } from 'main/core/Launcher';
+import { ClientArgs } from './IClientArgs';
+import { Updater } from './Updater';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import { LogHelper } from 'main/helpers/LogHelper';
 
-export default class Starter {
+export class Starter {
     static setHandler(): void {
         ipcMain.on('startGame', (event, clientArgs) =>
             Starter.startGame(event, clientArgs)

@@ -4,7 +4,7 @@ import { ipcMain } from 'electron';
 
 // TODO Подумать над реализацией корректной обработки запросов и отлова ошибок
 
-export default class APIManager {
+export class APIManager {
     public readonly api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370', {
         onOpen: () => (this.tryConnect = true),
         onError: () => (this.tryConnect = true),

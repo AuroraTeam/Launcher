@@ -1,2 +1,2 @@
-import Launcher from './core/Launcher';
+import { Launcher } from './core/Launcher';
 new Launcher();
