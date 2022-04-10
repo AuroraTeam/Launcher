@@ -6,6 +6,7 @@ const toDir = (dir: string) => join(__dirname, dir);
 
 export default defineConfig({
     root: toDir('src/renderer'),
+    cacheDir: toDir('node_modules/.vite'),
     base: '',
     build: {
         sourcemap: true,

@@ -2,6 +2,11 @@
 <html lang="ru">
     <head>
         <meta charset="UTF-8" />
+        <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self'; style-src 'unsafe-inline'; style-src-elem 'unsafe-inline' fonts.googleapis.com; font-src 'unsafe-inline' fonts.gstatic.com"
+        />
     </head>
     <body>
         <div id="app">

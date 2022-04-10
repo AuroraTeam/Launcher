@@ -5,7 +5,7 @@ import logo from '../../renderer/runtime/assets/images/logo.png';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { window as windowConfig } from '@config';
 
-const isDev = process.env.DEV || false;
+const isDev = process.env.DEV === 'true' || false;
 
 export default class LauncherWindow {
     private mainWindow?: BrowserWindow;
@@ -74,7 +74,7 @@ export default class LauncherWindow {
             icon: join(__dirname, logo), // TODO Check no img (maybe use mainWindow.setIcon())
             webPreferences: {
                 preload: join(__dirname, '../preload/index.js'),
-                sandbox: true,
+                devTools: isDev,
             },
         });
 
