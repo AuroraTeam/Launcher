@@ -5,10 +5,13 @@ import { ipcMain } from 'electron';
 // TODO Подумать над реализацией корректной обработки запросов и отлова ошибок
 
 export class APIManager {
-    public readonly api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370', {
-        onOpen: () => (this.tryConnect = true),
-        onError: () => (this.tryConnect = true),
-    });
+    private readonly api = new AuroraAPI(
+        apiConfig.ws || 'ws://localhost:1370',
+        {
+            onOpen: () => (this.tryConnect = true),
+            onError: () => (this.tryConnect = true),
+        }
+    );
     private tryConnect = false;
 
     constructor() {

@@ -1,5 +1,5 @@
 import { IpcMainEvent } from 'electron/main';
-import Launcher from 'main/core/Launcher';
+import { Launcher } from 'main/core/Launcher';
 import { HttpHelper } from 'main/helpers/HttpHelper';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import pMap from 'p-map';
