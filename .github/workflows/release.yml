@@ -2,7 +2,7 @@ name: Release Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   release:
@@ -34,11 +34,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            build_os: "linux"
+            build_os: 'linux'
           - os: windows-latest
-            build_os: "win32"
+            build_os: 'win32'
           - os: macos-latest
-            build_os: "darwin"
+            build_os: 'darwin'
 
     steps:
       - uses: actions/checkout@v2
@@ -53,6 +53,9 @@ jobs:
 
       - name: Build Launcher
         run: npm run build
+
+      - name: Copy package.json
+        run: cp src/package.json build/package.json
 
       - name: Pack Launcher
         run: npm run pack

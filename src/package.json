@@ -1,0 +1,6 @@
+{
+    "name": "aurora-launcher",
+    "version": "0.0.3",
+    "description": "Launcher for Minecraft",
+    "main": "main/index.js"
+}
