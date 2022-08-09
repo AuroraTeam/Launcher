@@ -5,7 +5,7 @@ import logo from '../../renderer/runtime/assets/images/logo.png';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { window as windowConfig } from '@config';
 
-const isDev = process.env.DEV === 'true' || false;
+const isDev = process.env.DEV === 'true';
 
 export class LauncherWindow {
     private mainWindow?: BrowserWindow;

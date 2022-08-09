@@ -4,6 +4,8 @@ import { format } from 'util';
 
 import { StorageHelper } from './StorageHelper';
 
+// TODO Replace logger with winston / pino ?
+
 export class LogHelper {
     static readonly isDevEnabled = process.argv.includes('--dev');
     static readonly isDebugEnabled =
