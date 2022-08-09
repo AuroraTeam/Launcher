@@ -5,6 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { SkinViewer, WalkingAnimation, createOrbitControls } from 'skinview3d';
+import defaultSkin from '../assets/images/steve.png';
 
 export default Vue.extend({
     props: ['url'],
@@ -13,7 +14,7 @@ export default Vue.extend({
             canvas: <HTMLCanvasElement>this.$refs.skinContainer,
             width: 180,
             height: 360,
-            skin: this.url || 'runtime/assets/images/steve.png',
+            skin: this.url || defaultSkin,
         });
 
         skinViewer.camera.position.x = -25;
