@@ -1,239 +1,164 @@
-import { ipcMain, IpcMainEvent } from "electron"
+import { ipcMain, IpcMainEvent } from 'electron';
 
-import * as path from "path"
-import * as fs from "fs"
-import { spawn } from "child_process"
-import { App } from ".."
-import { gte } from "semver"
-import { Request } from "aurora-api"
-import { StorageHelper } from "../helpers/StorageHelper"
-import { HttpHelper } from "../helpers/HttpHelper"
-import pMap from "p-map"
-const api = require("@config").api
+import { join, delimiter } from 'path';
+import fs from 'fs';
+import { spawn } from 'child_process';
+import { coerce, gte, lte } from 'semver';
+import { Launcher } from 'main/core/Launcher';
+import { ClientArgs } from './IClientArgs';
+import { Updater } from './Updater';
+import { StorageHelper } from 'main/helpers/StorageHelper';
+import { LogHelper } from 'main/helpers/LogHelper';
 
-interface ClientArgs {
-    // Auth params
-    username: string
-    userUUID: string
-    accessToken: string
-
-    // Client
-    version: string
-    clientDir: string
-
-    // Assets
-    assetsIndex: string
-    assetsDir: string
-
-    // Launch client
-    mainClass: string
-    classPath: string[]
-    jvmArgs: string[]
-    clientArgs: string[]
-}
-
-// TODO БООООООЛЬШЕ РЕФАКТОРА, КОД ПОГРЯЗ В ГОВНЕ!!!
-
-export default class Starter {
-    constructor() {
-        ipcMain.on("startGame", (event, clientArgs) =>
-            this.startChain(event, clientArgs)
-        )
+export class Starter {
+    static setHandler(): void {
+        ipcMain.on('startGame', (event, clientArgs) =>
+            Starter.startGame(event, clientArgs)
+        );
     }
 
-    async startChain(event: IpcMainEvent, clientArgs: ClientArgs) {
+    static async startGame(
+        event: IpcMainEvent,
+        clientArgs: ClientArgs
+    ): Promise<void> {
         try {
-            await this.hash(event, clientArgs)
-        } catch (error) {
-            return event.reply("stopGame")
+            await Updater.checkClient(event, clientArgs);
+        } catch (_) {
+            event.reply('stopGame');
+            return;
         }
-        await this.start(event, clientArgs)
+        await this.start(event, clientArgs);
     }
 
-    async start(event: IpcMainEvent, clientArgs: ClientArgs) {
-        const clientDir = path.join(__dirname, "clients", clientArgs.clientDir)
-        const assetsDir = path.join(__dirname, "assets", clientArgs.assetsDir)
+    static async start(
+        event: IpcMainEvent,
+        clientArgs: ClientArgs
+    ): Promise<void> {
+        const clientDir = join(StorageHelper.clientsDir, clientArgs.clientDir);
+        const assetsDir = join(StorageHelper.assetsDir, clientArgs.assetsDir);
 
-        const gameArgs: string[] = []
-
-        if (gte(clientArgs.version, "1.6.0")) {
-            this.gameLauncher(gameArgs, clientArgs, clientDir, assetsDir)
-        } else {
-            this.gameLauncherLegacy(gameArgs, clientArgs, clientDir, assetsDir)
+        const clientVersion = coerce(clientArgs.version);
+        if (clientVersion === null) {
+            Launcher.window.sendEvent(
+                'textToConsole',
+                'invalig client version'
+            );
+            LogHelper.error('invalig client version');
+            return;
         }
 
-        const librariesDirectory = path.join(clientDir, "libraries")
-        const nativesDirectory = path.join(clientDir, "natives")
+        const gameArgs: string[] = [];
 
-        const classpath: string[] = []
+        gameArgs.push('--version', clientArgs.version);
+        gameArgs.push('--gameDir', clientDir);
+        gameArgs.push('--assetsDir', assetsDir);
+
+        if (gte(clientVersion, '1.6.0')) {
+            this.gameLauncher(gameArgs, clientArgs, clientVersion.version);
+        } else {
+            gameArgs.push(clientArgs.username);
+            gameArgs.push(clientArgs.accessToken);
+        }
+
+        const librariesDirectory = join(clientDir, 'libraries');
+        const nativesDirectory = join(clientDir, 'natives');
+
+        const classPath: string[] = [];
         if (clientArgs.classPath !== undefined) {
-            clientArgs.classPath.forEach(fileName => {
-                const filePath = path.join(clientDir, fileName)
+            clientArgs.classPath.forEach((fileName) => {
+                const filePath = join(clientDir, fileName);
                 if (fs.statSync(filePath).isDirectory()) {
-                    classpath.push(...Starter.scanDir(librariesDirectory))
+                    classPath.push(...this.scanDir(librariesDirectory));
                 } else {
-                    classpath.push(filePath)
+                    classPath.push(filePath);
                 }
-            })
+            });
         } else {
-            App.window.sendEvent("textToConsole", "classPath is empty")
-            console.error("classPath is empty")
-            return
+            Launcher.window.sendEvent('textToConsole', 'classPath is empty');
+            LogHelper.error('classPath is empty');
+            return;
         }
 
-        const jvmArgs = []
+        const jvmArgs = [];
 
-        jvmArgs.push(`-Djava.library.path=${nativesDirectory}`)
+        // TODO Убрать костыль
+        // jvmArgs.push(
+        //     '-javaagent:../../authlib-injector.jar=http://localhost:1370'
+        // );
+
+        jvmArgs.push(`-Djava.library.path=${nativesDirectory}`);
 
         if (clientArgs.jvmArgs?.length > 0) {
-            jvmArgs.push(...clientArgs.jvmArgs)
+            jvmArgs.push(...clientArgs.jvmArgs);
         }
 
-        jvmArgs.push("-cp", classpath.join(path.delimiter))
-        jvmArgs.push(clientArgs.mainClass)
+        jvmArgs.push('-cp', classPath.join(delimiter));
+        jvmArgs.push(clientArgs.mainClass);
 
-        jvmArgs.push(...gameArgs)
+        jvmArgs.push(...gameArgs);
         if (clientArgs.clientArgs?.length > 0) {
-            jvmArgs.push(...clientArgs.clientArgs)
+            jvmArgs.push(...clientArgs.clientArgs);
         }
 
-        const gameProccess = spawn("java", jvmArgs, {
-            cwd: clientDir
-        })
+        const gameProccess = spawn('java', jvmArgs, {
+            cwd: clientDir,
+        });
 
-        gameProccess.stdout.on("data", (data: Buffer) => {
-            App.window.sendEvent("textToConsole", data.toString())
-            console.log(data.toString())
-        })
+        gameProccess.stdout.on('data', (data: Buffer) => {
+            Launcher.window.sendEvent('textToConsole', data.toString());
+            LogHelper.info(data.toString());
+        });
 
-        gameProccess.stderr.on("data", (data: Buffer) => {
-            App.window.sendEvent("textToConsole", data.toString())
-            console.error(data.toString())
-        })
+        gameProccess.stderr.on('data', (data: Buffer) => {
+            Launcher.window.sendEvent('textToConsole', data.toString());
+            LogHelper.error(data.toString());
+        });
 
-        gameProccess.on("close", () => {
-            event.reply("stopGame")
-            console.log("game stop")
-        })
+        gameProccess.on('close', () => {
+            event.reply('stopGame');
+            LogHelper.info('Game stop');
+        });
     }
 
-    async download(dir: string, type: "assets" | "client") {
-        const hashes = await App.api.send("updates", { dir })
-        let parentDir =
-            type == "assets"
-                ? StorageHelper.assetsDir
-                : StorageHelper.clientsDir
-        App.window.sendEvent("textToConsole", `Load ${type} files \n`)
-
-        const fileHashes = ((hashes as Request).data as {
-            hashes: any[]
-        }).hashes
-        if (!fileHashes) {
-            App.window.sendEvent("textToConsole", `${type} not found`)
-            console.error(`${type} not found`)
-            throw undefined
-        }
-        fileHashes.sort((a, b) => b.size - a.size)
-        const totalSize = fileHashes.reduce((p, c) => p + c.size, 0)
-        let loaded = 0
-
-        await pMap(
-            fileHashes,
-            async hash => {
-                const filePath = path.join(parentDir, hash.path)
-                fs.mkdirSync(path.dirname(filePath), { recursive: true })
-                await HttpHelper.downloadFile(
-                    new URL(hash.path.replace("\\", "/"), api.fileUrl),
-                    filePath
-                )
-                App.window.sendEvent(
-                    "textToConsole",
-                    `File ${hash.path} downloaded \n`
-                )
-                App.window.sendEvent("loadProgress", {
-                    total: totalSize,
-                    loaded: loaded += hash.size
-                })
-            },
-            { concurrency: 4 }
-        )
-    }
-
-    async hash(_event: IpcMainEvent, clientArgs: ClientArgs) {
-        if (
-            !fs.existsSync(
-                path.resolve(StorageHelper.assetsDir, clientArgs.assetsDir)
-            )
-        ) {
-            await this.download(clientArgs.assetsDir, "assets")
-        } else {
-            // Здесь должен быть код, который будет проверять хеш файлов
-        }
-
-        if (
-            !fs.existsSync(
-                path.resolve(StorageHelper.clientsDir, clientArgs.clientDir)
-            )
-        ) {
-            await this.download(clientArgs.clientDir, "client")
-        } else {
-            // И здесь тоже
-        }
-        return // Проверка хешей файлов, подобую хрень ещё нужно в дирвотчер кинуть
-    }
-
-    static scanDir(dir: string, list: string[] = []): string[] {
+    private static scanDir(dir: string, list: string[] = []): string[] {
         if (fs.statSync(dir).isDirectory()) {
             for (const fdir of fs.readdirSync(dir)) {
-                this.scanDir(path.resolve(dir, fdir), list)
+                this.scanDir(join(dir, fdir), list);
             }
         } else {
-            list.push(dir)
+            list.push(dir);
         }
-        return list
+        return list;
     }
 
-    gameLauncher(
+    static gameLauncher(
         gameArgs: string[],
         clientArgs: ClientArgs,
-        clientDir: string,
-        assetsDir: string
-    ) {
-        gameArgs.push("--username", clientArgs.username)
-        gameArgs.push("--version", clientArgs.version)
-        gameArgs.push("--gameDir", clientDir)
-        gameArgs.push("--assetsDir", assetsDir)
+        clientVersion: string
+    ): void {
+        gameArgs.push('--username', clientArgs.username);
 
-        if (gte(clientArgs.version, "1.7.2")) {
-            gameArgs.push("--uuid", clientArgs.userUUID)
-            gameArgs.push("--accessToken", clientArgs.accessToken)
+        if (gte(clientVersion, '1.7.2')) {
+            gameArgs.push('--uuid', clientArgs.userUUID);
+            gameArgs.push('--accessToken', clientArgs.accessToken);
 
-            if (gte(clientArgs.version, "1.7.3")) {
-                gameArgs.push("--assetIndex", clientArgs.assetsIndex)
+            if (gte(clientVersion, '1.7.3')) {
+                gameArgs.push('--assetIndex', clientArgs.assetsIndex);
+
+                if (lte(clientVersion, '1.9.0')) {
+                    gameArgs.push('--userProperties', '{}');
+                }
             }
 
-            if (gte(clientArgs.version, "1.7.4")) {
-                gameArgs.push("--userType", "mojang")
+            if (gte(clientVersion, '1.7.4')) {
+                gameArgs.push('--userType', 'mojang');
             }
 
-            if (gte(clientArgs.version, "1.9.0")) {
-                gameArgs.push("--versionType", "AuroraLauncher v0.1.0")
+            if (gte(clientVersion, '1.9.0')) {
+                gameArgs.push('--versionType', 'AuroraLauncher v0.0.3');
             }
         } else {
-            gameArgs.push("--session", clientArgs.accessToken)
+            gameArgs.push('--session', clientArgs.accessToken);
         }
-    }
-
-    gameLauncherLegacy(
-        gameArgs: string[],
-        clientArgs: ClientArgs,
-        clientDir: string,
-        assetsDir: string
-    ) {
-        gameArgs.push(clientArgs.username)
-        gameArgs.push(clientArgs.accessToken)
-        gameArgs.push("--version", clientArgs.version)
-        gameArgs.push("--gameDir", clientDir)
-        gameArgs.push("--assetsDir", assetsDir)
     }
 }

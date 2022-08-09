@@ -1,18 +1,19 @@
-import LauncherWindow from "./LauncherWindow"
-import APIManager from "./APIManager"
-import RuntimeManager from "./RuntimeManager"
-import { LogHelper } from "../helpers/LogHelper"
-import { StorageHelper } from "../helpers/StorageHelper"
+import { LauncherWindow } from './LauncherWindow';
+import { APIManager } from './APIManager';
+import { LogHelper } from '../helpers/LogHelper';
+import { StorageHelper } from '../helpers/StorageHelper';
+import { Starter } from 'main/game/Starter';
 
-export default class Launcher {
-    window: LauncherWindow
-    api: APIManager
+export class Launcher {
+    public static readonly window = new LauncherWindow();
+    public static readonly api = new APIManager();
+    private static isInitialized = false;
 
     constructor() {
-        this.window = new LauncherWindow()
-        this.api = new APIManager()
-        new RuntimeManager()
-        StorageHelper.createMissing()
-        LogHelper.info('Launcher started')
+        if (Launcher.isInitialized) return;
+        Starter.setHandler();
+        StorageHelper.createMissing();
+        LogHelper.info('Launcher started');
+        Launcher.isInitialized = true;
     }
 }

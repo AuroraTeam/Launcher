@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es2017",
-        "module": "esnext",
+        "target": "ES2020",
+        "module": "ES2020",
         "moduleResolution": "node",
         "strict": true,
         "noUnusedLocals": true,
@@ -9,19 +9,17 @@
         "noImplicitReturns": true,
         "inlineSources": true,
         "sourceMap": true,
+        "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "newLine": "lf",
         "noEmitOnError": true,
         "baseUrl": "src",
         "paths": {
-            "@config": ["config.json"],
-            "@Launcher": ["renderer/index.ts"],
-            "@runtime/*": ["renderer/runtime/*"],
-            "@scripts/*": ["renderer/scripts/*"]
-        }
+            "@config": ["../config.json"],
+        },
+        "types": [
+            "vue-sweetalert2"
+        ]
     },
-    "types": [
-        "vue-sweetalert2"
-    ],
 }

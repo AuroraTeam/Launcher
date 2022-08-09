@@ -1,9 +1,8 @@
 <template>
-    <div id="app">
-        <title-bar/>
-        <!-- <router-view class="main inactive"/> -->
-        <router-view class="main"/>
-    </div>
+    <main>
+        <title-bar />
+        <router-view :class="`main ${inactive ? 'inactive' : ''}`" />
+    </main>
 </template>
 
 <style lang="sass" scoped>
@@ -12,27 +11,36 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue'
-import { ipcRenderer } from 'electron'
-import TitleBar from './TitleBar.vue'
+import Vue from 'vue';
+import TitleBar from './TitleBar.vue';
 
-import '../assets/sass/main.sass'
+import '../assets/sass/main.sass';
 
 export default Vue.extend({
     components: {
-        TitleBar
+        TitleBar,
     },
-    mounted() {
-        ipcRenderer.on('apiConnectSuccess', (_e, message: string) => {
-            // document.querySelector('.inactive')?.classList.remove('inactive')
-        })
-        ipcRenderer.on('apiConnectError', (_e, message: string) => {
-            this.$swal({
-                title: 'Error!',
-                text: message,
-                icon: 'error'
-            })
-        })
-    }
-})
+    data() {
+        return {
+            inactive: true,
+        };
+    },
+    // TODO Доработать
+    async mounted() {
+        switch (await launcherAPI.api.getStatus()) {
+            case 'connected':
+                this.inactive = false;
+                break;
+            case 'connecting':
+                break;
+            case 'failure':
+                console.log('apiConnectError');
+                this.$swal({
+                    title: 'Ошибка подключения!',
+                    text: 'Сервер не доступен',
+                    icon: 'error',
+                });
+        }
+    },
+});
 </script>

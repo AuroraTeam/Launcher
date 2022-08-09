@@ -1,110 +1,108 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
-import * as path from 'path'
-import { format as formatUrl } from 'url'
-const windowConfig = require('@config').window
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { join } from 'path';
+import logo from '../../renderer/runtime/assets/images/logo.png';
 
-// Пока не обновили пакет и не завезли новые тайпинги - костылим через require)) 
-// import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
-const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer')
+import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import { window as windowConfig } from '@config';
 
-export default class LauncherWindow {
-    mainWindow: BrowserWindow | null = null
+const isDev = process.env.DEV === 'true';
+
+export class LauncherWindow {
+    private mainWindow?: BrowserWindow;
 
     /**
      * Launcher initialization
      */
     constructor() {
-        // quit application when all windows are closed
-        app.on('window-all-closed', () => {
-            // on macOS it is common for applications to stay open until the user explicitly quits
-            if (process.platform !== 'darwin') {
-                app.quit()
-            }
-        })
-
-        app.on('activate', () => {
-            // on macOS it is common to re-create a window even after all windows have been closed
-            if (this.mainWindow === null) {
-                this.mainWindow = this.createMainWindow()
-            }
-        })
-
-        // create main window when electron is ready
-        app.on('ready', () => {
-            this.mainWindow = this.createMainWindow()
-            if (process.env.DEV || false) {
+        // This method will be called when Electron has finished
+        // initialization and is ready to create browser windows.
+        // Some APIs can only be used after this event occurs.
+        app.whenReady().then(() => {
+            this.mainWindow = this.createMainWindow();
+            if (isDev) {
                 installExtension(VUEJS_DEVTOOLS, {
                     loadExtensionOptions: { allowFileAccess: true },
                 })
-                .then((name: any) => console.log(`Added Extension:  ${name}`))
-                .catch((err: any) => console.log('An error occurred: ', err));
+                    .then((name: any) =>
+                        console.log(`Added Extension: ${name}`)
+                    )
+                    .catch((err: any) =>
+                        console.log('An error occurred: ', err)
+                    );
             }
-        })
+
+            app.on('activate', () => {
+                // On macOS it's common to re-create a window in the app when the
+                // dock icon is clicked and there are no other windows open.
+                if (BrowserWindow.getAllWindows().length === 0)
+                    this.mainWindow = this.createMainWindow();
+            });
+        });
+
+        // Quit when all windows are closed, except on macOS. There, it's common
+        // for applications and their menu bar to stay active until the user quits
+        // explicitly with Cmd + Q.
+        app.on('window-all-closed', () => {
+            if (process.platform !== 'darwin') app.quit();
+        });
 
         // hide the main window when the minimize button is pressed
         ipcMain.on('window-hide', () => {
-            this.mainWindow?.minimize()
-        })
+            this.mainWindow?.minimize();
+        });
 
         // close the main window when the close button is pressed
         ipcMain.on('window-close', () => {
-            this.mainWindow?.close()
-        })
+            this.mainWindow?.close();
+        });
     }
 
     /**
      * Create launcher window
      */
-    createMainWindow() {
+    private createMainWindow(): BrowserWindow {
         // creating and configuring a window
-        const launcherWindow = new BrowserWindow({
+        const mainWindow = new BrowserWindow({
+            show: false, // Use 'ready-to-show' event to show window
             width: windowConfig.width || 900,
             height: windowConfig.height || 550,
             frame: windowConfig.frame || false,
             resizable: windowConfig.resizable || false,
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
-            title: windowConfig.title || "Aurora Launcher",
-            icon: path.join(__dirname, '../renderer/logo.png'),
+            title: windowConfig.title || 'Aurora Launcher',
+            icon: join(__dirname, logo), // TODO Check no img (maybe use mainWindow.setIcon())
             webPreferences: {
-                nodeIntegration: true,
-                // TODO Пофиксить
-                // Временный фикс, подробнее:
-                // https://github.com/AuroraTeam/Launcher/issues/3
-                // https://github.com/electron/electron/issues/28034
-                // https://github.com/electron/electron/blob/master/docs/breaking-changes.md#default-changed-contextisolation-defaults-to-true
-                contextIsolation: false
-            }
-        })
+                preload: join(__dirname, '../preload/index.js'),
+                devTools: isDev,
+            },
+        });
 
         // loading renderer code (runtime)
-        launcherWindow.loadURL(formatUrl({
-            pathname: path.join(__dirname, '../renderer/index.html'),
-            protocol: 'file',
-            slashes: true
-        }))
+        if (isDev) mainWindow.loadURL('http://localhost:3000');
+        else mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
 
-        launcherWindow.on('closed', () => {
-            this.mainWindow = null
-        })
+        mainWindow.on('closed', () => {
+            this.mainWindow = undefined;
+        });
 
-        // open developer tools when using development mode
-        launcherWindow.webContents.on('did-frame-finish-load', () => {
-            if (process.env.DEV || false) launcherWindow.webContents.openDevTools()
-        })
+        /**
+         * If you install `show: true` then it can cause issues when trying to close the window.
+         * Use `show: false` and listener events `ready-to-show` to fix these issues.
+         *
+         * @see https://github.com/electron/electron/issues/25012
+         */
+        mainWindow.on('ready-to-show', () => {
+            mainWindow?.show();
 
-        // focus on development tools when opening
-        launcherWindow.webContents.on('devtools-opened', () => {
-            launcherWindow.focus()
-            setImmediate(() => {
-                launcherWindow.focus()
-            })
-        })
+            // open developer tools when using development mode
+            if (isDev) mainWindow.webContents.openDevTools();
+        });
 
-        return launcherWindow
+        return mainWindow;
     }
 
-    sendEvent(channel: string, ...args: any[]): void {
-        return this.mainWindow?.webContents.send(channel, ...args)
+    public sendEvent(channel: string, ...args: any[]): void {
+        this.mainWindow?.webContents.send(channel, ...args);
     }
 }
