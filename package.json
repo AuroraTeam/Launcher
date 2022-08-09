@@ -1,6 +1,6 @@
 {
     "name": "aurora-launcher",
-    "version": "0.0.3-dev",
+    "version": "0.0.3",
     "description": "Launcher for Minecraft",
     "main": "build/main/index.js",
     "private": true,
@@ -49,7 +49,7 @@
         "prettier": "^2.4.1",
         "rimraf": "^3.0.2",
         "sass": "^1.47.0",
-        "sweetalert2": "^11.1.7",
+        "sweetalert2": "11.4.8",
         "typescript": "^4.5.4",
         "vite": "^2.7.10",
         "vite-plugin-vue2": "^2.0.1",
