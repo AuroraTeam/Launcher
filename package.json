@@ -8,7 +8,7 @@
         "dev": "concurrently -n main,preload,renderer,electron -c blue.bold,yellow.bold,magenta.bold,cyan.bold \"npm:build:main -- --watch --sourcemap=inline\" \"npm:build:preload -- --watch --sourcemap=inline\" \"vite\" \"npm:start:dev\"",
         "build": "concurrently -n main,preload,renderer -c blue.bold,yellow.bold,magenta.bold \"npm:build:main\" \"npm:build:preload\" \"npm:build:renderer\" --kill-others-on-fail",
         "build:main": "esbuild src/main/index.ts --platform=node --bundle --outdir=build/main --external:electron --loader:.png=file",
-        "build:preload": "esbuild src/preload/index.ts --platform=node --bundle --outdir=build/preload --external:electron",
+        "build:preload": "esbuild src/preload/index.ts --format=iife --platform=node --bundle --outdir=build/preload --external:electron",
         "build:renderer": "vue-tsc --noEmit && vite build",
         "start:dev": "cross-env DEV=true nodemon --watch src --ext ts --ignore 'src/renderer' --exec electron .",
         "start:prod": "electron .",
