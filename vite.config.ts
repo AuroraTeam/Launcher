@@ -13,9 +13,9 @@ export default defineConfig({
         outDir: toDir('build/renderer'),
         assetsDir: '.',
         emptyOutDir: true,
-        brotliSize: false,
     },
     plugins: [vue()],
+    server: { port: 3000 },
     resolve: {
         alias: [
             {
