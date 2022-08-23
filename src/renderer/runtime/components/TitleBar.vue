@@ -1,3 +1,56 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+
+const historyBackBtn = ref({
+    show: false,
+});
+const title = ref({
+    show: true,
+    text: 'AuroraLauncher dev build v0.0.3',
+});
+const user = ref({
+    show: false,
+    username: 'Test',
+});
+
+function hide() {
+    launcherAPI.ipc.send('window-hide');
+}
+function close() {
+    launcherAPI.ipc.send('window-close');
+}
+function historyBack() {
+    // this.$router.back();
+}
+
+// mounted() {
+//     this.$root.$on('showHistoryBackBtn', () => {
+//         this.historyBackBtn.show = true;
+//     });
+//     this.$root.$on('hideHistoryBackBtn', () => {
+//         this.historyBackBtn.show = false;
+//     });
+//     this.$root.$on('showTitle', () => {
+//         this.title.show = true;
+//     });
+//     this.$root.$on('hideTitle', () => {
+//         this.title.show = false;
+//     });
+//     this.$root.$on('setTitle', (s: string) => {
+//         this.title.text = s;
+//     });
+//     this.$root.$on('showUser', () => {
+//         this.user.show = true;
+//     });
+//     this.$root.$on('hideUser', () => {
+//         this.user.show = false;
+//     });
+//     this.$root.$on('setUser', (s: string) => {
+//         this.user.username = s;
+//     });
+// },
+</script>
+
 <template>
     <div class="titlebar">
         <div class="left">
@@ -107,62 +160,3 @@
     }
 }
 </style>
-
-<script lang="ts">
-import Vue from 'vue';
-
-export default Vue.extend({
-    data() {
-        return {
-            historyBackBtn: {
-                show: false,
-            },
-            title: {
-                show: true,
-                text: 'AuroraLauncher dev build v0.0.3',
-            },
-            user: {
-                show: false,
-                username: 'Test',
-            },
-        };
-    },
-    methods: {
-        hide() {
-            launcherAPI.ipc.send('window-hide');
-        },
-        close() {
-            launcherAPI.ipc.send('window-close');
-        },
-        historyBack() {
-            this.$router.back();
-        },
-    },
-    mounted() {
-        this.$root.$on('showHistoryBackBtn', () => {
-            this.historyBackBtn.show = true;
-        });
-        this.$root.$on('hideHistoryBackBtn', () => {
-            this.historyBackBtn.show = false;
-        });
-        this.$root.$on('showTitle', () => {
-            this.title.show = true;
-        });
-        this.$root.$on('hideTitle', () => {
-            this.title.show = false;
-        });
-        this.$root.$on('setTitle', (s: string) => {
-            this.title.text = s;
-        });
-        this.$root.$on('showUser', () => {
-            this.user.show = true;
-        });
-        this.$root.$on('hideUser', () => {
-            this.user.show = false;
-        });
-        this.$root.$on('setUser', (s: string) => {
-            this.user.username = s;
-        });
-    },
-});
-</script>
