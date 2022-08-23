@@ -6,9 +6,10 @@ module.exports = {
     },
     extends: [
         'eslint:recommended',
-        'plugin:vue/essential',
+        'plugin:vue/vue3-essential',
         'plugin:@typescript-eslint/recommended',
     ],
+    parser: 'vue-eslint-parser',
     parserOptions: {
         ecmaVersion: 'latest',
         parser: '@typescript-eslint/parser',
@@ -17,7 +18,8 @@ module.exports = {
     plugins: ['vue', '@typescript-eslint'],
     rules: {
         '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/no-var-requires': 'off',
-        '@typescript-eslint/ban-types': 'off',
+    },
+    globals: {
+        launcherAPI: 'readonly',
     },
 };

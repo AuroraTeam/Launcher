@@ -16,10 +16,9 @@
         "noEmitOnError": true,
         "baseUrl": "src",
         "paths": {
-            "@config": ["../config.json"],
+            "@config": ["../config.json"]
         },
-        "types": [
-            "vue-sweetalert2"
-        ]
-    },
+        "types": ["vue-sweetalert2"],
+        "jsx": "preserve"
+    }
 }

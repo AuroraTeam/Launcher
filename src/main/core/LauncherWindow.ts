@@ -76,6 +76,7 @@ export class LauncherWindow {
             webPreferences: {
                 preload: join(__dirname, '../preload/index.js'),
                 devTools: isDev,
+                sandbox: false, // TODO temp https://github.com/evanw/esbuild/issues/2490
             },
         });
 

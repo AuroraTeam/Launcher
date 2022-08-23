@@ -1,4 +1,4 @@
-declare type LauncherAPI = typeof import('../preload/index').api;
+declare type LauncherAPI = import('../preload/index').API;
 
 // Для использования window.launcherAPI
 declare interface Window {

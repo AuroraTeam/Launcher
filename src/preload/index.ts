@@ -6,7 +6,7 @@ import ServerList from './components/ServerList';
 import ServerPanel from './components/ServerPanel';
 
 // export для типизации
-export const api = {
+const API = {
     ipc: {
         on: ipcRenderer.on,
         send: ipcRenderer.send,
@@ -24,4 +24,6 @@ export const api = {
     },
 };
 
-contextBridge.exposeInMainWorld('launcherAPI', api);
+contextBridge.exposeInMainWorld('launcherAPI', API);
+
+export type API = typeof API;
