@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
+
 import Game from './components/Game';
 import LauncherAuth from './components/LauncherAuth';
 import ServerList from './components/ServerList';

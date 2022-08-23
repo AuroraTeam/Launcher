@@ -1,5 +1,5 @@
-import { AuroraAPI, Response, ResponseError } from 'aurora-api';
 import { api as apiConfig } from '@config';
+import { AuroraAPI, Response, ResponseError } from 'aurora-api';
 import { ipcMain } from 'electron';
 
 // TODO Подумать над реализацией корректной обработки запросов и отлова ошибок

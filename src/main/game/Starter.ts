@@ -1,14 +1,15 @@
-import { ipcMain, IpcMainEvent } from 'electron';
-
-import { join, delimiter } from 'path';
-import fs from 'fs';
 import { spawn } from 'child_process';
-import { coerce, gte, lte } from 'semver';
+import fs from 'fs';
+import { delimiter, join } from 'path';
+
+import { IpcMainEvent, ipcMain } from 'electron';
 import { Launcher } from 'main/core/Launcher';
+import { LogHelper } from 'main/helpers/LogHelper';
+import { StorageHelper } from 'main/helpers/StorageHelper';
+import { coerce, gte, lte } from 'semver';
+
 import { ClientArgs } from './IClientArgs';
 import { Updater } from './Updater';
-import { StorageHelper } from 'main/helpers/StorageHelper';
-import { LogHelper } from 'main/helpers/LogHelper';
 
 export class Starter {
     static setHandler(): void {

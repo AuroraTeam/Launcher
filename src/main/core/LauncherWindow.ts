@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
-import logo from '../../renderer/runtime/assets/images/logo.png';
 
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { window as windowConfig } from '@config';
+import { BrowserWindow, app, ipcMain } from 'electron';
+import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+
+import logo from '../../renderer/runtime/assets/images/logo.png';
 
 const isDev = process.env.DEV === 'true';
 

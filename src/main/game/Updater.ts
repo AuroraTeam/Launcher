@@ -1,13 +1,15 @@
+import { existsSync, mkdirSync } from 'fs';
+import { dirname, join } from 'path';
+
+import { api as apiConfig } from '@config';
 import { IpcMainEvent } from 'electron/main';
 import { Launcher } from 'main/core/Launcher';
 import { HttpHelper } from 'main/helpers/HttpHelper';
+import { LogHelper } from 'main/helpers/LogHelper';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import pMap from 'p-map';
-import { join, dirname } from 'path';
-import { existsSync, mkdirSync } from 'fs';
-import { api as apiConfig } from '@config';
+
 import { ClientArgs } from './IClientArgs';
-import { LogHelper } from 'main/helpers/LogHelper';
 
 type DirType = 'Assets' | 'Client'; // Enum?
 

@@ -1,8 +1,9 @@
-import { LauncherWindow } from './LauncherWindow';
-import { APIManager } from './APIManager';
+import { Starter } from 'main/game/Starter';
+
 import { LogHelper } from '../helpers/LogHelper';
 import { StorageHelper } from '../helpers/StorageHelper';
-import { Starter } from 'main/game/Starter';
+import { APIManager } from './APIManager';
+import { LauncherWindow } from './LauncherWindow';
 
 export class Launcher {
     public static readonly window = new LauncherWindow();
