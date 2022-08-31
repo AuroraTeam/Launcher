@@ -1,24 +1,26 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
-        "module": "ES2020",
-        "moduleResolution": "node",
+        "target": "ESNext",
+        "module": "ESNext",
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
+        "moduleResolution": "Node",
         "strict": true,
-        "noUnusedLocals": true,
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true,
-        "inlineSources": true,
-        "sourceMap": true,
+        "useDefineForClassFields": true,
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": false,
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
-        "newLine": "lf",
-        "noEmitOnError": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+        "noEmit": true,
         "baseUrl": "src",
         "paths": {
             "@config": ["../config.json"]
         },
-        "types": ["vue-sweetalert2"],
-        "jsx": "preserve"
-    }
+        "jsx": "react-jsx"
+    },
+    "include": ["src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }

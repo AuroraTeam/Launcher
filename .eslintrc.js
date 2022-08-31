@@ -6,20 +6,26 @@ module.exports = {
     },
     extends: [
         'eslint:recommended',
-        'plugin:vue/vue3-essential',
+        'plugin:react/recommended',
         'plugin:@typescript-eslint/recommended',
+        'plugin:react/jsx-runtime',
     ],
-    parser: 'vue-eslint-parser',
+    overrides: [],
+    parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 'latest',
-        parser: '@typescript-eslint/parser',
         sourceType: 'module',
     },
-    plugins: ['vue', '@typescript-eslint'],
+    plugins: ['react', '@typescript-eslint'],
     rules: {
         '@typescript-eslint/no-explicit-any': 'off',
     },
     globals: {
         launcherAPI: 'readonly',
+    },
+    settings: {
+        react: {
+            version: 'detect',
+        },
     },
 };

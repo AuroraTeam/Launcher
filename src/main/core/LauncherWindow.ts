@@ -2,7 +2,9 @@ import { join } from 'path';
 
 import { window as windowConfig } from '@config';
 import { BrowserWindow, app, ipcMain } from 'electron';
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import installExtension, {
+    REACT_DEVELOPER_TOOLS,
+} from 'electron-devtools-installer';
 
 import logo from '../../renderer/runtime/assets/images/logo.png';
 
@@ -21,7 +23,7 @@ export class LauncherWindow {
         app.whenReady().then(() => {
             this.mainWindow = this.createMainWindow();
             if (isDev) {
-                installExtension(VUEJS_DEVTOOLS, {
+                installExtension(REACT_DEVELOPER_TOOLS, {
                     loadExtensionOptions: { allowFileAccess: true },
                 })
                     .then((name: any) =>

@@ -7,10 +7,9 @@ import ServerPanel from './components/ServerPanel';
 
 // export для типизации
 export const API = {
-    ipc: {
-        on: ipcRenderer.on,
-        send: ipcRenderer.send,
-        invoke: ipcRenderer.invoke,
+    window: {
+        hide: () => ipcRenderer.send('window-hide'),
+        show: () => ipcRenderer.send('window-close'),
     },
     game: {
         start: Game.start,
