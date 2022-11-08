@@ -5,12 +5,12 @@ export default class Game {
      * Start the game
      * @param csl Print to console wrapper
      */
-    static async start(
+    static start(
         profile: object,
         csl: (string: string) => void,
         progress: (data: object) => void,
         callback: () => void
-    ): Promise<void> {
+    ) {
         ipcRenderer.send('startGame', {
             ...profile,
             username: localStorage.getItem('username'),

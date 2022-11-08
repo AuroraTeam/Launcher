@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import swal from 'sweetalert';
 
+import Modal from '../Modal';
+import { useModal } from '../Modal/hooks';
 import TitleBar from '../TitleBar';
+import classes from './index.module.sass';
 
 export default function Layout() {
     const [inactive, setInactive] = useState(true);
+    const { showModal } = useModal();
 
     useEffect(() => {
         launcherAPI.api.getStatus().then((status) => {
+            console.log(status);
+
             switch (status) {
                 case 'connected':
                     setInactive(false);
@@ -16,10 +23,10 @@ export default function Layout() {
                     // TODO ?
                     break;
                 case 'failure':
-                    console.log('apiConnectError');
-                // Swal.fire({
+                    showModal('Ошибка подключения!', 'Сервер недоступен');
+                // swal({
                 //     title: 'Ошибка подключения!',
-                //     text: 'Сервер не доступен',
+                //     text: 'Сервер недоступен',
                 //     icon: 'error',
                 // });
             }
@@ -29,9 +36,10 @@ export default function Layout() {
     return (
         <>
             <TitleBar />
-            <main className={`${inactive ? 'inactive' : ''}`}>
+            <main className={`${inactive ? classes.inactive : ''}`}>
                 <Outlet />
             </main>
+            <Modal />
         </>
     );
 }

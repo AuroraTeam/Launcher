@@ -1,105 +1,49 @@
 import { api as apiConfig } from '@config';
-import { AuroraAPI, Response, ResponseError } from 'aurora-api';
+import { AuroraAPI } from 'aurora-api';
 import { ipcMain } from 'electron';
 
 // TODO Подумать над реализацией корректной обработки запросов и отлова ошибок
 
 export class APIManager {
-    private readonly api = new AuroraAPI(
-        apiConfig.ws || 'ws://localhost:1370',
-        {
-            onOpen: () => (this.tryConnect = true),
-            onError: () => (this.tryConnect = true),
-        }
-    );
+    private api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370');
     private tryConnect = false;
+    private failedСonnection = false;
 
     constructor() {
+        this.api
+            .connect()
+            .catch(() => {
+                this.failedСonnection = true;
+            })
+            .finally(() => {
+                this.tryConnect = true;
+            });
+
+        this.initMethods();
+    }
+
+    private initMethods() {
         ipcMain.handle('auth', (_, login: string, password: string) =>
-            this.auth(login, password)
+            this.errorHandler(() => this.api.auth(login, password))
         );
         ipcMain.handle('getStatus', () => this.getStatus());
-        ipcMain.handle('getServers', () => this.getServers());
+        ipcMain.handle('getServers', () => this.api.getServers());
         ipcMain.handle('getProfile', (_, uuid: string) =>
-            this.getProfile(uuid)
+            this.api.getProfile(uuid)
         );
     }
 
     public getStatus(): 'connected' | 'failure' | 'connecting' {
-        if (this.api.hasConnected()) return 'connected';
-        if (this.tryConnect) return 'failure';
+        if (this.tryConnect && this.failedСonnection) return 'failure';
+        if (this.tryConnect) return 'connected';
         return 'connecting';
     }
 
-    public async send(type: string, data?: object): Promise<Response> {
-        await this.api.ready();
-        return await this.api.send(type, data);
-    }
-
-    async auth(login: string, password: string): Promise<object> {
+    private async errorHandler(callback: () => any) {
         try {
-            const { data } = <Response>(
-                await this.send('auth', { login, password })
-            );
-            return data;
+            return await callback();
         } catch (error) {
-            const e = <ResponseError>error; // Какого хрена TS?!
-            console.log(`Ошибка №${e.code}: ${e.message}`);
-            return {
-                error: e.message,
-            };
+            return error;
         }
     }
-
-    async getServers(): Promise<any[] | object> {
-        try {
-            const { data } = <ServerResponse>await this.send('servers');
-            return data.servers;
-        } catch (error) {
-            const e = <ResponseError>error; // Какого хрена TS?!
-            return {
-                code: e.code,
-                message: e.message,
-            };
-        }
-    }
-
-    async getProfile(uuid: string): Promise<any[] | object> {
-        try {
-            const { data } = <ProfileResponse>(
-                await this.send('profile', { uuid })
-            );
-            return data.profile;
-        } catch (error) {
-            const e = <ResponseError>error; // Какого хрена TS?!
-            return {
-                code: e.code,
-                message: e.message,
-            };
-        }
-    }
-
-    // TODO Доработать
-    public async getUpdates(dir: string): Promise<HashedFile[]> {
-        const { data } = <UpdatesResponse>await this.send('updates', { dir });
-        return data.hashes;
-    }
-}
-
-interface ServerResponse extends Response {
-    data: { servers: any[] };
-}
-
-interface ProfileResponse extends Response {
-    data: { profile: any[] };
-}
-
-interface UpdatesResponse extends Response {
-    data: { hashes: HashedFile[] };
-}
-
-interface HashedFile {
-    path: string;
-    hashsum: string;
-    size: number;
 }

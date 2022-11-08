@@ -3,16 +3,11 @@
     "configurations": [
         {
             "name": "Debug",
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
-            "runtimeArgs": [
-                "run-script",
-                "dev"
-            ],
+            "runtimeArgs": ["run-script", "dev"],
             "runtimeExecutable": "npm",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
+            "skipFiles": ["<node_internals>/**"],
             "console": "integratedTerminal"
         }
     ]

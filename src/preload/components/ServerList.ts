@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
 
 export default class ServerList {
-    static async getServers(): Promise<any[]> {
-        return await ipcRenderer.invoke('getServers');
+    static getServers(): Promise<any[]> {
+        return ipcRenderer.invoke('getServers');
     }
 }
