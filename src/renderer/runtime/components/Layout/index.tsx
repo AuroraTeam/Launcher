@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import swal from 'sweetalert';
 
 import Modal from '../Modal';
 import { useModal } from '../Modal/hooks';

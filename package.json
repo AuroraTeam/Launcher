@@ -66,8 +66,7 @@
         "react-router-dom": "^6.3.0",
         "recoil": "^0.7.5",
         "semver": "^7.3.5",
-        "skinview3d": "^3.0.0-alpha.1",
-        "sweetalert": "^2.1.2"
+        "skinview3d": "^3.0.0-alpha.1"
     },
     "importSort": {
         ".tsx, .ts": {
