@@ -48,4 +48,8 @@ export class APIManager {
             return error;
         }
     }
+
+    public getUpdates(dir: string) {
+        return this.api.getUpdates(dir);
+    }
 }

@@ -42,7 +42,7 @@ export class Updater {
             `Load ${type.toLowerCase()} files\n`
         );
 
-        const hashes = await Launcher.api.getUpdates(dir);
+        const { hashes } = await Launcher.api.getUpdates(dir);
         if (!hashes) {
             Launcher.window.sendEvent('textToConsole', `${type} not found\n`);
             LogHelper.error(`${type} not found`);
