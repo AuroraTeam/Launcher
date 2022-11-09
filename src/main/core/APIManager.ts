@@ -27,9 +27,11 @@ export class APIManager {
             this.errorHandler(() => this.api.auth(login, password))
         );
         ipcMain.handle('getStatus', () => this.getStatus());
-        ipcMain.handle('getServers', () => this.api.getServers());
+        ipcMain.handle('getServers', () =>
+            this.errorHandler(() => this.api.getServers())
+        );
         ipcMain.handle('getProfile', (_, uuid: string) =>
-            this.api.getProfile(uuid)
+            this.errorHandler(() => this.api.getProfile(uuid))
         );
     }
 

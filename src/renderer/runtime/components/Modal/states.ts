@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { atom } from 'recoil';
 
 export const modalShow = atom({
@@ -12,5 +13,5 @@ export const modalTitle = atom({
 
 export const modalContent = atom({
     key: 'modal.content',
-    default: 'Modal content',
+    default: <ReactNode>'Modal content',
 });
