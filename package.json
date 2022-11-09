@@ -5,7 +5,7 @@
     "main": "build/main/index.js",
     "private": true,
     "scripts": {
-        "dev": "concurrently -n main,preload,renderer,electron -c blue.bold,yellow.bold,magenta.bold,cyan.bold \"npm:build:main -- --watch --sourcemap=inline\" \"npm:build:preload -- --watch --sourcemap=inline\" \"vite\" \"npm:start:dev\"",
+        "dev": "concurrently -i -n electron,main,preload,renderer -c cyan.bold,blue.bold,yellow.bold,magenta.bold \"npm:start:dev\" \"npm:build:main -- --watch --sourcemap=inline\" \"npm:build:preload -- --watch --sourcemap=inline\" \"vite\"",
         "build": "concurrently -n main,preload,renderer -c blue.bold,yellow.bold,magenta.bold \"npm:build:main\" \"npm:build:preload\" \"npm:build:renderer\" --kill-others-on-fail",
         "build:main": "esbuild src/main/index.ts --platform=node --bundle --outdir=build/main --external:electron --loader:.png=file",
         "build:preload": "esbuild src/preload/index.ts --format=iife --platform=node --bundle --outdir=build/preload --external:electron",
