@@ -30,15 +30,14 @@ export class LauncherWindow {
                         console.log(`Added Extension: ${name}`)
                     )
                     .catch((err: any) =>
-                        console.log('An error occurred: ', err)
+                        console.error('An error occurred: ', err)
                     );
             }
 
             app.on('activate', () => {
                 // On macOS it's common to re-create a window in the app when the
                 // dock icon is clicked and there are no other windows open.
-                if (BrowserWindow.getAllWindows().length === 0)
-                    this.mainWindow = this.createMainWindow();
+                if (!this.mainWindow) this.mainWindow = this.createMainWindow();
             });
         });
 
@@ -50,12 +49,12 @@ export class LauncherWindow {
         });
 
         // hide the main window when the minimize button is pressed
-        ipcMain.on('window-hide', () => {
+        ipcMain.on('window:hide', () => {
             this.mainWindow?.minimize();
         });
 
         // close the main window when the close button is pressed
-        ipcMain.on('window-close', () => {
+        ipcMain.on('window:close', () => {
             this.mainWindow?.close();
         });
     }

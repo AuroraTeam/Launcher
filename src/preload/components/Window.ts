@@ -5,13 +5,13 @@ export default class Window {
      * Hide window
      */
     static hide() {
-        ipcRenderer.send('window-hide');
+        ipcRenderer.send('window:hide');
     }
 
     /**
      * Show window
      */
     static show() {
-        ipcRenderer.send('window-close');
+        ipcRenderer.send('window:close');
     }
 }
