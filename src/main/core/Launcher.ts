@@ -8,13 +8,10 @@ import { LauncherWindow } from './LauncherWindow';
 export class Launcher {
     public static readonly window = new LauncherWindow();
     public static readonly api = new APIManager();
-    private static isInitialized = false;
 
     constructor() {
-        if (Launcher.isInitialized) return;
         Starter.setHandler();
         StorageHelper.createMissing();
         LogHelper.info('Launcher started');
-        Launcher.isInitialized = true;
     }
 }
