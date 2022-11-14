@@ -6,6 +6,7 @@ import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-devtools-installer';
 
+import { WINDOW_CLOSE_EVENT, WINDOW_HIDE_EVENT } from '../../common/events';
 import logo from '../../renderer/runtime/assets/images/logo.png';
 
 const isDev = process.env.DEV === 'true';
@@ -49,12 +50,12 @@ export class LauncherWindow {
         });
 
         // hide the main window when the minimize button is pressed
-        ipcMain.on('window:hide', () => {
+        ipcMain.on(WINDOW_HIDE_EVENT, () => {
             this.mainWindow?.minimize();
         });
 
         // close the main window when the close button is pressed
-        ipcMain.on('window:close', () => {
+        ipcMain.on(WINDOW_CLOSE_EVENT, () => {
             this.mainWindow?.close();
         });
     }
