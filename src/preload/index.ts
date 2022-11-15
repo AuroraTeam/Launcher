@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
+import { API_GET_STATUS_HANDLER } from '../common/channels';
 import Game from './components/Game';
 import LauncherAuth from './components/LauncherAuth';
 import ServerList from './components/ServerList';
@@ -18,7 +19,7 @@ export const API = {
     auth: LauncherAuth.auth,
     api: {
         getStatus: (): Promise<'connected' | 'failure' | 'connecting'> =>
-            ipcRenderer.invoke('getStatus'),
+            ipcRenderer.invoke(API_GET_STATUS_HANDLER),
         getServers: ServerList.getServers,
         getProfile: ServerPanel.getProfile,
     },

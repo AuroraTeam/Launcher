@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron';
 
-import { WINDOW_CLOSE_EVENT, WINDOW_HIDE_EVENT } from '../../common/events';
+import { WINDOW_CLOSE_EVENT, WINDOW_HIDE_EVENT } from '../../common/channels';
 
 export default class Window {
     /**
