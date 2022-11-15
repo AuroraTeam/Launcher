@@ -2,6 +2,13 @@ import { api as apiConfig } from '@config';
 import { AuroraAPI } from 'aurora-api';
 import { ipcMain } from 'electron';
 
+import {
+    API_AUTH_HANDLER,
+    API_GET_PROFILE_HANDLER,
+    API_GET_SERVERS_HANDLER,
+    API_GET_STATUS_HANDLER,
+} from '../../common/channels';
+
 // TODO Подумать над реализацией корректной обработки запросов и отлова ошибок
 
 export class APIManager {
@@ -23,14 +30,14 @@ export class APIManager {
     }
 
     private initMethods() {
-        ipcMain.handle('auth', (_, login: string, password: string) =>
+        ipcMain.handle(API_AUTH_HANDLER, (_, login: string, password: string) =>
             this.errorHandler(() => this.api.auth(login, password))
         );
-        ipcMain.handle('getStatus', () => this.getStatus());
-        ipcMain.handle('getServers', () =>
+        ipcMain.handle(API_GET_STATUS_HANDLER, () => this.getStatus());
+        ipcMain.handle(API_GET_SERVERS_HANDLER, () =>
             this.errorHandler(() => this.api.getServers())
         );
-        ipcMain.handle('getProfile', (_, uuid: string) =>
+        ipcMain.handle(API_GET_PROFILE_HANDLER, (_, uuid: string) =>
             this.errorHandler(() => this.api.getProfile(uuid))
         );
     }

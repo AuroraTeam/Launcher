@@ -8,12 +8,13 @@ import { LogHelper } from 'main/helpers/LogHelper';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import { coerce, gte, lte } from 'semver';
 
+import { GAME_START_EVENT } from '../../common/channels';
 import { ClientArgs } from './IClientArgs';
 import { Updater } from './Updater';
 
 export class Starter {
     static setHandler(): void {
-        ipcMain.on('startGame', (event, clientArgs) =>
+        ipcMain.on(GAME_START_EVENT, (event, clientArgs) =>
             Starter.startGame(event, clientArgs)
         );
     }

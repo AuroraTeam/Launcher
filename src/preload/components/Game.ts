@@ -1,5 +1,7 @@
 import { ipcRenderer } from 'electron';
 
+import { GAME_START_EVENT } from '../../common/channels';
+
 export default class Game {
     /**
      * Start the game
@@ -11,7 +13,7 @@ export default class Game {
         progress: (data: object) => void,
         callback: () => void
     ) {
-        ipcRenderer.send('startGame', {
+        ipcRenderer.send(GAME_START_EVENT, {
             ...profile,
             username: localStorage.getItem('username'),
             userUUID: localStorage.getItem('userUUID'),

@@ -6,7 +6,7 @@ import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-devtools-installer';
 
-import { WINDOW_CLOSE_EVENT, WINDOW_HIDE_EVENT } from '../../common/events';
+import { WINDOW_CLOSE_EVENT, WINDOW_HIDE_EVENT } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png';
 
 const isDev = process.env.DEV === 'true';
