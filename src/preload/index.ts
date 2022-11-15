@@ -1,8 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-import { API_GET_STATUS_HANDLER } from '../common/channels';
+import { API_AUTH_HANDLER, API_GET_STATUS_HANDLER } from '../common/channels';
 import Game from './components/Game';
-import LauncherAuth from './components/LauncherAuth';
 import ServerList from './components/ServerList';
 import ServerPanel from './components/ServerPanel';
 import Window from './components/Window';
@@ -16,7 +15,9 @@ export const API = {
     game: {
         start: Game.start,
     },
-    auth: LauncherAuth.auth,
+    auth: (login: string, password: string): Promise<any> => {
+        return ipcRenderer.invoke(API_AUTH_HANDLER, login, password);
+    },
     api: {
         getStatus: (): Promise<'connected' | 'failure' | 'connecting'> =>
             ipcRenderer.invoke(API_GET_STATUS_HANDLER),
