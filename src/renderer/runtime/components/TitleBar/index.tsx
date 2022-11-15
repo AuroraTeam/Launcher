@@ -13,7 +13,7 @@ export default function TitleBar() {
         launcherAPI.window.hide();
     }
     function close() {
-        launcherAPI.window.show();
+        launcherAPI.window.close();
     }
     function historyBack() {
         // this.$router.back();

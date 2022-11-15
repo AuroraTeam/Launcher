@@ -11,7 +11,7 @@ import Window from './components/Window';
 export const API = {
     window: {
         hide: Window.hide,
-        show: Window.show,
+        close: Window.close,
     },
     game: {
         start: Game.start,

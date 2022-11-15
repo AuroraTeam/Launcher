@@ -13,7 +13,7 @@ export default class Window {
     /**
      * Show window
      */
-    static show() {
+    static close() {
         ipcRenderer.send(WINDOW_CLOSE_EVENT);
     }
 }
