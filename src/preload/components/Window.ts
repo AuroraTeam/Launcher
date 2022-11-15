@@ -11,7 +11,7 @@ export default class Window {
     }
 
     /**
-     * Show window
+     * Close window
      */
     static close() {
         ipcRenderer.send(WINDOW_CLOSE_EVENT);
