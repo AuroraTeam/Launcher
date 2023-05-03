@@ -58,7 +58,9 @@ export class LogHelper {
     }
 
     private static rawLog(msg: any, ...args: any) {
-        appendFileSync(StorageHelper.logFile, format(msg, ...args) + '\n');
+        const massage = format(msg, ...args);
+        console.log(massage);
+        appendFileSync(StorageHelper.logFile, massage + '\n');
     }
 }
 

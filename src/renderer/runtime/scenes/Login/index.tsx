@@ -20,25 +20,23 @@ export default function Login() {
             string
         >;
 
-        console.log({ login, password });
-
         // Валидацию можно делать как хошш))
-        if (login.length < 4)
-            return showError(
-                'Ошибка ввода',
-                'Логин должен быть не менее 4-ёх символов'
-            );
-        if (password.length < 8)
-            return showError(
-                'Ошибка ввода',
-                'Пароль должен быть не менее 8-ми символов'
-            );
+        // if (login.length < 3)
+        //     return showModal(
+        //         'Ошибка ввода',
+        //         'Логин должен быть не менее 3-ёх символов'
+        //     );
+        // if (password.length < 8)
+        //     return showModal(
+        //         'Ошибка ввода',
+        //         'Пароль должен быть не менее 8-ми символов'
+        //     );
         const auth = await launcherAPI.auth(login, password);
         console.log(auth);
 
         if (auth instanceof Error) {
             console.log(auth);
-            showError('Ошибка авторизации', auth.message);
+            showModal('Ошибка авторизации', auth.message);
             return;
         }
 
@@ -50,15 +48,6 @@ export default function Login() {
         // this.$router.push('server-list');
         navigate('ServersList');
     };
-
-    function showError(title: string, message: string) {
-        showModal(title, message);
-        // Swal.fire({
-        //     title: 'Error!',
-        //     text: message,
-        //     icon: 'error',
-        // });
-    }
 
     return (
         <div className={classes.block}>

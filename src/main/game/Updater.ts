@@ -11,41 +11,31 @@ import pMap from 'p-map';
 
 import { ClientArgs } from './IClientArgs';
 
-type DirType = 'Assets' | 'Client'; // Enum?
-
 export class Updater {
     static async checkClient(
-        _event: IpcMainEvent,
+        _: IpcMainEvent,
         clientArgs: ClientArgs
     ): Promise<void> {
-        await this.hash(_event, 'Assets', clientArgs.assetsDir);
-        await this.hash(_event, 'Client', clientArgs.clientDir);
+        await this.hash(clientArgs.clientDir);
     }
 
-    static async hash(
-        _event: IpcMainEvent,
-        type: DirType,
-        dir: string
-    ): Promise<void> {
-        const parentDir = Updater.getParentDir(type);
-        if (!existsSync(join(parentDir, dir))) {
-            await this.download(dir, type);
+    static async hash(dir: string): Promise<void> {
+        if (!existsSync(join(StorageHelper.clientsDir, dir))) {
+            await this.download(dir);
         } else {
             // TODO Здесь должен быть код, который будет проверять хеш файлов
         }
     }
 
-    static async download(dir: string, type: DirType): Promise<void> {
-        const parentDir = Updater.getParentDir(type);
-        Launcher.window.sendEvent(
-            'textToConsole',
-            `Load ${type.toLowerCase()} files\n`
-        );
+    static async download(dir: string): Promise<void> {
+        const parentDir = StorageHelper.clientsDir;
+        Launcher.window.sendEvent('textToConsole', `Load client files\n`);
 
         const { hashes } = await Launcher.api.getUpdates(dir);
+
         if (!hashes) {
-            Launcher.window.sendEvent('textToConsole', `${type} not found\n`);
-            LogHelper.error(`${type} not found`);
+            Launcher.window.sendEvent('textToConsole', `client not found\n`);
+            LogHelper.error(`client not found`);
             throw undefined; // Ну можно и получше что-то придумать
         }
 
@@ -76,11 +66,5 @@ export class Updater {
             },
             { concurrency: 4 }
         );
-    }
-
-    private static getParentDir(type: DirType): string {
-        return type === 'Assets'
-            ? StorageHelper.assetsDir
-            : StorageHelper.clientsDir;
     }
 }
