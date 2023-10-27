@@ -1,151 +1,138 @@
 import { spawn } from 'child_process';
-import fs from 'fs';
 import { delimiter, join } from 'path';
 
-import { IpcMainEvent, ipcMain } from 'electron';
-import { Launcher } from 'main/core/Launcher';
+import { Profile, ZipHelper } from '@aurora-launcher/core';
 import { LogHelper } from 'main/helpers/LogHelper';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import { coerce, gte, lte } from 'semver';
+import { Service } from 'typedi';
 
-import { GAME_START_EVENT } from '../../common/channels';
-import { ClientArgs } from './IClientArgs';
-import { Updater } from './Updater';
+import { AuthorizationService, Session } from '../api/AuthorizationService';
+import { LibrariesMatcher } from './LibrariesMatcher';
+import { GameWindow } from './GameWindow';
+import { JavaManager } from './JavaManager';
+import { AuthlibInjector } from './AuthlibInjector';
 
+import { api as apiConfig } from '@config';
+
+@Service()
 export class Starter {
-    static setHandler(): void {
-        ipcMain.on(GAME_START_EVENT, (event, clientArgs) =>
-            Starter.startGame(event, clientArgs)
-        );
-    }
+    constructor(
+        private authorizationService: AuthorizationService,
+        private gameWindow: GameWindow,
+        private javaManager: JavaManager,
+        private authlibInjector: AuthlibInjector,
+    ) {}
 
-    static async startGame(
-        event: IpcMainEvent,
-        clientArgs: ClientArgs
-    ): Promise<void> {
-        try {
-            await Updater.checkClient(event, clientArgs);
-        } catch (_) {
-            event.reply('stopGame');
-            return;
-        }
-        await this.start(event, clientArgs);
-    }
-
-    static async start(
-        event: IpcMainEvent,
-        clientArgs: ClientArgs
-    ): Promise<void> {
+    async start(clientArgs: Profile): Promise<void> {
         const clientDir = join(StorageHelper.clientsDir, clientArgs.clientDir);
-        const assetsDir = join(StorageHelper.assetsDir, clientArgs.assetsDir);
 
         const clientVersion = coerce(clientArgs.version);
         if (clientVersion === null) {
-            Launcher.window.sendEvent(
-                'textToConsole',
-                'invalig client version'
-            );
-            LogHelper.error('invalig client version');
-            return;
+            throw new Error('Invalig client version');
+        }
+
+        const userArgs = this.authorizationService.getCurrentSession();
+        if (!userArgs) {
+            throw new Error('Auth requierd');
         }
 
         const gameArgs: string[] = [];
 
         gameArgs.push('--version', clientArgs.version);
         gameArgs.push('--gameDir', clientDir);
-        gameArgs.push('--assetsDir', assetsDir);
+        gameArgs.push('--assetsDir', StorageHelper.assetsDir);
+
+        // TODO: add support legacy assets
 
         if (gte(clientVersion, '1.6.0')) {
-            this.gameLauncher(gameArgs, clientArgs, clientVersion.version);
+            this.gameLauncher(
+                gameArgs,
+                clientArgs,
+                clientVersion.version,
+                userArgs,
+            );
         } else {
-            gameArgs.push(clientArgs.username);
-            gameArgs.push(clientArgs.accessToken);
+            gameArgs.push(userArgs.username);
+            gameArgs.push(userArgs.accessToken);
         }
 
-        const librariesDirectory = join(clientDir, 'libraries');
-        const nativesDirectory = join(clientDir, 'natives');
-
-        const classPath: string[] = [];
-        if (clientArgs.classPath !== undefined) {
-            clientArgs.classPath.forEach((fileName) => {
-                const filePath = join(clientDir, fileName);
-                if (fs.statSync(filePath).isDirectory()) {
-                    classPath.push(...this.scanDir(librariesDirectory));
-                } else {
-                    classPath.push(filePath);
-                }
+        const classPath = clientArgs.libraries
+            .filter(
+                (library) =>
+                    library.type === 'library' &&
+                    LibrariesMatcher.match(library.rules),
+            )
+            .map(({ path }) => {
+                return join(StorageHelper.librariesDir, path);
             });
-        } else {
-            Launcher.window.sendEvent('textToConsole', 'classPath is empty');
-            LogHelper.error('classPath is empty');
-            return;
-        }
+        classPath.push(join(clientDir, clientArgs.gameJar));
 
         const jvmArgs = [];
 
-        // TODO Убрать костыль
-        // jvmArgs.push(
-        //     '-javaagent:../../authlib-injector.jar=http://localhost:1370'
-        // );
+        await this.authlibInjector.verify();
+        jvmArgs.push(
+            `-javaagent:${this.authlibInjector.authlibFilePath}=${apiConfig.web}`,
+        );
 
+        const nativesDirectory = this.prepareNatives(clientArgs);
         jvmArgs.push(`-Djava.library.path=${nativesDirectory}`);
 
-        if (clientArgs.jvmArgs?.length > 0) {
-            jvmArgs.push(...clientArgs.jvmArgs);
+        if (gte(clientVersion, '1.20.0')) {
+            jvmArgs.push(
+                `-Djna.tmpdir=${nativesDirectory}`,
+                `-Dorg.lwjgl.system.SharedLibraryExtractPath=${nativesDirectory}`,
+                `-Dio.netty.native.workdir=${nativesDirectory}`,
+            );
         }
+
+        jvmArgs.push(...clientArgs.jvmArgs);
 
         jvmArgs.push('-cp', classPath.join(delimiter));
         jvmArgs.push(clientArgs.mainClass);
 
         jvmArgs.push(...gameArgs);
-        if (clientArgs.clientArgs?.length > 0) {
-            jvmArgs.push(...clientArgs.clientArgs);
-        }
+        jvmArgs.push(...clientArgs.clientArgs);
 
-        const gameProccess = spawn('java', jvmArgs, {
-            cwd: clientDir,
-        });
+        await this.javaManager.checkAndDownloadJava(clientArgs.javaVersion);
+
+        const gameProccess = spawn(
+            this.javaManager.getJavaPath(clientArgs.javaVersion),
+            jvmArgs,
+            { cwd: clientDir },
+        );
 
         gameProccess.stdout.on('data', (data: Buffer) => {
-            Launcher.window.sendEvent('textToConsole', data.toString());
-            LogHelper.info(data.toString());
+            const log = data.toString().trim();
+            this.gameWindow.sendToConsole(log);
+            LogHelper.info(log);
         });
 
         gameProccess.stderr.on('data', (data: Buffer) => {
-            Launcher.window.sendEvent('textToConsole', data.toString());
-            LogHelper.error(data.toString());
+            const log = data.toString().trim();
+            this.gameWindow.sendToConsole(log);
+            LogHelper.error(log);
         });
 
         gameProccess.on('close', () => {
-            event.reply('stopGame');
+            this.gameWindow.stopGame();
             LogHelper.info('Game stop');
         });
     }
-
-    private static scanDir(dir: string, list: string[] = []): string[] {
-        if (fs.statSync(dir).isDirectory()) {
-            for (const fdir of fs.readdirSync(dir)) {
-                this.scanDir(join(dir, fdir), list);
-            }
-        } else {
-            list.push(dir);
-        }
-        return list;
-    }
-
-    static gameLauncher(
+    private gameLauncher(
         gameArgs: string[],
-        clientArgs: ClientArgs,
-        clientVersion: string
+        clientArgs: Profile,
+        clientVersion: string,
+        userArgs: Session,
     ): void {
-        gameArgs.push('--username', clientArgs.username);
+        gameArgs.push('--username', userArgs.username);
 
         if (gte(clientVersion, '1.7.2')) {
-            gameArgs.push('--uuid', clientArgs.userUUID);
-            gameArgs.push('--accessToken', clientArgs.accessToken);
+            gameArgs.push('--uuid', userArgs.userUUID);
+            gameArgs.push('--accessToken', userArgs.accessToken);
 
             if (gte(clientVersion, '1.7.3')) {
-                gameArgs.push('--assetIndex', clientArgs.assetsIndex);
+                gameArgs.push('--assetIndex', clientArgs.assetIndex);
 
                 if (lte(clientVersion, '1.9.0')) {
                     gameArgs.push('--userProperties', '{}');
@@ -157,10 +144,38 @@ export class Starter {
             }
 
             if (gte(clientVersion, '1.9.0')) {
-                gameArgs.push('--versionType', 'AuroraLauncher v0.0.3');
+                gameArgs.push('--versionType', 'AuroraLauncher v0.0.9');
             }
         } else {
-            gameArgs.push('--session', clientArgs.accessToken);
+            gameArgs.push('--session', userArgs.accessToken);
         }
+    }
+
+    prepareNatives(clientArgs: Profile) {
+        const nativesDir = join(
+            StorageHelper.clientsDir,
+            clientArgs.clientDir,
+            'natives',
+        );
+
+        clientArgs.libraries
+            .filter(
+                (library) =>
+                    library.type === 'native' &&
+                    LibrariesMatcher.match(library.rules),
+            )
+            .forEach(({ path }) => {
+                try {
+                    ZipHelper.unzip(
+                        join(StorageHelper.librariesDir, path),
+                        nativesDir,
+                        ['.so', '.dylib', '.jnilib', '.dll'],
+                    );
+                } catch (error) {
+                    LogHelper.error(error);
+                }
+            });
+
+        return nativesDir;
     }
 }

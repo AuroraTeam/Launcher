@@ -4,20 +4,22 @@ import { window as windowConfig } from '@config';
 import { BrowserWindow, app, ipcMain } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
-} from 'electron-devtools-installer';
+} from 'electron-extension-installer';
+import { Service } from 'typedi';
 
-import { WINDOW_CLOSE_EVENT, WINDOW_HIDE_EVENT } from '../../common/channels';
+import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png';
 
-const isDev = process.env.DEV === 'true';
+const isDev = process.env.DEV === 'true' && !app.isPackaged;
 
+@Service()
 export class LauncherWindow {
     private mainWindow?: BrowserWindow;
 
     /**
      * Launcher initialization
      */
-    constructor() {
+    createWindow() {
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
@@ -25,13 +27,15 @@ export class LauncherWindow {
             this.mainWindow = this.createMainWindow();
             if (isDev) {
                 installExtension(REACT_DEVELOPER_TOOLS, {
-                    loadExtensionOptions: { allowFileAccess: true },
+                    loadExtensionOptions: {
+                        allowFileAccess: true,
+                    },
                 })
                     .then((name: any) =>
-                        console.log(`Added Extension: ${name}`)
+                        console.log(`Added Extension: ${name}`),
                     )
                     .catch((err: any) =>
-                        console.error('An error occurred: ', err)
+                        console.error('An error occurred: ', err),
                     );
             }
 
@@ -50,12 +54,12 @@ export class LauncherWindow {
         });
 
         // hide the main window when the minimize button is pressed
-        ipcMain.on(WINDOW_HIDE_EVENT, () => {
+        ipcMain.on(EVENTS.WINDOW.HIDE, () => {
             this.mainWindow?.minimize();
         });
 
         // close the main window when the close button is pressed
-        ipcMain.on(WINDOW_CLOSE_EVENT, () => {
+        ipcMain.on(EVENTS.WINDOW.CLOSE, () => {
             this.mainWindow?.close();
         });
     }
