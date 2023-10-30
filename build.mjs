@@ -22,6 +22,8 @@ const ctx = await context({
     keepNames: true,
     loader: {
         '.png': 'file',
+        //TODO Secure auth
+        '.pem': 'base64',
     },
     plugins: [esbuildDecorators()],
     ...args,

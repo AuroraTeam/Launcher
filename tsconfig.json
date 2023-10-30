@@ -18,7 +18,7 @@
         "noEmit": true,
         "baseUrl": "src",
         "paths": {
-            "@config": ["../config.json"]
+            "@config": ["../config.ts"]
         },
         "jsx": "react-jsx"
     },

@@ -20,7 +20,9 @@
         "pack": "electron-packager build --overwrite --out=out",
         "start": "electron-forge start",
         "package": "electron-forge package",
-        "make": "electron-forge make"
+        "make": "electron-forge make",
+        "obf": "javascript-obfuscator build/main/index.js --output build/main/index-obf.js --split-strings-chunk-length 8",
+        "bytenode": "bytenode -c build/main/index-obf.js -e"
     },
     "repository": {
         "type": "git",
@@ -52,6 +54,7 @@
         "@typescript-eslint/eslint-plugin": "^6.5.0",
         "@typescript-eslint/parser": "^6.5.0",
         "@vitejs/plugin-react": "^4.0.0",
+        "bytenode": "^1.5.3",
         "concurrently": "^8.0.1",
         "cross-env": "^7.0.3",
         "electron": "^26.1.0",
@@ -60,6 +63,7 @@
         "eslint": "^8.13.0",
         "eslint-plugin-react": "^7.31.1",
         "import-sort-style-module": "^6.0.0",
+        "javascript-obfuscator": "^4.1.0",
         "minimist": "^1.2.8",
         "nodemon": "^3.0.1",
         "prettier": "^3.0.3",
