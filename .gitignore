@@ -1,6 +1,7 @@
-# Aurora builds ignore
+# Aurora files ignore
 build
 out
+game
 
 # Logs
 logs
