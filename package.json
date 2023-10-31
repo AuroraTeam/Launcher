@@ -75,8 +75,8 @@
         "vite": "^4.3.7"
     },
     "dependencies": {
-        "@aurora-launcher/api": "^0.2.1",
-        "@aurora-launcher/core": "^0.12.0",
+        "@aurora-launcher/api": "^0.2.2",
+        "@aurora-launcher/core": "^0.13.0",
         "electron-squirrel-startup": "^1.0.0",
         "p-map": "^6.0.0",
         "react": "^18.2.0",
