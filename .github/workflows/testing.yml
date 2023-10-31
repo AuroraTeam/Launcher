@@ -27,7 +27,7 @@ jobs:
           node-version: 14
 
       - name: Download dependencies
-        run: npm ci
+        run: npm i
 
       - name: Build Launcher
         run: npm run build
