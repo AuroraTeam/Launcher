@@ -40,7 +40,7 @@ export class AuthlibInjector {
             return;
         }
 
-        const fileHash = await HashHelper.getHashfromFile(
+        const fileHash = await HashHelper.getHashFromFile(
             this.authlibFilePath,
             'sha256',
         );
