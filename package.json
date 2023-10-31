@@ -10,7 +10,6 @@
         "build:main": "node build.mjs",
         "build:preload": "esbuild src/preload/index.ts --platform=node --bundle --outdir=build/preload --external:electron --format=iife",
         "build:renderer": "tsc && vite build",
-        "postbuild": "echo {\"main\": \"main/index.js\"} > build/package.json",
         "start:dev": "cross-env DEV=true nodemon --watch src --ext ts,tsx --ignore 'src/renderer' --exec npm run start:prod",
         "start:prod": "electron-forge start",
         "clean": "rimraf build out",
@@ -90,7 +89,7 @@
         "typedi": "^0.10.0"
     },
     "importSort": {
-        ".tsx, .ts, .mjs": {
+        ".tsx, .ts, .mjs, .js": {
             "style": "module",
             "parser": "typescript"
         }
