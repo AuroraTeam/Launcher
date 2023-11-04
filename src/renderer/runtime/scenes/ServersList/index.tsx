@@ -14,8 +14,8 @@ export default function ServersList() {
         launcherAPI.scenes.serversList.getServers().then(setServers);
     }, []);
 
-    const selectServer = (server: Server) => {
-        launcherAPI.scenes.serversList.selectServer(server);
+    const selectServer = async (server: Server) => {
+        await launcherAPI.scenes.serversList.selectServer(server);
         navigate('/ServerPanel');
     };
 
