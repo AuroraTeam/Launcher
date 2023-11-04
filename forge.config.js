@@ -1,6 +1,7 @@
-import { ForgeConfig } from '@electron-forge/shared-types';
-
-const config: ForgeConfig = {
+/**
+ * @type {import('@electron-forge/shared-types').ForgeConfig}
+ */
+module.exports = {
     packagerConfig: {
         asar: true,
         ignore(path) {
@@ -40,5 +41,3 @@ const config: ForgeConfig = {
         },
     ],
 };
-
-export default config;
