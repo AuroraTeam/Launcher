@@ -36,7 +36,7 @@ jobs:
         run: npm run package
 
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Launcher_Testing_${{ matrix.build_os }}
           path: out/aurora-launcher-app-${{ matrix.build_os }}-x64

@@ -2,7 +2,6 @@ import { Profile, Server } from '@aurora-launcher/core';
 import { Service } from 'typedi';
 
 import { APIManager } from '../api/APIManager';
-import { LogHelper } from '../helpers/LogHelper';
 import { Starter } from './Starter';
 import { Updater } from './Updater';
 import { GameWindow } from './GameWindow';
@@ -48,9 +47,9 @@ export class GameService {
             await this.gameUpdater.validateClient(profile);
             await this.gameStarter.start(profile);
         } catch (error) {
-            LogHelper.error(error);
             this.gameWindow.sendToConsole(`${error}`);
             this.gameWindow.stopGame();
+            throw error;
         }
     }
 }

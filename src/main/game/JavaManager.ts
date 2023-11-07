@@ -40,7 +40,7 @@ export class JavaManager {
 
         // windows moment
         await rename(
-            join(javaDir, `${javaData.release_name}-jre`),
+            join(javaDir, javaData.binary.scm_ref.replace('_adopt', '-jre')),
             `${javaDir}-tmp`,
         );
         await rmdir(javaDir);
@@ -79,33 +79,23 @@ export class JavaManager {
     }
 }
 
-export interface JavaData {
-    binary: Binary;
+interface JavaData {
+    binary: {
+        package: {
+            link: string;
+        };
+        scm_ref: string;
+    };
     release_name: string;
 }
 
-export interface Binary {
-    package: Package;
-}
-
-export interface Package {
-    checksum: string;
-    checksum_link: string;
-    download_count: number;
-    link: string;
-    metadata_link: string;
-    name: string;
-    signature_link: string;
-    size: number;
-}
-
-export enum JavaOs {
+enum JavaOs {
     WINDOWS = 'windows',
     MAC = 'mac',
     LINUX = 'linux',
 }
 
-export enum JavaArchitecture {
+enum JavaArchitecture {
     ARM = 'arm',
     ARM64 = 'aarch64',
     X32 = 'x86',
