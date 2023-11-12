@@ -70,7 +70,7 @@
     "dependencies": {
         "@aurora-launcher/api": "^0.2.2",
         "@aurora-launcher/core": "^0.14.0",
-        "p-map": "^6.0.0",
+        "electron-updater": "^6.1.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.3.0",
@@ -90,14 +90,21 @@
     "build": {
         "appId": "ru.aurora.launcher",
         "productName": "Aurora Launcher",
+        "directories": {
+            "buildResources": "resources"
+        },
         "files": [
             "build/**/*",
             "!node_modules/**/*"
         ],
+        "mac": {
+            "category": "public.app-category.games"
+        },
         "linux": {
             "target": [
                 "deb"
-            ]
+            ],
+            "category": "Game"
         }
     }
 }

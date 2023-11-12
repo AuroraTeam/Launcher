@@ -6,6 +6,7 @@ import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
 import { Service } from 'typedi';
+import { autoUpdater } from 'electron-updater';
 
 import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png';
@@ -20,6 +21,7 @@ export class LauncherWindow {
      * Launcher initialization
      */
     createWindow() {
+        autoUpdater.checkForUpdatesAndNotify();
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
         // Some APIs can only be used after this event occurs.
