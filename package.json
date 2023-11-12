@@ -1,6 +1,6 @@
 {
     "name": "aurora-launcher-app",
-    "version": "0.0.4",
+    "version": "0.0.4-beta.1",
     "description": "Launcher for Minecraft",
     "main": "build/main/index.js",
     "private": true,
@@ -93,7 +93,7 @@
         "publish": [
             {
                 "provider": "generic",
-                "url": "http://212.109.221.239:1371"
+                "url": "http://212.109.221.239:1371/download/latest"
             },
             "github"
         ],
