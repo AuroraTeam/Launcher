@@ -13,6 +13,5 @@ export const window = {
 export const api = {
     ws: 'ws://212.109.221.239:1370/ws',
     web: 'http://212.109.221.239:1370',
-    update: 'http://212.109.221.239:1371',
     // extraToken: token,
 };

@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-import { window as windowConfig, api as apiConfig } from '@config';
+import { window as windowConfig } from '@config';
 import { BrowserWindow, app, ipcMain } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
@@ -21,10 +21,6 @@ export class LauncherWindow {
      * Launcher initialization
      */
     createWindow() {
-        // autoUpdater.setFeedURL({
-        //     provider: 'generic',
-        //     url: apiConfig.update,
-        // });
         autoUpdater.checkForUpdatesAndNotify();
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
