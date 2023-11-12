@@ -21,10 +21,10 @@ export class LauncherWindow {
      * Launcher initialization
      */
     createWindow() {
-        autoUpdater.setFeedURL({
-            provider: 'generic',
-            url: apiConfig.update,
-        });
+        // autoUpdater.setFeedURL({
+        //     provider: 'generic',
+        //     url: apiConfig.update,
+        // });
         autoUpdater.checkForUpdatesAndNotify();
         // This method will be called when Electron has finished
         // initialization and is ready to create browser windows.
