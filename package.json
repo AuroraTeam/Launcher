@@ -90,6 +90,10 @@
     "build": {
         "appId": "ru.aurora.launcher",
         "productName": "Aurora Launcher",
+        "publish": [
+            "generic",
+            "github"
+        ],
         "directories": {
             "buildResources": "resources"
         },
