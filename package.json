@@ -91,7 +91,10 @@
         "appId": "ru.aurora.launcher",
         "productName": "Aurora Launcher",
         "publish": [
-            "generic",
+            {
+                "provider": "generic",
+                "url": "http://212.109.221.239:1371"
+            },
             "github"
         ],
         "directories": {
