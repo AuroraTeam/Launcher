@@ -104,7 +104,8 @@
             "target": [
                 "deb"
             ],
-            "category": "Game"
+            "category": "Game",
+            "maintainer": "AuroraTeam <null@aurora-tean.ru>"
         }
     },
     "optionalDependencies": {
