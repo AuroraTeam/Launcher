@@ -18,7 +18,7 @@
         "lint": "eslint src --ext .ts,.tsx",
         "lint:fix": "npm run lint -- --fix",
         "pack": "electron-builder --dir",
-        "dist": "electron-builder",
+        "publish": "electron-builder -p always",
         "obf": "javascript-obfuscator build/main/index.js --output build/main/index-obf.js --split-strings-chunk-length 8",
         "bytenode": "bytenode -c build/main/index-obf.js -e"
     },
