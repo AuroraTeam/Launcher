@@ -31,3 +31,5 @@ jobs:
 
       - name: Pack and publish Launcher
         run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
