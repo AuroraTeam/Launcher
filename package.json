@@ -1,6 +1,6 @@
 {
     "name": "aurora-launcher-app",
-    "version": "0.0.4-beta.7",
+    "version": "0.0.4-beta.8",
     "description": "Launcher for Minecraft",
     "main": "build/main/index.js",
     "private": true,
@@ -106,7 +106,7 @@
             "!node_modules/**/*"
         ],
         "nsis": {
-            "artifactName": "${productName}-Setup-${version}.${ext}"
+            "artifactName": "${name}-Setup-${version}.${ext}"
         },
         "mac": {
             "category": "public.app-category.games"
