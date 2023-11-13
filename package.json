@@ -105,7 +105,7 @@
             "!node_modules/**/*"
         ],
         "nsis": {
-            "artifactName": "${productName}-Setup-${version}-${os}-${arch}.${ext}"
+            "artifactName": "${productName}-Setup-${version}.${ext}"
         },
         "mac": {
             "category": "public.app-category.games"
