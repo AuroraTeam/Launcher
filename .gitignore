@@ -1,7 +1,6 @@
 # Aurora files ignore
 build
 out
-game
 
 # Logs
 logs

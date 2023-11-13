@@ -2,7 +2,7 @@ import { existsSync, mkdirSync } from 'fs';
 import { resolve } from 'path';
 
 export class StorageHelper {
-    static storageDir: string = resolve(process.cwd(), 'game');
+    static storageDir: string = resolve(__dirname, '../game');
     static assetsDir: string = resolve(StorageHelper.storageDir, 'assets');
     static clientsDir: string = resolve(StorageHelper.storageDir, 'clients');
     static librariesDir: string = resolve(
