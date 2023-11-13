@@ -93,8 +93,8 @@
         "publish": [
             {
                 "provider": "s3",
-                "bucket": "launcher",
-                "endpoint": "http://212.109.221.239:1371/"
+                "bucket": "1d9331f7-f396817b-b981-4ede-980b-acfe89b8ba52",
+                "endpoint": "https://s3.timeweb.com"
             },
             "github"
         ],
