@@ -96,7 +96,10 @@
                 "bucket": "1d9331f7-f396817b-b981-4ede-980b-acfe89b8ba52",
                 "endpoint": "https://s3.timeweb.com"
             },
-            "github"
+            {
+                "provider": "github",
+                "releaseType": "release"
+            }
         ],
         "directories": {
             "buildResources": "resources"
