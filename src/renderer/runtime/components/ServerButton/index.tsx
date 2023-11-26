@@ -1,16 +1,20 @@
+import { Server } from '@aurora-launcher/core';
 import classes from './index.module.sass';
+import { usePingServer } from '../../hooks/pingServer';
 
 interface ServerButtonProps {
     onClick: () => void;
-    server: any;
+    server: Server;
 }
 
 export function ServerButton({ onClick, server }: ServerButtonProps) {
+    const players = usePingServer(server);
+
     return (
         <button className={classes.button} onClick={onClick}>
             <span className={classes.title}>{server.title}</span>
             <span className={classes.online}>
-                {server.online?.current || 10} / {server.online?.maximum || 100}
+                {players.online || 0} / {players.max || 10}
             </span>
             <div className={classes.next}>
                 <svg
@@ -27,8 +31,8 @@ export function ServerButton({ onClick, server }: ServerButtonProps) {
             </div>
             <progress
                 className={classes.progress}
-                value={server.online?.current || 10}
-                max={server.online?.maximum || 100}
+                value={players.online || 0}
+                max={players.max || 10}
             ></progress>
         </button>
     );

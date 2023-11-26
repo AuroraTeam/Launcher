@@ -5,10 +5,12 @@ import If from '../../components/If';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
 import { LoadProgress } from '../../../../common/types';
+import { usePingServer } from '../../hooks/pingServer';
 
 export default function ServerPanel() {
     const [selectedProfile, setSelectedProfile] = useState({} as Profile);
     const [selectedServer, setSelectedServer] = useState({} as Server);
+    const players = usePingServer(selectedServer);
 
     const [console, setConsole] = useState('');
     const [showProgress, setShowProgress] = useState(false);
@@ -75,8 +77,10 @@ export default function ServerPanel() {
                     </div>
                     <div className={classes.line}></div>
                     <div className={classes.count}>
-                        10
-                        <div className={classes.total}>из 100</div>
+                        {players.online || 0}
+                        <div className={classes.total}>
+                            из {players.max || 10}
+                        </div>
                     </div>
                 </div>
             </div>
