@@ -1,6 +1,6 @@
 {
     "name": "aurora-launcher-app",
-    "version": "0.0.4-rc.1",
+    "version": "0.0.4-rc.2",
     "description": "Launcher for Minecraft",
     "main": "build/main/index.js",
     "private": true,
@@ -94,8 +94,8 @@
             {
                 "provider": "github",
                 "releaseType": "release",
-                "repo": "Launcher",
-                "owner": "AuroraTeam"
+                "owner": "AuroraTeam",
+                "repo": "Launcher"
             }
         ],
         "directories": {
