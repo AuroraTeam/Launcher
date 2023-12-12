@@ -94,8 +94,8 @@
             {
                 "provider": "github",
                 "releaseType": "release",
-                "repo": "AuroraTeam",
-                "owner": "Launcher"
+                "repo": "Launcher",
+                "owner": "AuroraTeam"
             }
         ],
         "directories": {
