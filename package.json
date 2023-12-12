@@ -92,13 +92,10 @@
         "productName": "Aurora Launcher",
         "publish": [
             {
-                "provider": "s3",
-                "bucket": "1d9331f7-f396817b-b981-4ede-980b-acfe89b8ba52",
-                "endpoint": "https://s3.timeweb.com"
-            },
-            {
                 "provider": "github",
-                "releaseType": "release"
+                "releaseType": "release",
+                "repo": "AuroraTeam",
+                "owner": "Launcher"
             }
         ],
         "directories": {
@@ -116,7 +113,9 @@
         },
         "linux": {
             "target": [
-                "deb"
+                "deb",
+                "rpm",
+                "AppImage"
             ],
             "category": "Game",
             "maintainer": "AuroraTeam <null@aurora-team.ru>"
