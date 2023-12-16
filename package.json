@@ -65,11 +65,11 @@
         "sass": "^1.55.0",
         "source-map-support": "^0.5.21",
         "typescript": "^5.0.4",
-        "vite": "^4.3.7"
+        "vite": "^5.0.9"
     },
     "dependencies": {
         "@aurora-launcher/api": "^0.2.3",
-        "@aurora-launcher/core": "^0.14.0",
+        "@aurora-launcher/core": "^0.15.0",
         "electron-updater": "^6.1.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
