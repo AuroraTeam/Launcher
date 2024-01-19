@@ -10,14 +10,14 @@ export function usePingServer(server: Server) {
         }
 
         fetch(
-            `https://api.mcstatus.io/v2/status/java/${server.ip}:${server.port}`,
-        ).then((response) => {
-            response.json().then((data) => {
-                if (data.online) {
-                    setPlayers(data.players);
-                }
+            `https://mcapi.us/server/status?ip=${server.ip}&port=${server.port || 25565}`,
+        )
+            .then((res) => res.json())
+            .then((res) => {
+                if (!res.online) return;
+                const { max, now } = res.players;
+                setPlayers({ max, online: now });
             });
-        });
     }, [server]);
 
     return players;
