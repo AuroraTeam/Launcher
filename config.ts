@@ -16,4 +16,4 @@ export const api = {
     // extraToken: token,
 };
 
-export const appPath = '.aurora_launcher';
+export const appPath = '.aurora-launcher';
