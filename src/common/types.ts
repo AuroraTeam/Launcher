@@ -6,4 +6,5 @@ export interface UserData {
 export interface LoadProgress {
     total: number;
     loaded: number;
+    type: 'count' | 'size';
 }

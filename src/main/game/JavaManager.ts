@@ -6,9 +6,13 @@ import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
 import tar from 'tar';
 import { mkdir, readdir } from 'fs/promises';
 import { Architecture, Platform } from '../core/System';
+import { GameWindow } from './GameWindow';
 
 @Service()
 export class JavaManager {
+    // TODO Лишнее связывание, придумать как сделать лучше
+    constructor(private gameWindow: GameWindow) {}
+
     async checkAndDownloadJava(majorVersion: number) {
         const javaDir = await this.#getJavaDir(majorVersion);
         if (existsSync(javaDir)) return true;
@@ -16,13 +20,23 @@ export class JavaManager {
         const javaLink =
             'https://api.adoptium.net/v3/binary/latest/{version}/ga/{os}/{arch}/jre/hotspot/normal/eclipse';
 
+        this.gameWindow.sendToConsole('Download Java');
         const javaFile = await HttpHelper.downloadFile(
             javaLink
                 .replace('{version}', majorVersion.toString())
                 .replace('{os}', this.#getOs())
                 .replace('{arch}', this.#getArch()),
             null,
-            { saveToTempFile: true },
+            {
+                saveToTempFile: true,
+                onProgress: (progress) => {
+                    this.gameWindow.sendProgress({
+                        total: progress.total,
+                        loaded: progress.transferred,
+                        type: 'size',
+                    });
+                },
+            },
         );
 
         if (process.platform === Platform.WINDOWS) {
@@ -38,17 +52,15 @@ export class JavaManager {
         if (process.platform === Platform.MACOS) {
             path.unshift('Contents', 'Home');
         }
-        return join(await this.#getJavaDir(majorVersion), ...path);
-    }
 
-    async #getJavaDir(majorVersion: number) {
-        const javaVerPath = join(
-            StorageHelper.javaDir,
-            majorVersion.toString(),
-        );
+        const javaVerPath = this.#getJavaDir(majorVersion);
         const firstDir = (await readdir(javaVerPath))[0];
 
-        return join(javaVerPath, firstDir);
+        return join(javaVerPath, firstDir, ...path);
+    }
+
+    #getJavaDir(majorVersion: number) {
+        return join(StorageHelper.javaDir, majorVersion.toString());
     }
 
     #getOs() {

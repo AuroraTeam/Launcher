@@ -7,12 +7,13 @@ import classes from './index.module.sass';
 import { LoadProgress } from '../../../../common/types';
 import { usePingServer } from '../../hooks/pingServer';
 
+// TODO Refactoring scene
 export default function ServerPanel() {
     const [selectedProfile, setSelectedProfile] = useState({} as Profile);
     const [selectedServer, setSelectedServer] = useState({} as Server);
     const players = usePingServer(selectedServer);
 
-    const [console, setConsole] = useState('');
+    const [showConsole, setShowConsole] = useState(false);
     const [showProgress, setShowProgress] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
 
@@ -20,7 +21,7 @@ export default function ServerPanel() {
     const progressLine = useRef() as MutableRefObject<HTMLDivElement>;
     const progressInfo = useRef() as MutableRefObject<HTMLDivElement>;
 
-    const { showTitlebarBackBtn } = useTitlebar();
+    const { showTitlebarBackBtn, hideTitlebarBackBtn } = useTitlebar();
 
     useEffect(() => {
         launcherAPI.scenes.serverPanel.getProfile().then(setSelectedProfile);
@@ -30,36 +31,49 @@ export default function ServerPanel() {
     }, []);
 
     const startGame = () => {
-        setConsole('');
-        setShowProgress(true);
+        hideTitlebarBackBtn();
+        setShowConsole(true);
+        consoleRef.current?.replaceChildren();
         setGameStarted(true);
-        launcherAPI.scenes.serverPanel.startGame(textToConsole, progress, () =>
-            setGameStarted(false),
+        launcherAPI.scenes.serverPanel.startGame(
+            textToConsole,
+            progress,
+            stopGame,
         );
     };
 
-    const textToConsole = (string: string) => {
-        setConsole((console) => console + string);
-
-        const consoleEl = consoleRef.current;
-        if (!consoleEl) return;
-        // Если не оборачивать в setTimeout, то оно прокручивает не до конца
-        setTimeout(() => {
-            consoleEl.scrollTop = consoleEl.scrollHeight;
-        }, 1);
+    const stopGame = () => {
+        setGameStarted(false);
+        showTitlebarBackBtn();
     };
 
-    const progress = ({ total, loaded }: LoadProgress) => {
-        if (!progressLine.current) return;
+    const textToConsole = (string: string) => {
+        const consoleEl = consoleRef.current;
+        if (!consoleEl) return;
+
+        consoleEl.appendChild(document.createTextNode(string));
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    };
+
+    const progress = ({ total, loaded, type }: LoadProgress) => {
+        if (loaded < total) setShowProgress(true);
 
         const percent = (loaded / total) * 100;
 
-        progressLine.current.style.width = percent + '%';
+        if (progressLine.current) {
+            progressLine.current.style.width = percent.toFixed(2) + '%';
+        }
         setShowProgress(percent < 100);
 
-        progressInfo.current.innerHTML = `Загружено ${bytesToSize(
-            loaded,
-        )} из ${bytesToSize(total)}`;
+        if (!progressInfo.current) return;
+
+        if (type === 'count') {
+            progressInfo.current.innerHTML = `Загружено ${loaded} из ${total}`;
+        } else {
+            progressInfo.current.innerHTML = `Загружено ${bytesToSize(
+                loaded,
+            )} из ${bytesToSize(total)}`;
+        }
     };
 
     return (
@@ -104,10 +118,8 @@ export default function ServerPanel() {
                     ></div>
                 </>
             </If>
-            <If state={console.length > 0}>
-                <pre className={classes.console} ref={consoleRef}>
-                    {console}
-                </pre>
+            <If state={showConsole}>
+                <pre className={classes.console} ref={consoleRef}></pre>
             </If>
         </div>
     );
@@ -117,6 +129,6 @@ function bytesToSize(bytes: number): string {
     const sizes = ['Bytes', 'KB', 'MB'];
     if (bytes === 0) return 'n/a';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    if (i === 0) return `${bytes} ${sizes[i]})`;
+    if (i === 0) return `${bytes} ${sizes[i]}`;
     return `${(bytes / 1024 ** i).toFixed(2)} ${sizes[i]}`;
 }

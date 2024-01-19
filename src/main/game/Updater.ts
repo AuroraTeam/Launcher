@@ -69,6 +69,7 @@ export class Updater {
                 this.gameWindow.sendProgress({
                     total: totalSize,
                     loaded: (loaded += hash.size),
+                    type: 'size',
                 });
             },
             { concurrency: 4 },
@@ -78,12 +79,14 @@ export class Updater {
     async validateLibraries(clientArgs: Profile): Promise<void> {
         this.gameWindow.sendToConsole('Load libraries files');
 
+        const usedLibraries = clientArgs.libraries.filter((library) =>
+            LibrariesMatcher.match(library.rules),
+        );
+
         let loaded = 0;
 
         await pMap(
-            clientArgs.libraries.filter((library) =>
-                LibrariesMatcher.match(library.rules),
-            ),
+            usedLibraries,
             async (library) => {
                 await this.validateAndDownloadFile(
                     library.path,
@@ -93,8 +96,9 @@ export class Updater {
                 );
 
                 this.gameWindow.sendProgress({
-                    total: clientArgs.libraries.length,
+                    total: usedLibraries.length,
                     loaded: (loaded += 1),
+                    type: 'count',
                 });
             },
             { concurrency: 4 },
@@ -131,6 +135,7 @@ export class Updater {
                 this.gameWindow.sendProgress({
                     total: totalSize,
                     loaded: (loaded += hash.size),
+                    type: 'size',
                 });
             },
             { concurrency: 4 },
