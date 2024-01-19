@@ -106,7 +106,7 @@ export class Starter {
         await this.javaManager.checkAndDownloadJava(clientArgs.javaVersion);
 
         const gameProccess = spawn(
-            this.javaManager.getJavaPath(clientArgs.javaVersion),
+            await this.javaManager.getJavaPath(clientArgs.javaVersion),
             jvmArgs,
             { cwd: clientDir },
         );
