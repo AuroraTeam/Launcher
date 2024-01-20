@@ -7,7 +7,7 @@
     display: flex
     align-items: center
     justify-content: center
-    background-color: rgba(0, 0, 0, 0.25)
+    background-color: rgba(0, 0, 0, 0.5)
     opacity: 0
     pointer-events: none
     transition-duration: .3s
@@ -18,8 +18,7 @@
             transform: translateY(0)
 
 .modal
-    background: rgba(255, 255, 255, 0.1)
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25)
+    background: var(--background-color)
     backdrop-filter: blur(10px)
     border-radius: 10px
     padding: 25px
@@ -29,7 +28,7 @@
     max-width: 50%
 
 .button
-    background-color: #2575FC
+    background-color: var(--primary-color)
     border-radius: 10px
     display: block
     margin: auto
@@ -37,7 +36,7 @@
     padding: 12px 40px
     color: #fff
     &:hover
-        background-color: #0e65fb
+        background-color: var(--primary-color-hover)
 
 .title
     font-size: 1.5rem

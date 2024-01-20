@@ -1,5 +1,5 @@
 import { MutableRefObject, useEffect, useRef } from 'react';
-import { SkinViewer, WalkingAnimation, createOrbitControls } from 'skinview3d';
+import { IdleAnimation, SkinViewer, createOrbitControls } from 'skinview3d';
 
 import defaultSkin from '../assets/images/steve.png';
 
@@ -18,11 +18,9 @@ export default function SkinView() {
         skinViewer.camera.position.y = 20;
         skinViewer.zoom = 0.8;
 
-        skinViewer.animations.add(WalkingAnimation);
-        skinViewer.animations.speed = 0.6;
+        skinViewer.animations.add(IdleAnimation);
 
         const control = createOrbitControls(skinViewer);
-        control.enableRotate = true;
         control.enableZoom = false;
     }, []);
 

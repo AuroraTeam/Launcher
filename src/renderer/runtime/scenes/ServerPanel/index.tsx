@@ -9,6 +9,7 @@ import { usePingServer } from '../../hooks/pingServer';
 
 // TODO Refactoring scene
 export default function ServerPanel() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [selectedProfile, setSelectedProfile] = useState({} as Profile);
     const [selectedServer, setSelectedServer] = useState({} as Server);
     const players = usePingServer(selectedServer);
@@ -79,10 +80,7 @@ export default function ServerPanel() {
     return (
         <div className={classes.window}>
             <div className={classes.info}>
-                <div>
-                    <div className={classes.title}>{selectedServer.title}</div>
-                    <div>{selectedProfile.version}</div>
-                </div>
+                <div className={classes.title}>{selectedServer.title}</div>
                 <div className={classes.status}>
                     <div className={classes.gamers}>
                         Игроков
@@ -102,7 +100,6 @@ export default function ServerPanel() {
                 <button onClick={startGame} disabled={gameStarted}>
                     Играть
                 </button>
-                <button>Настройки</button>
             </div>
             <If state={showProgress}>
                 <>
