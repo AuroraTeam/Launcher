@@ -22,6 +22,18 @@ export default function SkinView() {
 
         const control = createOrbitControls(skinViewer);
         control.enableZoom = false;
+
+        // Поддержка загрузки и отображения скина
+        // const uuid = localStorage.getItem('userUUID');
+        // if (uuid) {
+        //     fetch(`http://api.local.host/users/skin/${uuid}`)
+        //         .then((res) => res.json())
+        //         .then(({ skinUrl, capeUrl, isAlex }) => {
+        //             if (skinUrl) skinViewer.loadSkin(skinUrl);
+        //             if (capeUrl) skinViewer.loadCape(capeUrl);
+        //             if (isAlex) skinViewer.playerObject.skin.modelType = 'slim';
+        //         });
+        // }
     }, []);
 
     return <canvas ref={skinCanvas} />;

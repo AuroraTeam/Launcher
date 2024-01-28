@@ -47,6 +47,8 @@ export default function Login() {
         }
 
         setTitlebarUserText(userData.username);
+        // Поддержка загрузки и отображения скина
+        // localStorage.setItem('userUUID', userData.userUUID);
         showTitlebarUser();
         navigate('ServersList');
     };
