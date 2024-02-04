@@ -14,6 +14,8 @@ import { JavaManager } from './JavaManager';
 import { AuthlibInjector } from './AuthlibInjector';
 
 import { api as apiConfig } from '@config';
+import process from 'process';
+import { Platform } from '../core/System';
 
 @Service()
 export class Starter {
@@ -87,6 +89,10 @@ export class Starter {
         }
 
         jvmArgs.push(...clientArgs.jvmArgs);
+
+        if (process.platform == Platform.MACOS) {
+            jvmArgs.push('-XstartOnFirstThread');
+        }
 
         jvmArgs.push('-cp', classPath.join(delimiter));
         jvmArgs.push(clientArgs.mainClass);
