@@ -14,8 +14,7 @@ import { JavaManager } from './JavaManager';
 import { AuthlibInjector } from './AuthlibInjector';
 
 import { api as apiConfig } from '@config';
-import process from 'process';
-import { Platform } from '../core/System';
+import { PlatformHelper } from '../helpers/PlatformHelper';
 
 @Service()
 export class Starter {
@@ -90,7 +89,7 @@ export class Starter {
 
         jvmArgs.push(...clientArgs.jvmArgs);
 
-        if (process.platform == Platform.MACOS) {
+        if (PlatformHelper.isMac) {
             jvmArgs.push('-XstartOnFirstThread');
         }
 

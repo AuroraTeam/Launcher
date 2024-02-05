@@ -10,6 +10,7 @@ import { autoUpdater } from 'electron-updater';
 
 import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png';
+import { PlatformHelper } from '../helpers/PlatformHelper';
 
 const isDev = process.env.DEV === 'true' && !app.isPackaged;
 
@@ -52,7 +53,7 @@ export class LauncherWindow {
         // for applications and their menu bar to stay active until the user quits
         // explicitly with Cmd + Q.
         app.on('window-all-closed', () => {
-            if (process.platform !== 'darwin') app.quit();
+            if (!PlatformHelper.isMac) app.quit();
         });
 
         // hide the main window when the minimize button is pressed
