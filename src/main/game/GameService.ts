@@ -4,6 +4,7 @@ import { Service } from 'typedi';
 import { APIManager } from '../api/APIManager';
 import { Starter } from './Starter';
 import { Updater } from './Updater';
+import { Watcher } from './Watcher';
 import { GameWindow } from './GameWindow';
 
 @Service()
@@ -14,6 +15,7 @@ export class GameService {
     constructor(
         private apiService: APIManager,
         private gameUpdater: Updater,
+        private gameWatcher: Watcher,
         private gameStarter: Starter,
         private gameWindow: GameWindow,
     ) {}
@@ -46,6 +48,7 @@ export class GameService {
         try {
             await this.gameUpdater.validateClient(profile);
             await this.gameStarter.start(profile);
+            await this.gameWatcher.watch();
         } catch (error) {
             this.gameWindow.sendToConsole(`${error}`);
             this.gameWindow.stopGame();

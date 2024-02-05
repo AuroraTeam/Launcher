@@ -21,6 +21,7 @@ export class GameWindow {
             progress,
         );
     }
+
     stopGame() {
         this.window.sendEvent(EVENTS.SCENES.SERVER_PANEL.STOP_GAME);
     }

@@ -22,12 +22,14 @@ export default class ServerPanelScene {
 
         ipcRenderer.on(
             EVENTS.SCENES.SERVER_PANEL.TEXT_TO_CONSOLE,
-            (_, string) => consoleListener(string),
+            (_, string) => {
+                consoleListener(string);
+            },
         );
 
-        ipcRenderer.on(EVENTS.SCENES.SERVER_PANEL.LOAD_PROGRESS, (_, data) =>
-            progressListener(data),
-        );
+        ipcRenderer.on(EVENTS.SCENES.SERVER_PANEL.LOAD_PROGRESS, (_, data) => {
+            progressListener(data);
+        });
 
         ipcRenderer.once(EVENTS.SCENES.SERVER_PANEL.STOP_GAME, () => {
             ipcRenderer.removeAllListeners(

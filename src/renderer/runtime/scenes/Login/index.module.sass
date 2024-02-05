@@ -3,16 +3,14 @@ h1
 .block
     width: 300px
     height: 450px
-    // background-color: rgba(255, 255, 255, 0.10)
-    background-color: rgba(69, 75, 223, 0.25)
+    background-color: var(--background-color)
     border-radius: 10px
     position: absolute
     top: 70px
-    // left: 0
-    // right: 0
-    right: 50px
-    // margin: auto
-    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25)
+    left: 0
+    right: 0
+    margin: auto
+    box-shadow: var(--default-shadow)
     backdrop-filter: blur(10px)
     display: flex
     flex-direction: column
@@ -21,18 +19,14 @@ h1
         height: 100px
         margin-top: 30px
         border-radius: 50%
-        filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))
     div
         font-size: 24px
         margin-top: 20px
-        text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
     p
         margin: 20px 0 30px
-        font-size: 15px
+        font-size: 14px
         font-weight: 300
-        text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
         text-align: center
-        font-family: 'Roboto', sans-serif
         letter-spacing: 0.02em
     form
         display: flex
@@ -42,20 +36,17 @@ h1
         width: 194px
         height: 35px
         margin-bottom: 15px
-        border: 2px solid rgba(255, 255, 255, 0.5)
-        text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
+        border: 2px solid var(--primary-color)
         border-radius: 17px
         background-color: transparent
         text-align: center
         font-size: 13px
         font-weight: 300
-        font-family: 'Roboto', sans-serif
         outline: 0
-        color: #fff
         &::placeholder
             color: #fff
         &:hover, &:focus
-            border-color: rgba(255, 255, 255, 0.75)
+            border-color: var(--primary-color-hover)
             &::placeholder
                 color: #ddd
     button
@@ -64,11 +55,12 @@ h1
         margin-top: 15px
         border: 0
         border-radius: 17px
-        background: linear-gradient(88.14deg, #5619EC 0%, #A500ED 100%)
+        background: linear-gradient(135deg, #F403D1 0%, #647BF6 100%)
         font-size: 16px
         outline: 0
         color: #fff
         text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25)
         box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.25)
         &:hover
-            box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25)
+            box-shadow: var(--default-shadow)
+            filter: saturate(150%)

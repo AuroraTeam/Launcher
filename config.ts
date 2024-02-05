@@ -15,3 +15,5 @@ export const api = {
     web: 'http://127.0.0.1:1370',
     // extraToken: token,
 };
+
+export const appPath = '.aurora-launcher';

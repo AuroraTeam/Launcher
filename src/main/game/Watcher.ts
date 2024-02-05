@@ -1,7 +1,9 @@
 import { LogHelper } from 'main/helpers/LogHelper';
+import { Service } from 'typedi';
 
+@Service()
 export class Watcher {
-    static watch(): void {
+    async watch() {
         LogHelper.info('Watcher not implemented in current version');
     }
 }

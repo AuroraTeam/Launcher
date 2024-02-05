@@ -8,13 +8,13 @@ interface ServerButtonProps {
 }
 
 export function ServerButton({ onClick, server }: ServerButtonProps) {
-    const players = usePingServer(server);
+    const { online, max } = usePingServer(server);
 
     return (
         <button className={classes.button} onClick={onClick}>
             <span className={classes.title}>{server.title}</span>
             <span className={classes.online}>
-                {players.online || 0} / {players.max || 10}
+                {online || 0} / {max || 10}
             </span>
             <div className={classes.next}>
                 <svg
@@ -29,11 +29,12 @@ export function ServerButton({ onClick, server }: ServerButtonProps) {
                     />
                 </svg>
             </div>
-            <progress
-                className={classes.progress}
-                value={players.online || 0}
-                max={players.max || 10}
-            ></progress>
+            <div className={classes.progress}>
+                <div
+                    className={classes.progressLine}
+                    style={{ width: `${(online / max) * 100}%` }}
+                ></div>
+            </div>
         </button>
     );
 }

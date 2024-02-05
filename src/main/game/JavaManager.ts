@@ -4,32 +4,39 @@ import { existsSync } from 'fs';
 import { Service } from 'typedi';
 import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
 import tar from 'tar';
-import { mkdir, rename, rmdir } from 'fs/promises';
+import { mkdir, readdir } from 'fs/promises';
 import { Architecture, Platform } from '../core/System';
 import { PlatformHelper } from '../helpers/PlatformHelper';
 
 @Service()
 export class JavaManager {
+    // TODO Лишнее связывание, придумать как сделать лучше
+    constructor(private gameWindow: GameWindow) {}
+
     async checkAndDownloadJava(majorVersion: number) {
-        const javaDir = this.#getJavaDir(majorVersion);
+        const javaDir = await this.#getJavaDir(majorVersion);
         if (existsSync(javaDir)) return true;
 
-        const javaDataLink =
-            'https://api.adoptium.net/v3/assets/latest/{version}/hotspot?architecture={arch}&image_type=jre&os={os}&vendor=eclipse';
+        const javaLink =
+            'https://api.adoptium.net/v3/binary/latest/{version}/ga/{os}/{arch}/jre/hotspot/normal/eclipse';
 
-        const javaData = (
-            await HttpHelper.getResourceFromJson<JavaData[]>(
-                javaDataLink
-                    .replace('{version}', majorVersion.toString())
-                    .replace('{os}', this.#getOs())
-                    .replace('{arch}', this.#getArch()),
-            )
-        )[0];
-
+        this.gameWindow.sendToConsole('Download Java');
         const javaFile = await HttpHelper.downloadFile(
-            javaData.binary.package.link,
+            javaLink
+                .replace('{version}', majorVersion.toString())
+                .replace('{os}', this.#getOs())
+                .replace('{arch}', this.#getArch()),
             null,
-            { saveToTempFile: true },
+            {
+                saveToTempFile: true,
+                onProgress: (progress) => {
+                    this.gameWindow.sendProgress({
+                        total: progress.total,
+                        loaded: progress.transferred,
+                        type: 'size',
+                    });
+                },
+            },
         );
 
         if (PlatformHelper.isWindows) {
@@ -38,22 +45,18 @@ export class JavaManager {
             await mkdir(javaDir, { recursive: true });
             await tar.x({ file: javaFile, cwd: javaDir });
         }
-
-        // windows moment
-        await rename(
-            join(javaDir, javaData.binary.scm_ref.replace('_adopt', '-jre')),
-            `${javaDir}-tmp`,
-        );
-        await rmdir(javaDir);
-        await rename(`${javaDir}-tmp`, javaDir);
     }
 
-    getJavaPath(majorVersion: number) {
+    async getJavaPath(majorVersion: number) {
         const path = ['bin', 'java'];
         if (PlatformHelper.isMac) {
             path.unshift('Contents', 'Home');
         }
-        return join(this.#getJavaDir(majorVersion), ...path);
+
+        const javaVerPath = this.#getJavaDir(majorVersion);
+        const firstDir = (await readdir(javaVerPath))[0];
+
+        return join(javaVerPath, firstDir, ...path);
     }
 
     #getJavaDir(majorVersion: number) {
@@ -78,16 +81,6 @@ export class JavaManager {
         };
         return ArchitectureToJavaOS[<Architecture>process.arch] || process.arch;
     }
-}
-
-interface JavaData {
-    binary: {
-        package: {
-            link: string;
-        };
-        scm_ref: string;
-    };
-    release_name: string;
 }
 
 enum JavaOs {
