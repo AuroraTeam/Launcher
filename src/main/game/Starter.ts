@@ -14,6 +14,7 @@ import { JavaManager } from './JavaManager';
 import { AuthlibInjector } from './AuthlibInjector';
 
 import { api as apiConfig } from '@config';
+import { PlatformHelper } from '../helpers/PlatformHelper';
 
 @Service()
 export class Starter {
@@ -96,6 +97,10 @@ export class Starter {
                     .replaceAll('${classpath_separator}', delimiter),
             ),
         );
+
+        if (PlatformHelper.isMac) {
+            jvmArgs.push('-XstartOnFirstThread');
+        }
 
         jvmArgs.push('-cp', classPath.join(delimiter));
         jvmArgs.push(clientArgs.mainClass);

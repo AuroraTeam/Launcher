@@ -6,7 +6,7 @@ import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
 import tar from 'tar';
 import { mkdir, readdir } from 'fs/promises';
 import { Architecture, Platform } from '../core/System';
-import { GameWindow } from './GameWindow';
+import { PlatformHelper } from '../helpers/PlatformHelper';
 
 @Service()
 export class JavaManager {
@@ -39,7 +39,7 @@ export class JavaManager {
             },
         );
 
-        if (process.platform === Platform.WINDOWS) {
+        if (PlatformHelper.isWindows) {
             ZipHelper.unzip(javaFile, javaDir);
         } else {
             await mkdir(javaDir, { recursive: true });
@@ -49,7 +49,7 @@ export class JavaManager {
 
     async getJavaPath(majorVersion: number) {
         const path = ['bin', 'java'];
-        if (process.platform === Platform.MACOS) {
+        if (PlatformHelper.isMac) {
             path.unshift('Contents', 'Home');
         }
 
