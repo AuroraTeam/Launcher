@@ -7,6 +7,7 @@ import tar from 'tar';
 import { mkdir, readdir } from 'fs/promises';
 import { Architecture, Platform } from '../core/System';
 import { PlatformHelper } from '../helpers/PlatformHelper';
+import { GameWindow } from './GameWindow';
 
 @Service()
 export class JavaManager {
@@ -14,7 +15,7 @@ export class JavaManager {
     constructor(private gameWindow: GameWindow) {}
 
     async checkAndDownloadJava(majorVersion: number) {
-        const javaDir = await this.#getJavaDir(majorVersion);
+        const javaDir = this.#getJavaDir(majorVersion);
         if (existsSync(javaDir)) return true;
 
         const javaLink =
