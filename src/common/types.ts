@@ -1,15 +1,8 @@
-// TODO!!! Синхронизировать типы
-export interface UserData {
-    username: string;
-    userUUID: string;
-    isAlex?: boolean;
-    skinUrl?: string;
-    capeUrl?: string;
-}
+import { AuthResponseData } from '@aurora-launcher/core';
 
-export interface Session extends UserData {
-    accessToken: string;
-}
+export type UserData = Omit<Session, 'accessToken'>;
+
+export type Session = AuthResponseData;
 
 export interface LoadProgress {
     total: number;
