@@ -69,7 +69,7 @@
     },
     "dependencies": {
         "@aurora-launcher/api": "^0.2.3",
-        "@aurora-launcher/core": "^0.16.0",
+        "@aurora-launcher/core": "^0.17.0",
         "electron-updater": "^6.1.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
