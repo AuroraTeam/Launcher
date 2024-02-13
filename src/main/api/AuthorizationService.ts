@@ -1,11 +1,7 @@
 import { Service } from 'typedi';
 
-import { UserData } from '../../common/types';
+import { Session, UserData } from '../../common/types';
 import { APIManager } from './APIManager';
-
-export interface Session extends UserData {
-    accessToken: string;
-}
 
 @Service()
 export class AuthorizationService {
@@ -15,8 +11,9 @@ export class AuthorizationService {
 
     async authorize(login: string, password: string): Promise<UserData> {
         this.currentSession = await this.apiService.auth(login, password);
-        const { userUUID, username } = this.currentSession;
-        return { userUUID, username };
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { accessToken, ...publicData } = this.currentSession;
+        return publicData;
     }
 
     getCurrentSession() {

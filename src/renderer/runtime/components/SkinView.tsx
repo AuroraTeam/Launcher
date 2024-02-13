@@ -11,7 +11,6 @@ export default function SkinView() {
             canvas: skinCanvas.current,
             width: 220,
             height: 440,
-            skin: defaultSkin,
         });
 
         skinViewer.camera.position.x = -20;
@@ -24,16 +23,17 @@ export default function SkinView() {
         control.enableZoom = false;
 
         // Поддержка загрузки и отображения скина
-        // const uuid = localStorage.getItem('userUUID');
-        // if (uuid) {
-        //     fetch(`http://api.local.host/users/skin/${uuid}`)
-        //         .then((res) => res.json())
-        //         .then(({ skinUrl, capeUrl, isAlex }) => {
-        //             if (skinUrl) skinViewer.loadSkin(skinUrl);
-        //             if (capeUrl) skinViewer.loadCape(capeUrl);
-        //             if (isAlex) skinViewer.playerObject.skin.modelType = 'slim';
-        //         });
-        // }
+        const { skinUrl, capeUrl, isAlex } = JSON.parse(
+            localStorage.getItem('userData') || '{}',
+        );
+        if (skinUrl) {
+            skinViewer.loadSkin(skinUrl);
+        } else {
+            // Fuck skinview (race condition moment)
+            skinViewer.loadSkin(defaultSkin);
+        }
+        if (capeUrl) skinViewer.loadCape(capeUrl);
+        if (isAlex) skinViewer.playerObject.skin.modelType = 'slim';
     }, []);
 
     return <canvas ref={skinCanvas} />;

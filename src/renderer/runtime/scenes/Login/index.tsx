@@ -23,7 +23,7 @@ export default function Login() {
         const formData = new FormData(event.currentTarget);
         const { login, password } = Object.fromEntries(formData) as AuthData;
 
-        // Валидацию можно делать как хошш))
+        // Пример валидации
         if (login.length < 3) {
             return showModal(
                 'Ошибка ввода',
@@ -42,13 +42,13 @@ export default function Login() {
             userData = await launcherAPI.scenes.login.auth(login, password);
         } catch (error) {
             console.error(error);
-            showModal('Ошибка авторизации', (error as Error).message);
-            return;
+            return showModal('Ошибка авторизации', (error as Error).message);
         }
 
-        setTitlebarUserText(userData.username);
         // Поддержка загрузки и отображения скина
-        // localStorage.setItem('userUUID', userData.userUUID);
+        localStorage.setItem('userData', JSON.stringify(userData));
+
+        setTitlebarUserText(userData.username);
         showTitlebarUser();
         navigate('ServersList');
     };

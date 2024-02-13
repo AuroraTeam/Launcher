@@ -7,7 +7,7 @@ import { StorageHelper } from 'main/helpers/StorageHelper';
 import { coerce, gte, lte } from 'semver';
 import { Service } from 'typedi';
 
-import { AuthorizationService, Session } from '../api/AuthorizationService';
+import { AuthorizationService } from '../api/AuthorizationService';
 import { LibrariesMatcher } from './LibrariesMatcher';
 import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
@@ -15,6 +15,7 @@ import { AuthlibInjector } from './AuthlibInjector';
 
 import { api as apiConfig } from '@config';
 import { PlatformHelper } from '../helpers/PlatformHelper';
+import { Session } from '../../common/types';
 
 @Service()
 export class Starter {
