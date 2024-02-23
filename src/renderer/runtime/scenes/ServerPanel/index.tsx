@@ -89,35 +89,35 @@ export default function ServerPanel() {
                     </div>
                     <div className={classes.line}></div>
                     <div className={classes.count}>
-                        {players.online || 0}
-                        <div className={classes.total}>
-                            из {players.max || 10}
-                        </div>
+                        {players.online}
+                        <div className={classes.total}>из {players.max}</div>
                     </div>
                 </div>
+            </div>
+            <div className={classes.content}>
+                <If state={showProgress}>
+                    <>
+                        <div className={classes.progress}>
+                            <div
+                                className={classes['progress-line']}
+                                ref={progressLine}
+                            ></div>
+                        </div>
+                        <div
+                            className={classes['progress-info']}
+                            ref={progressInfo}
+                        ></div>
+                    </>
+                </If>
+                <If state={showConsole}>
+                    <pre className={classes.console} ref={consoleRef}></pre>
+                </If>
             </div>
             <div className={classes.buttons}>
                 <button onClick={startGame} disabled={gameStarted}>
                     Играть
                 </button>
             </div>
-            <If state={showProgress}>
-                <>
-                    <div className={classes.progress}>
-                        <div
-                            className={classes['progress-line']}
-                            ref={progressLine}
-                        ></div>
-                    </div>
-                    <div
-                        className={classes['progress-info']}
-                        ref={progressInfo}
-                    ></div>
-                </>
-            </If>
-            <If state={showConsole}>
-                <pre className={classes.console} ref={consoleRef}></pre>
-            </If>
         </div>
     );
 }

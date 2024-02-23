@@ -14,7 +14,7 @@ export function ServerButton({ onClick, server }: ServerButtonProps) {
         <button className={classes.button} onClick={onClick}>
             <span className={classes.title}>{server.title}</span>
             <span className={classes.online}>
-                {online || 0} / {max || 10}
+                {online} / {max}
             </span>
             <div className={classes.next}>
                 <svg

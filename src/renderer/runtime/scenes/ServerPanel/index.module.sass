@@ -4,16 +4,21 @@
     background-color: rgba(0,0,0,.2)
 .info
     display: flex
-    align-items: center
+    align-items: flex-start
     justify-content: space-between
     margin: 20px 0
+    gap: 20px
     .title
-        font-size: 72px
+        font-size: 60px
+        white-space: nowrap
+        text-overflow: ellipsis
+        overflow: hidden
     .status
         display: flex
         align-items: center
         text-align: right
         font-weight: bold
+        flex-shrink: 0
         .gamers
             font-size: 30px
         .line
@@ -27,16 +32,22 @@
                 font-size: 18px
                 color: #bdbdbd
 
+.content
+    height: calc( 100% - 163px )
+
 .buttons
     display: flex
+    justify-content: flex-end
     gap: 10px
+    margin-top: auto
     button
         cursor: pointer
-        height: 30px
+        width: 180px
+        height: 50px
         padding: 7px 19px
         border: 2px solid var(--primary-color)
         border-radius: 15px
-        font-size: 14px
+        font-size: 20px
         outline: 0
         color: #fff
         box-shadow: var(--default-shadow)
@@ -45,7 +56,7 @@
 pre
     overflow: auto
     margin-top: 20px
-    height: 250px
+    height: 220px
     padding: 10px
     border-radius: 3px
     font-family: monospace

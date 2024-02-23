@@ -2,7 +2,7 @@ import { Server } from '@aurora-launcher/core';
 import { useState, useEffect } from 'react';
 
 export function usePingServer(server: Server) {
-    const [players, setPlayers] = useState({ online: 0, max: 10 });
+    const [players, setPlayers] = useState({ online: 0, max: 0 });
 
     useEffect(() => {
         if (!server.ip) {
