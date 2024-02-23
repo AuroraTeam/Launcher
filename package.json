@@ -1,6 +1,6 @@
 {
     "name": "aurora-launcher-app",
-    "version": "0.0.4-rc.4",
+    "version": "0.0.4",
     "description": "Launcher for Minecraft",
     "main": "build/main/index.js",
     "private": true,
@@ -68,8 +68,8 @@
         "vite": "^5.0.9"
     },
     "dependencies": {
-        "@aurora-launcher/api": "^0.2.3",
-        "@aurora-launcher/core": "^0.17.0",
+        "@aurora-launcher/api": "^0.3.0",
+        "@aurora-launcher/core": "^0.18.0",
         "electron-updater": "^6.1.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
