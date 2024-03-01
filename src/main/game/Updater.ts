@@ -146,10 +146,7 @@ export class Updater {
         path: string,
         type: 'clients' | 'libraries' | 'assets',
     ): URL {
-        return new URL(
-            `files/${type}/${path.replace('\\', '/')}`,
-            apiConfig.web,
-        );
+        return new URL(join('files', type, path), apiConfig.web);
     }
 
     async validateAndDownloadFile(
