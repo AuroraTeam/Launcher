@@ -2,20 +2,19 @@ import { spawn } from 'child_process';
 import { delimiter, join } from 'path';
 
 import { Profile, ZipHelper } from '@aurora-launcher/core';
+import { api as apiConfig } from '@config';
 import { LogHelper } from 'main/helpers/LogHelper';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import { coerce, gte, lte } from 'semver';
 import { Service } from 'typedi';
 
+import { Session } from '../../common/types';
 import { AuthorizationService } from '../api/AuthorizationService';
-import { LibrariesMatcher } from './LibrariesMatcher';
+import { PlatformHelper } from '../helpers/PlatformHelper';
+import { AuthlibInjector } from './AuthlibInjector';
 import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
-import { AuthlibInjector } from './AuthlibInjector';
-
-import { api as apiConfig } from '@config';
-import { PlatformHelper } from '../helpers/PlatformHelper';
-import { Session } from '../../common/types';
+import { LibrariesMatcher } from './LibrariesMatcher';
 
 @Service()
 export class Starter {
@@ -63,6 +62,7 @@ export class Starter {
             .filter(
                 (library) =>
                     library.type === 'library' &&
+                    !library.ignoreClassPath &&
                     LibrariesMatcher.match(library.rules),
             )
             .map(({ path }) => {
