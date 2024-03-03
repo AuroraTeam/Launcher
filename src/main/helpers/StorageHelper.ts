@@ -1,7 +1,10 @@
 import { existsSync, mkdirSync } from 'fs';
 import { homedir } from 'os';
 import { resolve } from 'path';
+
+import { appPath } from '@config';
 import { app } from 'electron';
+
 import { PlatformHelper } from './PlatformHelper';
 
 export class StorageHelper {
@@ -25,9 +28,8 @@ export class StorageHelper {
 
     private static getPlatformStorageDir() {
         if (PlatformHelper.isMac) {
-            return resolve(app.getPath('userData'), "../", "aurora-launcher");
+            return resolve(app.getPath('userData'), '../', appPath);
         }
-        return resolve(homedir(), '.aurora-launcher');
+        return resolve(homedir(), appPath);
     }
 }
-
