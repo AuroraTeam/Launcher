@@ -17,3 +17,17 @@ export const api = {
 };
 
 export const appPath = '.aurora-launcher';
+
+export const discord_rpc = {
+    appId: '000000000000000000',
+    firstLineText: '',
+    secondLineText: '',
+    button: {
+        label: '',
+        url: ''
+    },
+    largeImageKey: '',
+    smallImageKey: '',
+    largeImageText: '',
+    smallImageText: ''
+};

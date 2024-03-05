@@ -7,12 +7,14 @@ import { LoginScene } from '../scenes/Login';
 import { ServerPanelScene } from '../scenes/ServerPanel';
 import { ServersListScene } from '../scenes/ServersList';
 import { LauncherWindow } from './LauncherWindow';
+import { Discord } from './Discord-RPC';
 
 @Service()
 export class Launcher {
     constructor(
         private window: LauncherWindow,
         private apiManager: APIManager,
+        private discord: Discord,
 
         private loginScene: LoginScene,
         private serversListScene: ServersListScene,
@@ -32,5 +34,6 @@ export class Launcher {
 
         this.window.createWindow();
         LogHelper.info('Launcher started');
+        this.discord.start();
     }
 }
