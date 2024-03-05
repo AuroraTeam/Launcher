@@ -18,16 +18,18 @@ export const api = {
 
 export const appPath = '.aurora-launcher';
 
-export const discord_rpc = {
-    appId: '000000000000000000',
-    firstLineText: '',
-    secondLineText: '',
-    button: {
-        label: '',
-        url: ''
-    },
-    largeImageKey: '',
-    smallImageKey: '',
-    largeImageText: '',
-    smallImageText: ''
+export const discordRPC = {
+    appId: '1214685301793103902',
+    firstLineText: 'Тестирую лаунчер',
+    secondLineText: 'Чувак, ты думал здесь что-то будет?',
+    buttons: [
+        {
+            label: 'Прекол',
+            url: 'https://youtu.be/dQw4w9WgXcQ',
+        },
+    ],
+    largeImageKey: 'logo',
+    smallImageKey: 'logo_mc',
+    largeImageText: 'Aurora Launcher',
+    smallImageText: 'Minecraft',
 };
