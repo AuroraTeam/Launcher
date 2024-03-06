@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { ServerButton } from '../../components/ServerButton';
 import SkinView from '../../components/SkinView';
-import classes from './index.module.sass';
 import { useTitlebar } from '../../components/TitleBar/hooks';
+import classes from './index.module.sass';
 
 export default function ServersList() {
     const { hideTitlebarBackBtn } = useTitlebar();

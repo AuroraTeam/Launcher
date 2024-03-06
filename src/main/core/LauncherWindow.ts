@@ -5,8 +5,8 @@ import { BrowserWindow, app, ipcMain } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
-import { Service } from 'typedi';
 import { autoUpdater } from 'electron-updater';
+import { Service } from 'typedi';
 
 import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png';

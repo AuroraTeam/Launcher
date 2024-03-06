@@ -1,9 +1,11 @@
-import { HashHelper, HttpHelper } from '@aurora-launcher/core';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { StorageHelper } from '../helpers/StorageHelper';
-import { LogHelper } from '../helpers/LogHelper';
+
+import { HashHelper, HttpHelper } from '@aurora-launcher/core';
 import { Service } from 'typedi';
+
+import { LogHelper } from '../helpers/LogHelper';
+import { StorageHelper } from '../helpers/StorageHelper';
 
 @Service()
 export class AuthlibInjector {

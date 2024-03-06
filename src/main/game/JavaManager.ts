@@ -1,12 +1,14 @@
-import { join } from 'path';
-import { StorageHelper } from '../helpers/StorageHelper';
 import { existsSync } from 'fs';
-import { Service } from 'typedi';
+import { mkdir, readdir } from 'fs/promises';
+import { join } from 'path';
+
 import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
 import tar from 'tar';
-import { mkdir, readdir } from 'fs/promises';
+import { Service } from 'typedi';
+
 import { Architecture, Platform } from '../core/System';
 import { PlatformHelper } from '../helpers/PlatformHelper';
+import { StorageHelper } from '../helpers/StorageHelper';
 import { GameWindow } from './GameWindow';
 
 @Service()

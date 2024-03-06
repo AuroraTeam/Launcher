@@ -1,8 +1,8 @@
 import { Service } from 'typedi';
 
 import { EVENTS } from '../../common/channels';
-import { LauncherWindow } from '../core/LauncherWindow';
 import { LoadProgress } from '../../common/types';
+import { LauncherWindow } from '../core/LauncherWindow';
 
 @Service()
 export class GameWindow {

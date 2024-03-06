@@ -1,11 +1,11 @@
 import { Profile, Server } from '@aurora-launcher/core';
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
 
+import { LoadProgress } from '../../../../common/types';
 import If from '../../components/If';
 import { useTitlebar } from '../../components/TitleBar/hooks';
-import classes from './index.module.sass';
-import { LoadProgress } from '../../../../common/types';
 import { usePingServer } from '../../hooks/pingServer';
+import classes from './index.module.sass';
 
 // TODO Refactoring scene
 export default function ServerPanel() {

@@ -1,5 +1,5 @@
 import { Server } from '@aurora-launcher/core';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function usePingServer(server: Server) {
     const [players, setPlayers] = useState({ online: 0, max: 0 });

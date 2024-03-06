@@ -1,4 +1,5 @@
 import { Action, LibraryRule, Name } from '@aurora-launcher/core';
+
 import { Architecture, Platform } from '../core/System';
 
 export class LibrariesMatcher {

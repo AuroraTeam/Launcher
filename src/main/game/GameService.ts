@@ -2,10 +2,10 @@ import { Profile, Server } from '@aurora-launcher/core';
 import { Service } from 'typedi';
 
 import { APIManager } from '../api/APIManager';
+import { GameWindow } from './GameWindow';
 import { Starter } from './Starter';
 import { Updater } from './Updater';
 import { Watcher } from './Watcher';
-import { GameWindow } from './GameWindow';
 
 @Service()
 export class GameService {

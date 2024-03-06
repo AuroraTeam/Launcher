@@ -65,9 +65,7 @@ export class Starter {
                     !library.ignoreClassPath &&
                     LibrariesMatcher.match(library.rules),
             )
-            .map(({ path }) => {
-                return join(StorageHelper.librariesDir, path);
-            });
+            .map(({ path }) => join(StorageHelper.librariesDir, path));
         classPath.push(join(clientDir, clientArgs.gameJar));
 
         const jvmArgs = [];

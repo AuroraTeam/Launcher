@@ -20,7 +20,6 @@ export default function SkinView() {
 
         skinViewer.animation = new IdleAnimation();
 
-
         // Поддержка загрузки и отображения скина
         const { skinUrl, capeUrl, isAlex } = JSON.parse(
             localStorage.getItem('userData') || '{}',
