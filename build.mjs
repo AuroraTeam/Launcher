@@ -13,7 +13,8 @@ if (!watch) {
 const ctx = await context({
     entryPoints: ['src/main/index.ts'],
     bundle: true,
-    sourcemap: true,
+    sourcemap: 'inline',
+    sourcesContent: false,
     platform: 'node',
     target: 'node20',
     format: 'cjs',
@@ -22,8 +23,7 @@ const ctx = await context({
     keepNames: true,
     loader: {
         '.png': 'file',
-        //TODO Secure auth
-        '.pem': 'base64',
+        '.pem': 'text',
     },
     plugins: [esbuildDecorators()],
     ...args,

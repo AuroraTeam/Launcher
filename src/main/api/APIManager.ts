@@ -33,4 +33,8 @@ export class APIManager {
     public getUpdates(dir: string) {
         return this.api.getUpdates(dir);
     }
+
+    public verify(stage: number, token?: string) {
+        return this.api.verify(stage, token);
+    }
 }

@@ -31,5 +31,6 @@ export class DiscordRPC {
         // Из-за капризов Discord RPC скорее всего придётся реализовывать gracefull shutdown
         // хотя c nodemon это в любом случае не будет работать
         // process.once('beforeExit', () => this.client.destroy());
+        // либо забить как любые другие разрабы, что работают с Discord RPC
     }
 }

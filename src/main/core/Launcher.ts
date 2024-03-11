@@ -1,6 +1,7 @@
 import { Service } from 'typedi';
 
 import { APIManager } from '../api/APIManager';
+import { VerifyService } from '../api/VerifyService';
 import { LogHelper } from '../helpers/LogHelper';
 import { StorageHelper } from '../helpers/StorageHelper';
 import { LoginScene } from '../scenes/Login';
@@ -15,6 +16,7 @@ export class Launcher {
         private window: LauncherWindow,
         private apiManager: APIManager,
         private discordRPC: DiscordRPC,
+        private verifyService: VerifyService,
 
         private loginScene: LoginScene,
         private serversListScene: ServersListScene,
@@ -31,6 +33,8 @@ export class Launcher {
         this.loginScene.initHandlers();
         this.serversListScene.initHandlers();
         this.serverPanelScene.initHandlers();
+
+        this.verifyService.verify();
 
         this.window.createWindow();
         LogHelper.info('Launcher started');

@@ -2,16 +2,17 @@
     "name": "aurora-launcher-app",
     "version": "0.0.5-dev",
     "description": "Launcher for Minecraft",
-    "main": "build/main/index.js",
+    "main": "build/main/index-obf.loader.js",
     "private": true,
     "scripts": {
         "dev": "concurrently -i -n electron,main,preload,renderer -c cyan.bold,blue.bold,yellow.bold,magenta.bold \"npm:start:dev\" \"npm:build:main -- --watch --sourcemap=inline\" \"npm:build:preload -- --watch --sourcemap=inline\" \"vite\"",
-        "build": "concurrently -n main,preload,renderer -c blue.bold,yellow.bold,magenta.bold \"npm:build:main\" \"npm:build:preload\" \"npm:build:renderer\" --kill-others-on-fail",
+        "build": "concurrently -n main,preload,renderer -c blue.bold,yellow.bold,magenta.bold \"npm:build:main-compile\" \"npm:build:preload\" \"npm:build:renderer\" --kill-others-on-fail",
         "build:main": "node build.mjs",
+        "build:main-compile": "npm run build:main && npm run obfuscator && npm run bytenode && rimraf build/main/index.js build/main/index-obf.js",
         "build:preload": "esbuild src/preload/index.ts --platform=node --bundle --outdir=build/preload --external:electron --format=iife",
         "build:renderer": "tsc && vite build",
         "start:dev": "cross-env DEV=true nodemon --watch src --ext ts,tsx --ignore 'src/renderer' --exec npm run start:prod",
-        "start:prod": "electron .",
+        "start:prod": "electron build/main/index.js",
         "clean": "rimraf build out",
         "prettier": "prettier --config .prettierrc.json --write src",
         "typecheck": "tsc --noEmit",
@@ -19,8 +20,8 @@
         "lint:fix": "npm run lint -- --fix",
         "pack": "electron-builder --dir",
         "release": "electron-builder",
-        "obf": "javascript-obfuscator build/main/index.js --output build/main/index-obf.js --split-strings-chunk-length 8",
-        "bytenode": "bytenode -c build/main/index-obf.js -e"
+        "obfuscator": "javascript-obfuscator build/main/index.js --output build/main/index-obf.js --split-strings true --split-strings-chunk-length 8",
+        "bytenode": "bytenode -c build/main/index-obf.js -e -l --compress"
     },
     "repository": {
         "type": "git",
@@ -46,10 +47,9 @@
         "@typescript-eslint/eslint-plugin": "^7.1.1",
         "@typescript-eslint/parser": "^7.1.1",
         "@vitejs/plugin-react": "^4.2.1",
-        "bytenode": "^1.5.3",
         "concurrently": "^8.2.2",
         "cross-env": "^7.0.3",
-        "electron": "^29.1.0",
+        "electron": "29.1.1",
         "electron-builder": "^24.13.3",
         "electron-extension-installer": "^1.2.0",
         "esbuild": "^0.20.1",
@@ -68,9 +68,10 @@
         "vite": "^5.1.5"
     },
     "dependencies": {
-        "@aurora-launcher/api": "^0.3.0",
+        "@aurora-launcher/api": "^0.4.0",
         "@aurora-launcher/core": "^0.19.0",
         "@xhayper/discord-rpc": "^1.1.2",
+        "bytenode": "^1.5.4",
         "electron-updater": "^6.1.8",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -104,7 +105,8 @@
         },
         "files": [
             "build/**/*",
-            "!node_modules/**/*"
+            "!node_modules/**/*",
+            "node_modules/bytenode/**/*"
         ],
         "nsis": {
             "artifactName": "${name}-Setup-${version}.${ext}"
