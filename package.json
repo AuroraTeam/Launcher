@@ -8,7 +8,7 @@
         "dev": "concurrently -i -n electron,main,preload,renderer -c cyan.bold,blue.bold,yellow.bold,magenta.bold \"npm:start:dev\" \"npm:build:main -- --watch --sourcemap=inline\" \"npm:build:preload -- --watch --sourcemap=inline\" \"vite\"",
         "build": "concurrently -n main,preload,renderer -c blue.bold,yellow.bold,magenta.bold \"npm:build:main-compile\" \"npm:build:preload\" \"npm:build:renderer\" --kill-others-on-fail",
         "build:main": "node build.mjs",
-        "build:main-compile": "npm run build:main && npm run obfuscator && npm run bytenode && rimraf build/main/index.js build/main/index-obf.js",
+        "build:main-compile": "npm run build:main && npm run obfuscator && npm run bytenode",
         "build:preload": "esbuild src/preload/index.ts --platform=node --bundle --outdir=build/preload --external:electron --format=iife",
         "build:renderer": "tsc && vite build",
         "start:dev": "cross-env DEV=true nodemon --watch src --ext ts,tsx --ignore 'src/renderer' --exec npm run start:prod",
@@ -105,6 +105,8 @@
         },
         "files": [
             "build/**/*",
+            "!build/main/index.js",
+            "!build/main/index-obf.js",
             "!node_modules/**/*",
             "node_modules/bytenode/**/*"
         ],
