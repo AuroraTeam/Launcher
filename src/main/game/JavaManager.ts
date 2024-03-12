@@ -27,8 +27,8 @@ export class JavaManager {
             javaLink
                 .replace('{version}', majorVersion.toString())
                 .replace('{os}', this.#getOs())
-                .replace('{arch}', this.#getArch())
-            );
+                .replace('{arch}', this.#getArch()),
+        );
         const javaFile = await HttpHelper.downloadFile(
             javaData[0].download_url,
             null,
@@ -92,7 +92,7 @@ enum JavaOs {
 enum JavaArchitecture {
     ARM = 'aarch32',
     ARM64 = 'aarch64',
-    X32 = 'x86',
+    X32 = 'i686',
     X64 = 'x64',
 }
 
