@@ -85,12 +85,12 @@ export class JavaManager {
 
 enum JavaOs {
     WINDOWS = 'windows',
-    MAC = 'mac',
+    MAC = 'macos',
     LINUX = 'linux',
 }
 
 enum JavaArchitecture {
-    ARM = 'arm',
+    ARM = 'aarch32',
     ARM64 = 'aarch64',
     X32 = 'x86',
     X64 = 'x64',
