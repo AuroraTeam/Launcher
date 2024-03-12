@@ -1,9 +1,8 @@
 import { existsSync } from 'fs';
-import { mkdir, readdir } from 'fs/promises';
+import { readdir } from 'fs/promises';
 import { join } from 'path';
 
 import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
-import tar from 'tar';
 import { Service } from 'typedi';
 
 import { Architecture, Platform } from '../core/System';
@@ -21,14 +20,17 @@ export class JavaManager {
         if (existsSync(javaDir)) return true;
 
         const javaLink =
-            'https://api.adoptium.net/v3/binary/latest/{version}/ga/{os}/{arch}/jre/hotspot/normal/eclipse';
+            'https://api.azul.com/metadata/v1/zulu/packages/?java_version={version}&os={os}&arch={arch}&archive_type=zip&java_package_type=jre&javafx_bundled=false&latest=true&release_status=ga&availability_types=CA&certifications=tck&page=1&page_size=1';
 
         this.gameWindow.sendToConsole('Download Java');
-        const javaFile = await HttpHelper.downloadFile(
+        const javaData: JavaData[] = await HttpHelper.getResourceFromJson(
             javaLink
                 .replace('{version}', majorVersion.toString())
                 .replace('{os}', this.#getOs())
-                .replace('{arch}', this.#getArch()),
+                .replace('{arch}', this.#getArch())
+            );
+        const javaFile = await HttpHelper.downloadFile(
+            javaData[0].download_url,
             null,
             {
                 saveToTempFile: true,
@@ -41,13 +43,8 @@ export class JavaManager {
                 },
             },
         );
-
-        if (PlatformHelper.isWindows) {
-            ZipHelper.unzip(javaFile, javaDir);
-        } else {
-            await mkdir(javaDir, { recursive: true });
-            await tar.x({ file: javaFile, cwd: javaDir });
-        }
+        this.gameWindow.sendToConsole('Unpacking Java');
+        ZipHelper.unzip(javaFile, javaDir);
     }
 
     async getJavaPath(majorVersion: number) {
@@ -97,4 +94,16 @@ enum JavaArchitecture {
     ARM64 = 'aarch64',
     X32 = 'x86',
     X64 = 'x64',
+}
+
+interface JavaData {
+    package_uuid: string;
+    name: string;
+    java_version: Array<number>;
+    openjdk_build_number: number;
+    latest: boolean;
+    download_url: URL;
+    product: string;
+    availability_type: string;
+    distro_version: Array<number>;
 }
