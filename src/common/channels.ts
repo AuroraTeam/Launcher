@@ -10,6 +10,7 @@ export const EVENTS = {
         SERVERS_LIST: {
             GET_SERVERS: 'scenes:serversList:getServers',
             SELECT_SERVER: 'scenes:serversList:selectServer',
+            PING_SERVER: 'scenes:serversList:pingServer',
         },
         SERVER_PANEL: {
             GET_PROFILE: 'scenes:serverPanel:getProfile',

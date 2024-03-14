@@ -18,6 +18,7 @@ export const API = {
         serversList: {
             getServers: ServersList.getServers,
             selectServer: ServersList.selectServer,
+            pingServer: ServersList.pingServer,
         },
         serverPanel: {
             getProfile: ServerPanel.getProfile,

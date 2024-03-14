@@ -1,22 +1,17 @@
 import { Server } from '@aurora-launcher/core';
 import { useEffect, useState } from 'react';
 
-export function usePingServer(server: Server) {
+export function usePingServer(server?: Server) {
     const [players, setPlayers] = useState({ online: 0, max: 0 });
 
     useEffect(() => {
-        if (!server.ip) {
-            return;
-        }
+        if (!server) return;
 
-        fetch(
-            `https://mcapi.us/server/status?ip=${server.ip}&port=${server.port || 25565}`,
-        )
-            .then((res) => res.json())
-            .then((res) => {
-                if (!res.online) return;
-                const { max, now } = res.players;
-                setPlayers({ max, online: now });
+        launcherAPI.scenes.serversList
+            .pingServer(server)
+            .then(({ players, maxPlayers }) => {
+                // Можно также передать инфу online сервер или нет
+                setPlayers({ online: players || 0, max: maxPlayers || 0 });
             });
     }, [server]);
 
