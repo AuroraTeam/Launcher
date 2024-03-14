@@ -1,21 +1,16 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { titlebarBackBtn, titlebarTitle, titlebarUser } from './states';
 
 export function useTitlebar() {
-    const [titlebarBackBtnState, setTitlebarBackBtnState] =
-        useRecoilState(titlebarBackBtn);
+    const setTitlebarBackBtnState = useSetRecoilState(titlebarBackBtn);
 
     function showTitlebarBackBtn() {
-        if (!titlebarBackBtnState.show) {
-            setTitlebarBackBtnState({ show: true });
-        }
+        setTitlebarBackBtnState({ show: true });
     }
 
     function hideTitlebarBackBtn() {
-        if (titlebarBackBtnState.show) {
-            setTitlebarBackBtnState({ show: false });
-        }
+        setTitlebarBackBtnState({ show: false });
     }
 
     const setTitlebarTitleState = useSetRecoilState(titlebarTitle);

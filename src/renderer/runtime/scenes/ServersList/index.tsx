@@ -9,12 +9,12 @@ import classes from './index.module.sass';
 
 export default function ServersList() {
     const { hideTitlebarBackBtn } = useTitlebar();
-    hideTitlebarBackBtn();
 
     const [servers, setServers] = useState<Server[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
+        hideTitlebarBackBtn();
         launcherAPI.scenes.serversList.getServers().then(setServers);
     }, []);
 
