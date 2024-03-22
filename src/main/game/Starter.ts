@@ -7,6 +7,7 @@ import { LogHelper } from 'main/helpers/LogHelper';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import { coerce, gte, lte } from 'semver';
 import { Service } from 'typedi';
+import { LauncherWindow } from 'main/core/LauncherWindow';
 
 import { Session } from '../../common/types';
 import { AuthorizationService } from '../api/AuthorizationService';
@@ -19,6 +20,7 @@ import { LibrariesMatcher } from './LibrariesMatcher';
 @Service()
 export class Starter {
     constructor(
+        private LauncherWindow: LauncherWindow,
         private authorizationService: AuthorizationService,
         private gameWindow: GameWindow,
         private javaManager: JavaManager,
@@ -114,6 +116,10 @@ export class Starter {
             jvmArgs,
             { cwd: clientDir },
         );
+
+        gameProccess.on('spawn',() => {
+            this.LauncherWindow.hideWindow();
+        });
 
         gameProccess.stdout.on('data', (data: Buffer) => {
             const log = data.toString().trim();

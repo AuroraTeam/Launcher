@@ -1,7 +1,7 @@
 import { join } from 'path';
 
 import { window as windowConfig } from '@config';
-import { BrowserWindow, app, ipcMain } from 'electron';
+import { BrowserWindow, app, ipcMain, Tray, Menu } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
@@ -63,7 +63,7 @@ export class LauncherWindow {
 
         // close the main window when the close button is pressed
         ipcMain.on(EVENTS.WINDOW.CLOSE, () => {
-            this.mainWindow?.close();
+            this.mainWindow?.hide();
         });
     }
 
@@ -71,6 +71,26 @@ export class LauncherWindow {
      * Create launcher window
      */
     private createMainWindow(): BrowserWindow {
+        // creating and configuring a tray
+        const tray = new Tray(join(__dirname, logo));
+
+        tray.setContextMenu(Menu.buildFromTemplate([
+            {
+              label: 'Показать окно', click: function () {
+                mainWindow.show();
+              }
+            },
+            {
+              label: 'Закрыть', click: function () {
+                mainWindow.close();
+              }
+            }
+          ]));
+
+        tray.on('click', () => {
+            mainWindow.show();
+        });
+
         // creating and configuring a window
         const mainWindow = new BrowserWindow({
             show: false, // Use 'ready-to-show' event to show window
@@ -110,6 +130,10 @@ export class LauncherWindow {
         });
 
         return mainWindow;
+    }
+
+    public hideWindow(): void {
+        this.mainWindow?.hide();
     }
 
     public sendEvent(channel: string, ...args: any[]): void {
