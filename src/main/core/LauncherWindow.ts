@@ -136,6 +136,10 @@ export class LauncherWindow {
         this.mainWindow?.hide();
     }
 
+    public showWindow(): void {
+        this.mainWindow?.show();
+    }
+
     public sendEvent(channel: string, ...args: any[]): void {
         this.mainWindow?.webContents.send(channel, ...args);
     }

@@ -136,6 +136,7 @@ export class Starter {
         gameProccess.on('close', () => {
             this.gameWindow.stopGame();
             LogHelper.info('Game stop');
+            this.LauncherWindow.showWindow();
         });
     }
     private gameLauncher(
