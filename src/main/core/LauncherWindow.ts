@@ -1,7 +1,7 @@
 import { join } from 'path';
 
 import { window as windowConfig } from '@config';
-import { BrowserWindow, app, ipcMain, Tray, Menu } from 'electron';
+import { BrowserWindow, Menu, Tray, app, ipcMain } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
@@ -13,6 +13,7 @@ import logo from '../../renderer/runtime/assets/images/logo.png';
 import { PlatformHelper } from '../helpers/PlatformHelper';
 
 const isDev = process.env.DEV === 'true' && !app.isPackaged;
+const logoPath = join(__dirname, logo);
 
 @Service()
 export class LauncherWindow {
@@ -57,14 +58,10 @@ export class LauncherWindow {
         });
 
         // hide the main window when the minimize button is pressed
-        ipcMain.on(EVENTS.WINDOW.HIDE, () => {
-            this.mainWindow?.minimize();
-        });
+        ipcMain.on(EVENTS.WINDOW.HIDE, () => this.mainWindow?.minimize());
 
         // close the main window when the close button is pressed
-        ipcMain.on(EVENTS.WINDOW.CLOSE, () => {
-            this.mainWindow?.hide();
-        });
+        ipcMain.on(EVENTS.WINDOW.CLOSE, () => this.mainWindow?.hide());
     }
 
     /**
@@ -72,24 +69,22 @@ export class LauncherWindow {
      */
     private createMainWindow(): BrowserWindow {
         // creating and configuring a tray
-        const tray = new Tray(join(__dirname, logo));
+        const tray = new Tray(logoPath);
 
-        tray.setContextMenu(Menu.buildFromTemplate([
-            {
-              label: 'Показать окно', click: function () {
-                mainWindow.show();
-              }
-            },
-            {
-              label: 'Закрыть', click: function () {
-                mainWindow.close();
-              }
-            }
-          ]));
+        tray.setContextMenu(
+            Menu.buildFromTemplate([
+                {
+                    label: 'Показать окно',
+                    click: () => mainWindow.show(),
+                },
+                {
+                    label: 'Закрыть',
+                    click: () => mainWindow.close(),
+                },
+            ]),
+        );
 
-        tray.on('click', () => {
-            mainWindow.show();
-        });
+        tray.on('click', () => mainWindow.show());
 
         // creating and configuring a window
         const mainWindow = new BrowserWindow({
@@ -101,7 +96,7 @@ export class LauncherWindow {
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
             title: windowConfig.title || 'Aurora Launcher',
-            icon: join(__dirname, logo), // TODO Check no img (maybe use mainWindow.setIcon())
+            icon: logoPath,
             webPreferences: {
                 preload: join(__dirname, '../preload/index.js'),
                 devTools: isDev,
