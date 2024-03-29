@@ -20,12 +20,13 @@ export default function ServerPanel() {
     const progressLine = useRef() as MutableRefObject<HTMLDivElement>;
     const progressInfo = useRef() as MutableRefObject<HTMLDivElement>;
 
-    const { showTitlebarBackBtn, hideTitlebarBackBtn } = useTitlebar();
+    const { showTitlebarBackBtn, hideTitlebarBackBtn, showTitlebarSettingsBtn, resetTitlebarTitleText } = useTitlebar();
 
     useEffect(() => {
         launcherAPI.scenes.serverPanel.getServer().then(setSelectedServer);
-
+        showTitlebarSettingsBtn();
         showTitlebarBackBtn();
+        resetTitlebarTitleText();
     }, []);
 
     const startGame = () => {

@@ -8,13 +8,15 @@ import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
 
 export default function ServersList() {
-    const { hideTitlebarBackBtn } = useTitlebar();
+    const { hideTitlebarBackBtn, showTitlebarSettingsBtn, resetTitlebarTitleText } = useTitlebar();
 
     const [servers, setServers] = useState<Server[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         hideTitlebarBackBtn();
+        showTitlebarSettingsBtn();
+        resetTitlebarTitleText();
         launcherAPI.scenes.serversList.getServers().then(setServers);
     }, []);
 
