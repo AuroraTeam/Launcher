@@ -1,4 +1,4 @@
-import { mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 import { dirname, join } from 'path';
 
@@ -6,6 +6,7 @@ import {
     HashHelper,
     HttpHelper,
     JsonHelper,
+    MojangAssets,
     Profile,
 } from '@aurora-launcher/core';
 import { api as apiConfig } from '@config';
@@ -41,7 +42,7 @@ export class Updater {
         const assetFile = await HttpHelper.getResource(assetIndexUrl);
         await writeFile(filePath, assetFile);
 
-        const { objects } = JsonHelper.fromJson<Assets>(assetFile);
+        const { objects } = JsonHelper.fromJson<MojangAssets>(assetFile);
 
         const assetsHashes = Object.values(objects)
             .sort((a, b) => b.size - a.size)
@@ -59,9 +60,8 @@ export class Updater {
         await pMap(
             assetsHashes,
             async (hash) => {
-                await this.validateAndDownloadFile(
+                await this.checkAndDownloadFile(
                     hash.path,
-                    hash.hash,
                     StorageHelper.assetsDir,
                     'assets',
                 );
@@ -122,15 +122,33 @@ export class Updater {
         );
         let loaded = 0;
 
+        const verifyArray = clientArgs.update.concat(clientArgs.updateVerify);
         await pMap(
             hashes,
-            async (hash: any) => {
-                await this.validateAndDownloadFile(
+            async (hash) => {
+                await this.checkAndDownloadFile(
                     hash.path,
-                    hash.sha1,
                     StorageHelper.clientsDir,
                     'clients',
                 );
+
+                const filteredPath = hash.path
+                    .replace(/\\/g, '/')
+                    .replace(`/${clientArgs.clientDir}/`, '');
+
+                if (
+                    verifyArray.find((u) => u.startsWith(filteredPath)) &&
+                    !clientArgs.updateExclusions.find((u) =>
+                        u.startsWith(filteredPath),
+                    )
+                ) {
+                    await this.validateAndDownloadFile(
+                        hash.path,
+                        hash.sha1,
+                        StorageHelper.clientsDir,
+                        'clients',
+                    );
+                }
 
                 this.gameWindow.sendProgress({
                     total: totalSize,
@@ -149,15 +167,13 @@ export class Updater {
         return new URL(join('files', type, path), apiConfig.web);
     }
 
-    async validateAndDownloadFile(
+    private async validateAndDownloadFile(
         path: string,
         sha1: string,
         rootDir: string,
         type: 'clients' | 'libraries' | 'assets',
     ): Promise<void> {
         const filePath = join(rootDir, path);
-        mkdirSync(dirname(filePath), { recursive: true });
-
         const fileUrl = this.getFileUrl(path, type);
 
         try {
@@ -173,27 +189,21 @@ export class Updater {
             throw new Error(`file ${fileUrl} not found`);
         }
     }
-}
 
-// TODO: Move to @aurora-launcher/core
-/**
- * For assets
- */
-export interface Assets {
-    /**
-     * Найдено в https://launchermeta.mojang.com/v1/packages/3d8e55480977e32acd9844e545177e69a52f594b/pre-1.6.json \
-     * до версии 1.6 (если точнее до снапшота 13w23b)
-     */
-    map_to_resources?: boolean;
-    /**
-     * Найдено в https://launchermeta.mojang.com/v1/packages/770572e819335b6c0a053f8378ad88eda189fc14/legacy.json \
-     * начиная с версии версии 1.6 (если точнее с снапшота 13w24a) и до 1.7.2 (13w48b)
-     */
-    virtual?: boolean;
-    objects: { [key: string]: Asset };
-}
+    private async checkAndDownloadFile(
+        path: string,
+        rootDir: string,
+        type: 'clients' | 'libraries' | 'assets',
+    ): Promise<void> {
+        const filePath = join(rootDir, path);
+        const fileUrl = this.getFileUrl(path, type);
 
-export interface Asset {
-    hash: string;
-    size: number;
+        if (existsSync(filePath)) return;
+
+        try {
+            await HttpHelper.downloadSafeFile(fileUrl, filePath);
+        } catch (error) {
+            throw new Error(`file ${fileUrl} not found`);
+        }
+    }
 }
