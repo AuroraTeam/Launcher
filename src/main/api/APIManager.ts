@@ -7,15 +7,21 @@ import { LogHelper } from '../helpers/LogHelper';
 @Service()
 export class APIManager {
     private api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370', {
-        onClose: () => setTimeout(() => this.initConnection(), 5000),
+        onClose: () => setTimeout(() => this.initConnection(), 2000),
     });
 
     async initConnection() {
         try {
             await this.api.connect();
+            this.#onConnectListeners.forEach((listener) => listener());
         } catch (error) {
             LogHelper.error(error);
         }
+    }
+
+    #onConnectListeners: (() => void)[] = [];
+    onConnect(listener: () => void) {
+        this.#onConnectListeners.push(listener);
     }
 
     public auth(login: string, password: string) {

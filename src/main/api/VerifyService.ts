@@ -10,6 +10,10 @@ import { APIManager } from './APIManager';
 export class VerifyService {
     constructor(private apiService: APIManager) {}
 
+    init() {
+        this.apiService.onConnect(() => this.verify());
+    }
+
     async verify() {
         const { token } = await this.apiService.verify(1);
         if (!token) {
