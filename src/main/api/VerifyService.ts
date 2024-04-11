@@ -11,6 +11,7 @@ export class VerifyService {
     constructor(private apiService: APIManager) {}
 
     init() {
+        this.verify();
         this.apiService.onConnect(() => this.verify());
     }
 
