@@ -3,6 +3,7 @@ import { Service } from 'typedi';
 
 import { APIManager } from '../api/APIManager';
 import { GameWindow } from './GameWindow';
+import { LibrariesMatcher } from './LibrariesMatcher';
 import { Starter } from './Starter';
 import { Updater } from './Updater';
 import { Watcher } from './Watcher';
@@ -45,10 +46,14 @@ export class GameService {
             return;
         }
 
+        const libraries = profile.libraries.filter((library) =>
+            LibrariesMatcher.match(library.rules),
+        );
+
         try {
-            await this.gameUpdater.validateClient(profile);
-            await this.gameStarter.start(profile);
-            await this.gameWatcher.watch();
+            await this.gameUpdater.validateClient(profile, libraries);
+            const natives = await this.gameStarter.start(profile, libraries);
+            await this.gameWatcher.watch(profile, libraries, natives);
         } catch (error) {
             this.gameWindow.sendToConsole(`${error}`);
             this.gameWindow.stopGame();

@@ -61,7 +61,7 @@ export class LauncherWindow {
         ipcMain.on(EVENTS.WINDOW.HIDE, () => this.mainWindow?.minimize());
 
         // close the main window when the close button is pressed
-        ipcMain.on(EVENTS.WINDOW.CLOSE, () => this.mainWindow?.hide());
+        ipcMain.on(EVENTS.WINDOW.CLOSE, () => this.mainWindow?.close());
     }
 
     /**

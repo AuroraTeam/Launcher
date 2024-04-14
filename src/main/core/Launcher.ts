@@ -34,7 +34,7 @@ export class Launcher {
         this.serversListScene.initHandlers();
         this.serverPanelScene.initHandlers();
 
-        this.verifyService.verify();
+        this.verifyService.init();
 
         this.window.createWindow();
         LogHelper.info('Launcher started');
