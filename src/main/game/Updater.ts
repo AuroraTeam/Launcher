@@ -8,15 +8,16 @@ import {
     JsonHelper,
     MojangAssets,
     Profile,
+    ProfileLibrary,
 } from '@aurora-launcher/core';
 import { api as apiConfig } from '@config';
 import { StorageHelper } from 'main/helpers/StorageHelper';
 import pMap from 'p-map';
 import { Service } from 'typedi';
 
+import { LoadProgress } from '../../common/types';
 import { APIManager } from '../api/APIManager';
 import { GameWindow } from './GameWindow';
-import { LibrariesMatcher } from './LibrariesMatcher';
 
 @Service()
 export class Updater {
@@ -25,16 +26,19 @@ export class Updater {
         private gameWindow: GameWindow,
     ) {}
 
-    async validateClient(clientArgs: Profile): Promise<void> {
-        await this.validateAssets(clientArgs);
-        await this.validateLibraries(clientArgs);
+    async validateClient(
+        clientArgs: Profile,
+        libraries: ProfileLibrary[],
+    ): Promise<void> {
+        await this.validateAssets(clientArgs.assetIndex);
+        await this.validateLibraries(libraries);
         await this.validateGameFiles(clientArgs);
     }
 
-    async validateAssets(clientArgs: Profile): Promise<void> {
+    async validateAssets(assetIndex: string): Promise<void> {
         this.gameWindow.sendToConsole('Load assets files');
 
-        const assetIndexPath = `indexes/${clientArgs.assetIndex}.json`;
+        const assetIndexPath = `indexes/${assetIndex}.json`;
         const filePath = join(StorageHelper.assetsDir, assetIndexPath);
         mkdirSync(dirname(filePath), { recursive: true });
 
@@ -51,11 +55,8 @@ export class Updater {
                 path: `objects/${hash.hash.slice(0, 2)}/${hash.hash}`,
             }));
 
-        const totalSize = assetsHashes.reduce(
-            (prev, cur) => prev + cur.size,
-            0,
-        );
-        let loaded = 0;
+        const total = assetsHashes.reduce((prev, cur) => prev + cur.size, 0);
+        const updateProgress = this.createProgressUpdater(total, 'size');
 
         await pMap(
             assetsHashes,
@@ -66,27 +67,24 @@ export class Updater {
                     'assets',
                 );
 
-                this.gameWindow.sendProgress({
-                    total: totalSize,
-                    loaded: (loaded += hash.size),
-                    type: 'size',
-                });
+                updateProgress(hash.size);
             },
             { concurrency: 4 },
         );
+
+        this.gameWindow.sendToConsole('Assets files loaded');
     }
 
-    async validateLibraries(clientArgs: Profile): Promise<void> {
+    async validateLibraries(libraries: ProfileLibrary[]): Promise<void> {
         this.gameWindow.sendToConsole('Load libraries files');
 
-        const usedLibraries = clientArgs.libraries.filter((library) =>
-            LibrariesMatcher.match(library.rules),
+        const updateProgress = this.createProgressUpdater(
+            libraries.length,
+            'count',
         );
 
-        let loaded = 0;
-
         await pMap(
-            usedLibraries,
+            libraries,
             async (library) => {
                 await this.validateAndDownloadFile(
                     library.path,
@@ -95,32 +93,23 @@ export class Updater {
                     'libraries',
                 );
 
-                this.gameWindow.sendProgress({
-                    total: usedLibraries.length,
-                    loaded: (loaded += 1),
-                    type: 'count',
-                });
+                updateProgress();
             },
             { concurrency: 4 },
         );
+
+        this.gameWindow.sendToConsole('Libraries files loaded');
     }
 
     async validateGameFiles(clientArgs: Profile): Promise<void> {
         this.gameWindow.sendToConsole('Load client files');
 
         const hashes = await this.api.getUpdates(clientArgs.clientDir);
-        if (!hashes) {
-            throw new Error('Client not found');
-        }
+        if (!hashes) throw new Error('Client not found');
 
-        hashes.sort(
-            (a: { size: number }, b: { size: number }) => b.size - a.size,
-        );
-        const totalSize = hashes.reduce(
-            (prev: any, cur: { size: any }) => prev + cur.size,
-            0,
-        );
-        let loaded = 0;
+        hashes.sort((a, b) => b.size - a.size);
+        const total = hashes.reduce((prev, cur) => prev + cur.size, 0);
+        const updateProgress = this.createProgressUpdater(total, 'size');
 
         const verifyArray = clientArgs.update.concat(clientArgs.updateVerify);
         await pMap(
@@ -150,14 +139,12 @@ export class Updater {
                     );
                 }
 
-                this.gameWindow.sendProgress({
-                    total: totalSize,
-                    loaded: (loaded += hash.size),
-                    type: 'size',
-                });
+                updateProgress(hash.size);
             },
             { concurrency: 4 },
         );
+
+        this.gameWindow.sendToConsole('Client files loaded');
     }
 
     private getFileUrl(
@@ -205,5 +192,17 @@ export class Updater {
         } catch (error) {
             throw new Error(`file ${fileUrl} not found`);
         }
+    }
+
+    private createProgressUpdater(total: number, type: LoadProgress['type']) {
+        let loaded = 0;
+
+        return (size?: number) => {
+            this.gameWindow.sendProgress({
+                total,
+                loaded: (loaded += size || 1),
+                type,
+            });
+        };
     }
 }

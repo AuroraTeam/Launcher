@@ -56,8 +56,6 @@ export class AuthlibInjector {
 }
 
 interface AuthlibData {
-    build_number: number;
-    version: string;
     download_url: string;
     checksums: {
         sha256: string;
