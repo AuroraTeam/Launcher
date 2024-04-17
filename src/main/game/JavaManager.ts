@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { readdir } from 'fs/promises';
+import { readdir, chmod } from 'fs/promises';
 import { join } from 'path';
 
 import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
@@ -45,6 +45,9 @@ export class JavaManager {
         );
         this.gameWindow.sendToConsole('Unpacking Java');
         ZipHelper.unzip(javaFile, javaDir);
+        if (PlatformHelper.isLinux || PlatformHelper.isMac) {
+            await chmod(await this.getJavaPath(majorVersion), 744);
+        }
     }
 
     async getJavaPath(majorVersion: number) {
