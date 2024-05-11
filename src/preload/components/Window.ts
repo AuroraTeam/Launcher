@@ -16,4 +16,11 @@ export default class Window {
     static close() {
         ipcRenderer.send(EVENTS.WINDOW.CLOSE);
     }
+
+    /**
+     * Open external url
+     */
+    static openExternal(url: string) {
+        ipcRenderer.send(EVENTS.WINDOW.OPEN_EXTERNAL, url);
+    }
 }

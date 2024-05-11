@@ -10,6 +10,7 @@ export const API = {
     window: {
         hide: Window.hide,
         close: Window.close,
+        openExternal: Window.openExternal,
     },
     scenes: {
         login: {

@@ -2,6 +2,7 @@ export const EVENTS = {
     WINDOW: {
         HIDE: 'window:hide',
         CLOSE: 'window:close',
+        OPEN_EXTERNAL: 'window:openExternal',
     },
     SCENES: {
         LOGIN: {

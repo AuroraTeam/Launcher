@@ -1,7 +1,7 @@
 import { join } from 'path';
 
 import { window as windowConfig } from '@config';
-import { BrowserWindow, Menu, Tray, app, ipcMain } from 'electron';
+import { BrowserWindow, Menu, Tray, app, ipcMain, shell } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
@@ -62,6 +62,10 @@ export class LauncherWindow {
 
         // close the main window when the close button is pressed
         ipcMain.on(EVENTS.WINDOW.CLOSE, () => this.mainWindow?.close());
+
+        ipcMain.on(EVENTS.WINDOW.OPEN_EXTERNAL, (_, url: string) =>
+            shell.openExternal(url),
+        );
     }
 
     /**
