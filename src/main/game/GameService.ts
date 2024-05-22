@@ -52,8 +52,18 @@ export class GameService {
 
         try {
             await this.gameUpdater.validateClient(profile, libraries);
-            const natives = await this.gameStarter.start(profile, libraries);
-            await this.gameWatcher.watch(profile, libraries, natives);
+
+            const { nativesFiles, gameProcess } = await this.gameStarter.start(
+                profile,
+                libraries,
+            );
+
+            await this.gameWatcher.watch(
+                profile,
+                libraries,
+                nativesFiles,
+                gameProcess,
+            );
         } catch (error) {
             this.gameWindow.sendToConsole(`${error}`);
             this.gameWindow.stopGame();

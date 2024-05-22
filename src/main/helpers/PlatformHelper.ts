@@ -1,5 +1,3 @@
-import process from 'process';
-
 import { Platform } from '../core/System';
 
 export class PlatformHelper {

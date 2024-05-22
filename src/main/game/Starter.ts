@@ -102,35 +102,35 @@ export class Starter {
 
         await this.javaManager.checkAndDownloadJava(profile.javaVersion);
 
-        const gameProccess = spawn(
+        const gameProcess = spawn(
             await this.javaManager.getJavaPath(profile.javaVersion),
             jvmArgs,
             { cwd: clientDir },
         );
 
-        gameProccess.on('spawn', () => {
+        gameProcess.on('spawn', () => {
             this.LauncherWindow.hideWindow();
         });
 
-        gameProccess.stdout.on('data', (data: Buffer) => {
+        gameProcess.stdout.on('data', (data: Buffer) => {
             const log = data.toString().trim();
             this.gameWindow.sendToConsole(log);
             LogHelper.info(log);
         });
 
-        gameProccess.stderr.on('data', (data: Buffer) => {
+        gameProcess.stderr.on('data', (data: Buffer) => {
             const log = data.toString().trim();
             this.gameWindow.sendToConsole(log);
             LogHelper.error(log);
         });
 
-        gameProccess.on('close', () => {
+        gameProcess.on('close', () => {
             this.gameWindow.stopGame();
             LogHelper.info('Game stop');
             this.LauncherWindow.showWindow();
         });
 
-        return nativesFiles;
+        return { nativesFiles, gameProcess };
     }
     private gameLauncher(
         gameArgs: string[],
