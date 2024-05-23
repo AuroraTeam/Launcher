@@ -21,7 +21,8 @@
         "pack": "electron-builder --dir",
         "release": "electron-builder",
         "obfuscator": "javascript-obfuscator build/main/index.js --output build/main/index-obf.js --split-strings true --split-strings-chunk-length 8",
-        "bytenode": "bytenode -c build/main/index-obf.js -e -l --compress"
+        "bytenode": "bytenode -c build/main/index-obf.js -e -l --compress",
+        "test": "vitest"
     },
     "repository": {
         "type": "git",
@@ -65,11 +66,12 @@
         "sass": "^1.71.1",
         "source-map-support": "^0.5.21",
         "typescript": "^5.3.3",
-        "vite": "^5.1.5"
+        "vite": "^5.1.5",
+        "vitest": "^1.5.2"
     },
     "dependencies": {
         "@aurora-launcher/api": "^0.4.0",
-        "@aurora-launcher/core": "^0.21.0",
+        "@aurora-launcher/core": "^0.22.0",
         "@xhayper/discord-rpc": "^1.1.2",
         "bytenode": "^1.5.4",
         "chokidar": "^3.6.0",

@@ -29,9 +29,11 @@ export class ServersListScene implements IHandleable {
         );
     }
 
-    pingServer(server: Server) {
+    async pingServer(server: Server) {
         if ('hostname' in server) {
-            return fetchServerInfo({ hostname: server.hostname });
+            return fetchServerInfo({
+                hostname: `_minecraft._tcp.${server.hostname}`,
+            });
         }
         return fetchServerInfo({ address: server.ip, port: server.port });
     }

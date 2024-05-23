@@ -1,5 +1,5 @@
 /// <reference types="./config.d.ts" />
-import publicKey from './public.pem';
+import publicKey from './public.pem?raw';
 
 export const window = {
     width: 900,
