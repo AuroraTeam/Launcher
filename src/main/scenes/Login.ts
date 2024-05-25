@@ -1,7 +1,7 @@
-import { EVENTS } from 'common/channels';
 import { ipcMain } from 'electron';
 import { Service } from 'typedi';
 
+import { EVENTS } from '../../common/channels';
 import { AuthorizationService } from '../api/AuthorizationService';
 import { IHandleable } from '../core/IHandleable';
 

@@ -1,7 +1,8 @@
 import { discordRPC as config } from '@config';
 import { Client } from '@xhayper/discord-rpc';
-import { LogHelper } from 'main/helpers/LogHelper';
 import { Service } from 'typedi';
+
+import { LogHelper } from '../../main/helpers/LogHelper';
 
 @Service()
 export class DiscordRPC {

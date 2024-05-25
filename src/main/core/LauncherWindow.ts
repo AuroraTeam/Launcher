@@ -9,11 +9,10 @@ import { autoUpdater } from 'electron-updater';
 import { Service } from 'typedi';
 
 import { EVENTS } from '../../common/channels';
-import logo from '../../renderer/runtime/assets/images/logo.png';
+import logo from '../../renderer/runtime/assets/images/logo.png?asset';
 import { PlatformHelper } from '../helpers/PlatformHelper';
 
 const isDev = process.env.DEV === 'true' && !app.isPackaged;
-const logoPath = join(__dirname, logo);
 
 @Service()
 export class LauncherWindow {
@@ -69,7 +68,7 @@ export class LauncherWindow {
      */
     private createMainWindow(): BrowserWindow {
         // creating and configuring a tray
-        const tray = new Tray(logoPath);
+        const tray = new Tray(logo);
 
         tray.setContextMenu(
             Menu.buildFromTemplate([
@@ -96,7 +95,7 @@ export class LauncherWindow {
             maximizable: windowConfig.maximizable || false,
             fullscreenable: windowConfig.fullscreenable || false,
             title: windowConfig.title || 'Aurora Launcher',
-            icon: logoPath,
+            icon: logo,
             webPreferences: {
                 preload: join(__dirname, '../preload/index.js'),
                 devTools: isDev,
@@ -104,7 +103,8 @@ export class LauncherWindow {
         });
 
         // loading renderer code (runtime)
-        if (isDev) mainWindow.loadURL('http://localhost:3000');
+        if (isDev && process.env['ELECTRON_RENDERER_URL'])
+            mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
         else mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
 
         mainWindow.on('closed', () => {

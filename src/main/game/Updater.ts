@@ -11,7 +11,7 @@ import {
     ProfileLibrary,
 } from '@aurora-launcher/core';
 import { api as apiConfig } from '@config';
-import { StorageHelper } from 'main/helpers/StorageHelper';
+import { StorageHelper } from '../../main/helpers/StorageHelper';
 import pMap from 'p-map';
 import { Service } from 'typedi';
 

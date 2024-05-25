@@ -1,9 +1,9 @@
 import { Server } from '@aurora-launcher/core';
-import { EVENTS } from 'common/channels';
 import { ipcMain } from 'electron';
 import { fetchServerInfo } from 'minestat-es';
 import { Service } from 'typedi';
 
+import { EVENTS } from '../../common/channels';
 import { APIManager } from '../api/APIManager';
 import { IHandleable } from '../core/IHandleable';
 import { GameService } from '../game/GameService';
