@@ -1,14 +1,14 @@
-import { Service } from 'typedi';
+import { Service } from 'typedi'
 
-import { APIManager } from '../api/APIManager';
-import { VerifyService } from '../api/VerifyService';
-import { LogHelper } from '../helpers/LogHelper';
-import { StorageHelper } from '../helpers/StorageHelper';
-import { LoginScene } from '../scenes/Login';
-import { ServerPanelScene } from '../scenes/ServerPanel';
-import { ServersListScene } from '../scenes/ServersList';
-import { DiscordRPC } from './DiscordRPC';
-import { LauncherWindow } from './LauncherWindow';
+import { APIManager } from '../api/APIManager'
+import { VerifyService } from '../api/VerifyService'
+import { LogHelper } from '../helpers/LogHelper'
+import { StorageHelper } from '../helpers/StorageHelper'
+import { LoginScene } from '../scenes/Login'
+import { ServerPanelScene } from '../scenes/ServerPanel'
+import { ServersListScene } from '../scenes/ServersList'
+import { DiscordRPC } from './DiscordRPC'
+import { LauncherWindow } from './LauncherWindow'
 
 @Service()
 export class Launcher {
@@ -33,6 +33,7 @@ export class Launcher {
         this.loginScene.initHandlers();
         this.serversListScene.initHandlers();
         this.serverPanelScene.initHandlers();
+        this.discordRPC.initHandlers();
 
         this.verifyService.init();
 

@@ -1,10 +1,10 @@
-import { FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FormEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import logo from '../../assets/images/logo.png';
-import { useModal } from '../../components/Modal/hooks';
-import { useTitlebar } from '../../components/TitleBar/hooks';
-import classes from './index.module.sass';
+import logo from '../../assets/images/logo.png'
+import { useModal } from '../../components/Modal/hooks'
+import { useTitlebar } from '../../components/TitleBar/hooks'
+import classes from './index.module.sass'
 
 interface AuthData {
     [k: string]: string;
@@ -16,6 +16,11 @@ export default function Login() {
     const { showModal } = useModal();
     const { setTitlebarUserText, showTitlebarUser } = useTitlebar();
     const navigate = useNavigate();
+
+    // Example for custom DiscordRPC
+    // launcherAPI.rpc.updateActivity({
+    //       details: "Проходит этап авторизации"
+    // });
 
     const auth = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -40,6 +45,7 @@ export default function Login() {
         let userData;
         try {
             userData = await launcherAPI.scenes.login.auth(login, password);
+
         } catch (error) {
             console.error(error);
             return showModal('Ошибка авторизации', (error as Error).message);
