@@ -21,5 +21,9 @@ export const EVENTS = {
             LOAD_PROGRESS: 'scenes:serverPanel:loadProgress',
             STOP_GAME: 'scenes:serverPanel:stopGame',
         },
+        SETTINGS: {
+            EDIT: 'scenes:settings:edit',
+            CHECK: 'scenes:settings:check',
+        },
     },
 };

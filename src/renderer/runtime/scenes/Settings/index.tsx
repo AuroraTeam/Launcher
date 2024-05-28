@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, MutableRefObject } from 'react';
-import If from '../../components/If';
+import { useRecoilValue } from 'recoil';
 
+import If from '../../components/If';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
+import { settingsVersion } from '../../components/TitleBar/states';
 
-export default function ServersList() {
+export default function Settings() {
     const { showTitlebarBackBtn, setTitlebarTitleText, hideTitlebarSettingsBtn } = useTitlebar();
     
     useEffect(() => {
@@ -15,10 +17,11 @@ export default function ServersList() {
 
     const [main, EditeButtonMain] = useState(true);
     const [info, EditeButtonInfo] = useState(false);
+    const version = useRecoilValue(settingsVersion);
 
     const RAMvalue = useRef() as MutableRefObject<HTMLLabelElement>;
 
-    const Slader = (e:React.ChangeEvent<HTMLInputElement>) => {
+    const Slider = (e:React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         RAMvalue.current.innerText = `Выделено оперативной памяти: ${value}`
     }
@@ -66,7 +69,7 @@ export default function ServersList() {
                         Автоматический вход на сервер
                     </label>
                     <label ref={RAMvalue}>Выделено оперативной памяти: 0</label><br />
-                    <input className={classes.slider} type="range" list="values" defaultValue="0" onChange={e => Slader(e)}/>
+                    <input className={classes.slider} type="range" list="values" defaultValue="0" onChange={e => Slider(e)}/>
                     <datalist id="values">
                         <option value="0" label="5MG"/>
                         <option value="25" label="10MG"/>
@@ -107,7 +110,7 @@ export default function ServersList() {
                         </button>
                     </div>
                     <div className={classes.version}>
-                        <h5>Версия лаунчера: v0.0.4</h5>
+                        <h5>Версия лаунчера: {version.text}</h5>
                     </div>
                 </div>
             </If>

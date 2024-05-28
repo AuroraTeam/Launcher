@@ -3,6 +3,7 @@ import { contextBridge } from 'electron';
 import LoginScene from './components/LoginScene';
 import ServerPanel from './components/ServerPanelScene';
 import ServersList from './components/ServersListScene';
+import Settings from './components/SettingsScene';
 import Window from './components/Window';
 
 // export для типизации
@@ -25,6 +26,10 @@ export const API = {
             getProfile: ServerPanel.getProfile,
             getServer: ServerPanel.getServer,
             startGame: ServerPanel.startGame,
+        },
+        settings: {
+            edit: Settings.edit,
+            check: Settings.check,
         },
     },
 };
