@@ -1,7 +1,7 @@
 import { FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import logo from '../../assets/images/logo.png'
+import logo from '../../assets/images/logo.png?asset'
 import { useModal } from '../../components/Modal/hooks'
 import { useTitlebar } from '../../components/TitleBar/hooks'
 import classes from './index.module.sass'
@@ -21,6 +21,9 @@ export default function Login() {
     // launcherAPI.rpc.updateActivity({
     //       details: "Проходит этап авторизации"
     // });
+
+    //Example for open external link with browser
+    // <a href="https://exaple.com" target="_blank">Example</a>
 
     const auth = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();

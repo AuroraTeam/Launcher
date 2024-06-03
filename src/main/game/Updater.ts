@@ -18,6 +18,7 @@ import { Service } from 'typedi';
 import { LoadProgress } from '../../common/types';
 import { APIManager } from '../api/APIManager';
 import { GameWindow } from './GameWindow';
+import { retry } from '../utils/retry'
 
 @Service()
 export class Updater {
@@ -58,19 +59,27 @@ export class Updater {
         const total = assetsHashes.reduce((prev, cur) => prev + cur.size, 0);
         const updateProgress = this.createProgressUpdater(total, 'size');
 
-        await pMap(
-            assetsHashes,
-            async (hash) => {
-                await this.checkAndDownloadFile(
-                    hash.path,
-                    StorageHelper.assetsDir,
-                    'assets',
-                );
-
-                updateProgress(hash.size);
-            },
-            { concurrency: 4 },
-        );
+        try {
+            await pMap(
+                assetsHashes,
+                async (hash) => {
+                    await retry(
+                        () => this.checkAndDownloadFile(
+                            hash.path,
+                            StorageHelper.assetsDir,
+                            'assets',
+                        ),
+                        3, 
+                        1000 
+                    );
+            
+                    updateProgress(hash.size);
+                },
+                { concurrency: 4 },
+            );
+        } catch (error)  {
+            throw new Error(`p-map error ${error}`);
+        }
 
         this.gameWindow.sendToConsole('Assets files loaded');
     }

@@ -60,11 +60,11 @@ export class DiscordRPC implements IHandleable{
     }
 
     initHandlers() {
-        ipcMain.handle(EVENTS.RPC.UPDATEACTIVITY, (_, activity) =>
+        ipcMain.handle(EVENTS.RPC.UPDATE_ACTIVITY, (_, activity) =>
             this.updateActivity(activity)
         );
         //Может не чистить, а ставить стандарт ?
-        ipcMain.handle(EVENTS.RPC.CLEARACTIVITY, () =>
+        ipcMain.handle(EVENTS.RPC.CLEAR_ACTIVITY, () =>
             this.clearActivity()
         );
     }
