@@ -2,21 +2,21 @@
     "name": "aurora-launcher-app",
     "version": "0.0.5-dev",
     "description": "Launcher for Minecraft",
-    "main": "build/main/index-obf.loader.js",
+    "main": "out/main/index-obf.loader.js",
     "private": true,
     "scripts": {
-        "dev": "cross-env DEV=true electron-vite dev --entry ./build/main/index.js",
+        "dev": "cross-env DEV=true electron-vite dev -w --entry ./out/main/index.js",
         "build": "electron-vite build && npm run obfuscator && npm run bytenode",
-        "start": "electron-vite preview --entry ./build/main/index.js",
-        "clean": "rimraf build dist",
+        "start": "electron-vite preview --entry ./out/main/index.js",
+        "clean": "rimraf out dist",
         "prettier": "prettier --config .prettierrc.json --write src",
         "typecheck": "tsc --noEmit",
         "lint": "eslint src --ext .ts,.tsx",
         "lint:fix": "npm run lint -- --fix",
         "pack": "electron-builder --dir",
         "release": "electron-builder",
-        "obfuscator": "javascript-obfuscator build/main/index.js --output build/main/index-obf.js --split-strings true --split-strings-chunk-length 8",
-        "bytenode": "bytenode -c build/main/index-obf.js -e -l --compress",
+        "obfuscator": "javascript-obfuscator out/main/index.js --output out/main/index-obf.js --split-strings true --split-strings-chunk-length 8",
+        "bytenode": "bytenode -c out/main/index-obf.js -e -l --compress",
         "test": "vitest"
     },
     "repository": {
@@ -50,13 +50,11 @@
         "eslint-plugin-react": "^7.34.0",
         "import-sort-style-module": "^6.0.0",
         "javascript-obfuscator": "^4.1.0",
-        "minimist": "^1.2.8",
         "nodemon": "^3.1.0",
         "prettier": "^3.2.5",
         "prettier-plugin-import-sort": "^0.0.7",
         "rimraf": "^5.0.7",
         "sass": "^1.77.2",
-        "@swc/core": "^1.5.7",
         "source-map-support": "^0.5.21",
         "typescript": "^5.4.5",
         "vitest": "^1.6.0"
@@ -99,9 +97,9 @@
             "buildResources": "resources"
         },
         "files": [
-            "build/**/*",
-            "!build/main/index.js",
-            "!build/main/index-obf.js",
+            "out/**/*",
+            "!out/main/index.js",
+            "!out/main/index-obf.js",
             "!node_modules/**/*",
             "node_modules/bytenode/**/*"
         ],
@@ -120,9 +118,5 @@
             "category": "Game",
             "maintainer": "AuroraTeam <null@aurora-team.ru>"
         }
-    },
-    "optionalDependencies": {
-        "@swc/core-linux-x64-gnu": "^1.5.7",
-        "@swc/core-linux-x64-musl": "^1.5.7"
     }
 }
