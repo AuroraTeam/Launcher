@@ -6,7 +6,7 @@ import { MemoryRange } from '../../components/MemoryRange';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import { settingsVersion } from '../../components/TitleBar/states';
 import classes from './index.module.sass';
-
+import logo from '"./runtime/assets/images/logo.png'
 interface SettingsProps {
     token?: string;
     autoLogin?: boolean;
@@ -134,7 +134,7 @@ export default function Settings() {
             <If state={info}>
                 <div className={classes.options}>
                     <div className={classes.logo}>
-                        <img src="./runtime/assets/images/logo.png" alt="" />
+                        <img src={logo} alt="Aurora Launcher" />
                     </div>
                     <div className={classes.launcherName}>
                         <center>
