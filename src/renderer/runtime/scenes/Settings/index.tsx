@@ -49,12 +49,12 @@ export default function Settings() {
         });
     }, []);
 
-    const setValue = (name: string, value: any) => {
+    const setValue = (field: string, value: any) => {
         setSettings({
             ...settings,
-            [name]: value,
+            [field]: value,
         });
-        launcherAPI.scenes.settings.setField(name, value);
+        launcherAPI.scenes.settings.setField(field, value);
     };
 
     const Button = (type: string) => {
