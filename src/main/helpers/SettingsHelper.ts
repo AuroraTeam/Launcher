@@ -1,39 +1,45 @@
-import { writeFileSync, readFileSync } from 'fs';
-import { JsonHelper } from '@aurora-launcher/core';
 import { StorageHelper } from './StorageHelper'
+import os from 'os';
+export interface Settings {
+    token: string;
+    autoLogin: boolean;
+    fullScreen: boolean;
+    memory: number;
+    dev: boolean;
+    startDebug: boolean;
+}
 
 export class SettingsHelper {
-
-    static edit(type: Settings): void {
-        const file = readFileSync(StorageHelper.settingsFile).toString();
-        const newJson = file.replace('/(?<='+ type +': )[^,]*/', type.toString())
-        console.log(newJson)
-        writeFileSync(StorageHelper.settingsFile, newJson);
-    }
-
-    static check(): Settings {
-        const file = readFileSync(StorageHelper.settingsFile).toString();
-        const json: Settings = JsonHelper.fromJson(file);
-        return json;
-    }
-
-    static create(): void {
-        const defaultSettings: Settings = {
+    static defaultsValue(): Settings {
+        return {
             token: '0',
             autoLogin: false,
             fullScreen: false,
-            ram: 0,
-            dev: false
+            memory: 0,
+            dev: false,
+            startDebug: false
         };
-        const json = JsonHelper.toJson(defaultSettings, true);
-        writeFileSync(StorageHelper.settingsFile, json, {flag: 'a'});
     }
-}
 
-export interface Settings {
-    token?: string,
-    autoLogin?: boolean,
-    fullScreen?: boolean,
-    ram?: number,
-    dev?: boolean
+    static get() {
+        return StorageHelper.getStore().get('client');
+    }
+
+    static getField(name: string) {
+        return StorageHelper.getStore().get('client.' + name);
+    }
+
+    static setField(field: string, value: string | boolean | number) {
+        return StorageHelper.getStore().set('client.' + field, value);
+    }
+
+    static getTotalMemory()  {
+        let total_memory = os.totalmem();
+        total_memory /= 2 ** 20;
+        let default_mem = 2048;
+        if (total_memory > 6e3) default_mem += 1024;
+        if (total_memory > 16e3) default_mem += 2048;
+    
+        return  default_mem;
+    }
 }

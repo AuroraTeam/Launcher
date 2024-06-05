@@ -28,8 +28,10 @@ export const API = {
             startGame: ServerPanel.startGame,
         },
         settings: {
-            edit: Settings.edit,
-            check: Settings.check,
+            setField: Settings.setField,
+            getField: Settings.getField,
+            getAllFields: Settings.getAllFields,
+            getTotalMemory: Settings.getTotalMemory,
         },
     },
 };
