@@ -22,8 +22,10 @@ export const EVENTS = {
             STOP_GAME: 'scenes:serverPanel:stopGame',
         },
         SETTINGS: {
-            EDIT: 'scenes:settings:edit',
-            CHECK: 'scenes:settings:check',
+            SET_FIELD: 'scenes:settings:setField',
+            GET_FIELD: 'scenes:settings:getField',
+            GET_ALL_FIELDS: 'scenes:settings:getAllFields',
+            GET_TOTAL_MEMORY: 'scenes:settings:getTotalMemory',
         },
     },
 };
