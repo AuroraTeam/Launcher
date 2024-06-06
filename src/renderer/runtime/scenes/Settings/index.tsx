@@ -6,15 +6,8 @@ import { MemoryRange } from '../../components/MemoryRange';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import { settingsVersion } from '../../components/TitleBar/states';
 import classes from './index.module.sass';
-import logo from '"./runtime/assets/images/logo.png'
-interface SettingsProps {
-    token?: string;
-    autoLogin?: boolean;
-    fullScreen?: boolean;
-    memory?: number;
-    dev?: boolean;
-    startDebug?: boolean;
-}
+import logo from '../../assets/images/logo.png';
+import { SettingsFormat } from '../../../../main/helpers/ISettings';
 
 export default function Settings() {
     const {
@@ -27,27 +20,21 @@ export default function Settings() {
         showTitlebarBackBtn();
         hideTitlebarSettingsBtn();
         setTitlebarTitleText('Настройки лаунчера');
+
+        launcherAPI.scenes.settings
+            .getAllFields()
+            .then((res: SetStateAction<SettingsFormat>) => {
+                setSettings(res);
+            });
+        launcherAPI.scenes.settings.getTotalMemory().then((res: number) => SetTotalMemory(res));
     }, []);
 
-    const [main, EditeButtonMain] = useState(true);
-    const [info, EditeButtonInfo] = useState(false);
+    const [main, EditButtonMain] = useState(true);
+    const [info, EditButtonInfo] = useState(false);
     const version = useRecoilValue(settingsVersion);
 
     const [totalMemory, SetTotalMemory] = useState<number>(0);
-    const [settings, setSettings] = useState<SettingsProps>({});
-
-    useEffect(() => {
-        launcherAPI.scenes.settings
-            .getAllFields()
-            .then((res: SetStateAction<{}>) => {
-                setSettings(res);
-            });
-        launcherAPI.scenes.settings.getTotalMemory().then((res: number) => {
-            console.log('mem', res);
-
-            SetTotalMemory(res);
-        });
-    }, []);
+    const [settings, setSettings] = useState<SettingsFormat>({});
 
     const setValue = (field: string, value: any) => {
         setSettings({
@@ -60,12 +47,12 @@ export default function Settings() {
     const Button = (type: string) => {
         switch (type) {
             case 'main':
-                EditeButtonMain(true);
-                EditeButtonInfo(false);
+                EditButtonMain(true);
+                EditButtonInfo(false);
                 return;
             case 'info':
-                EditeButtonMain(false);
-                EditeButtonInfo(true);
+                EditButtonMain(false);
+                EditButtonInfo(true);
                 return;
         }
     };
@@ -87,9 +74,9 @@ export default function Settings() {
                     <label className={classes.checkbox}>
                         <input
                             type="checkbox"
-                            defaultChecked={settings.autoLogin}
+                            defaultChecked={settings.fullScreen}
                             onChange={(e) =>
-                                setValue('autoLogin', Boolean(e.target.checked))
+                                setValue('fullScreen', Boolean(e.target.checked))
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>
@@ -120,7 +107,7 @@ export default function Settings() {
                         <span className={classes.checkboxSwitch}></span>
                         Автоматический вход на сервер
                     </label>
-                    <label>Выделено оперативной памяти: {totalMemory}</label>
+                    <label>Выделено оперативной памяти: {settings.memory}</label>
                     <br />
                     <MemoryRange
                         limit={totalMemory}

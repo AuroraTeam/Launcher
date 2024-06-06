@@ -1,35 +1,27 @@
 import { StorageHelper } from './StorageHelper'
 import os from 'os';
-export interface Settings {
-    token: string;
-    autoLogin: boolean;
-    fullScreen: boolean;
-    memory: number;
-    dev: boolean;
-    startDebug: boolean;
-}
+import { SettingsFormat } from './ISettings';
 
 export class SettingsHelper {
-    static defaultsValue(): Settings {
+    static defaultsValue(): SettingsFormat {
         return {
             token: '0',
             autoLogin: false,
             fullScreen: false,
-            memory: 0,
-            dev: false,
+            memory: 1024,
             startDebug: false
         };
     }
 
-    static get() {
+    static get(): SettingsFormat {
         return StorageHelper.getStore().get('client');
     }
 
-    static getField(name: string) {
+    static getField(name: string): SettingsFormat {
         return StorageHelper.getStore().get('client.' + name);
     }
 
-    static setField(field: string, value: string | boolean | number) {
+    static setField(field: string, value: string | boolean | number): void {
         return StorageHelper.getStore().set('client.' + field, value);
     }
 

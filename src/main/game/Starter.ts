@@ -15,6 +15,7 @@ import { PlatformHelper } from '../helpers/PlatformHelper';
 import { AuthlibInjector } from './AuthlibInjector';
 import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
+import { SettingsHelper } from '../../main/helpers/SettingsHelper';
 
 @Service()
 export class Starter {
@@ -27,6 +28,7 @@ export class Starter {
     ) {}
 
     async start(profile: Profile, libraries: ProfileLibrary[]) {
+        const settings = SettingsHelper.get();
         const clientDir = join(StorageHelper.clientsDir, profile.clientDir);
 
         const clientVersion = coerce(profile.version);
@@ -65,6 +67,7 @@ export class Starter {
         await this.authlibInjector.verify();
         jvmArgs.push(
             `-javaagent:${this.authlibInjector.authlibFilePath}=${apiConfig.web}`,
+            `-Xmx` + settings.memory + `M`,
         );
 
         const nativesDirectory = join(clientDir, 'natives');
@@ -138,11 +141,22 @@ export class Starter {
         clientVersion: string,
         userArgs: Session,
     ): void {
+        const settings = SettingsHelper.get();
         gameArgs.push('--username', userArgs.username);
 
         if (gte(clientVersion, '1.7.2')) {
             gameArgs.push('--uuid', userArgs.userUUID);
             gameArgs.push('--accessToken', userArgs.accessToken);
+            if (settings.fullScreen) gameArgs.push('--fullscreen', 'true')
+
+            if (settings.autoLogin) {
+                if (gte(clientVersion, '1.20.0')) {
+                    gameArgs.push('--quickPlayMultiplayer', clientArgs.servers[0].ip + ':' + clientArgs.servers[0].port)
+                } else {
+                    gameArgs.push('--server', clientArgs.servers[0].ip)
+                    gameArgs.push('--port', clientArgs.servers[0].port)
+                }
+            }
 
             if (gte(clientVersion, '1.7.3')) {
                 gameArgs.push('--assetIndex', clientArgs.assetIndex);
