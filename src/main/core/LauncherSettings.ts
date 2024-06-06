@@ -1,6 +1,6 @@
-import { EVENTS } from 'common/channels'
+import { EVENTS } from '../../common/channels'
 import { ipcMain } from 'electron'
-import { SettingsHelper } from 'main/helpers/SettingsHelper'
+import { SettingsHelper } from '../helpers/SettingsHelper'
 import { Service } from 'typedi'
 
 import { IHandleable } from './IHandleable'
