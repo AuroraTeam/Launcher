@@ -35,8 +35,10 @@ export class Launcher {
         this.loginScene.initHandlers();
         this.serversListScene.initHandlers();
         this.serverPanelScene.initHandlers();
-        this.verifyService.init();
+        this.discordRPC.initHandlers();
         this.launcherSettings.initHandlers();
+
+        this.verifyService.init();
         this.window.createWindow();
         LogHelper.info('Launcher started');
         this.discordRPC.start();

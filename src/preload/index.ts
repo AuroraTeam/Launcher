@@ -5,6 +5,7 @@ import ServerPanel from './components/ServerPanelScene';
 import ServersList from './components/ServersListScene';
 import Settings from './components/SettingsScene';
 import Window from './components/Window';
+import RPC from './components/RPC'
 
 // export для типизации
 export const API = {
@@ -12,6 +13,10 @@ export const API = {
         hide: Window.hide,
         close: Window.close,
         openExternal: Window.openExternal,
+    },
+    rpc: {
+        updateActivity: RPC.updateActivity,
+        clearActivity: RPC.clearActivity
     },
     scenes: {
         login: {

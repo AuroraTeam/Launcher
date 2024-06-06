@@ -4,6 +4,10 @@ export const EVENTS = {
         CLOSE: 'window:close',
         OPEN_EXTERNAL: 'window:openExternal',
     },
+    RPC: {
+        UPDATE_ACTIVITY: 'discordrpc:updateactivty',
+        CLEAR_ACTIVITY: 'discordrpc:clearactivity'
+    },
     SCENES: {
         LOGIN: {
             AUTH: 'scenes:login:auth',

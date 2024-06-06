@@ -1,4 +1,3 @@
-/// <reference types="./config.d.ts" />
 import publicKey from './public.pem?raw';
 
 export const window = {

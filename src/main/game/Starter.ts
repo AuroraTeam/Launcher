@@ -3,9 +3,9 @@ import { delimiter, join } from 'path';
 
 import { Profile, ProfileLibrary, ZipHelper } from '@aurora-launcher/core';
 import { api as apiConfig } from '@config';
-import { LauncherWindow } from 'main/core/LauncherWindow';
-import { LogHelper } from 'main/helpers/LogHelper';
-import { StorageHelper } from 'main/helpers/StorageHelper';
+import { LauncherWindow } from '../../main/core/LauncherWindow';
+import { LogHelper } from '../../main/helpers/LogHelper';
+import { StorageHelper } from '../../main/helpers/StorageHelper';
 import { coerce, gte, lte } from 'semver';
 import { Service } from 'typedi';
 
