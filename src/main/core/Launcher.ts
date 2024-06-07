@@ -7,6 +7,7 @@ import { StorageHelper } from '../helpers/StorageHelper'
 import { LoginScene } from '../scenes/Login'
 import { ServerPanelScene } from '../scenes/ServerPanel'
 import { ServersListScene } from '../scenes/ServersList'
+import { SettingsScene } from '../scenes/Settings'
 import { DiscordRPC } from './DiscordRPC'
 import { LauncherWindow } from './LauncherWindow'
 
@@ -21,6 +22,7 @@ export class Launcher {
         private loginScene: LoginScene,
         private serversListScene: ServersListScene,
         private serverPanelScene: ServerPanelScene,
+        private settingsScene: SettingsScene,
     ) {
         this.init();
     }
@@ -31,12 +33,12 @@ export class Launcher {
         await this.apiManager.initConnection();
 
         this.loginScene.initHandlers();
+        this.settingsScene.initHandlers();
         this.serversListScene.initHandlers();
         this.serverPanelScene.initHandlers();
         this.discordRPC.initHandlers();
 
         this.verifyService.init();
-
         this.window.createWindow();
         LogHelper.info('Launcher started');
         this.discordRPC.start();

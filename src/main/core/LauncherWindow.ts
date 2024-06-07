@@ -61,6 +61,10 @@ export class LauncherWindow {
 
         // close the main window when the close button is pressed
         ipcMain.on(EVENTS.WINDOW.CLOSE, () => this.mainWindow?.close());
+
+        ipcMain.on(EVENTS.WINDOW.OPEN_EXTERNAL, (_, url: string) =>
+            shell.openExternal(url),
+        );
     }
 
     /**

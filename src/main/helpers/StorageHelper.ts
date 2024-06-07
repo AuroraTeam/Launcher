@@ -1,13 +1,16 @@
-import { existsSync, mkdirSync } from 'fs';
-import { homedir } from 'os';
-import { resolve } from 'path';
-
-import { appPath } from '@config';
-import { app } from 'electron';
-
-import { PlatformHelper } from './PlatformHelper';
+import { appPath } from '@config'
+import { app } from 'electron'
+import { existsSync, mkdirSync } from 'fs'
+import { homedir } from 'os'
+import { resolve } from 'path'
+import { PlatformHelper } from './PlatformHelper'
+import { SettingsHelper } from './SettingsHelper'
+import Store from 'electron-store'
 
 export class StorageHelper {
+    
+    static store: any;
+
     static storageDir: string = this.getPlatformStorageDir();
     static assetsDir: string = resolve(StorageHelper.storageDir, 'assets');
     static clientsDir: string = resolve(StorageHelper.storageDir, 'clients');
@@ -24,6 +27,17 @@ export class StorageHelper {
         if (!existsSync(this.clientsDir)) mkdirSync(this.clientsDir);
         if (!existsSync(this.librariesDir)) mkdirSync(this.librariesDir);
         if (!existsSync(this.javaDir)) mkdirSync(this.javaDir);
+
+        this.store = new Store({
+            cwd: StorageHelper.storageDir,
+            defaults: {
+                client: SettingsHelper.defaultsValue()
+            }
+        })
+    }
+
+    static getStore() {
+        return this.store;
     }
 
     private static getPlatformStorageDir() {
@@ -32,4 +46,5 @@ export class StorageHelper {
         }
         return resolve(homedir(), appPath);
     }
+    
 }

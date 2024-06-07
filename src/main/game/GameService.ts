@@ -56,6 +56,7 @@ export class GameService {
             const { nativesFiles, gameProcess } = await this.gameStarter.start(
                 profile,
                 libraries,
+                server
             );
 
             await this.gameWatcher.watch(

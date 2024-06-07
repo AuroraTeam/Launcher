@@ -7,11 +7,18 @@ export const titlebarBackBtn = atom({
     },
 });
 
+export const titlebarSettingsBtn = atom({
+    key: 'titlebar.settingsBtn',
+    default: {
+        show: false,
+    },
+});
+
 export const titlebarTitle = atom({
     key: 'titlebar.title',
     default: {
         show: true,
-        text: 'AuroraLauncher v0.0.4',
+        text: 'AuroraLauncher',
     },
 });
 

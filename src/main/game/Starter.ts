@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import { delimiter, join } from 'path';
 
-import { Profile, ProfileLibrary, ZipHelper } from '@aurora-launcher/core';
+import { Profile, Server, ProfileLibrary, ZipHelper } from '@aurora-launcher/core';
 import { api as apiConfig } from '@config';
 import { LauncherWindow } from '../../main/core/LauncherWindow';
 import { LogHelper } from '../../main/helpers/LogHelper';
@@ -15,6 +15,7 @@ import { PlatformHelper } from '../helpers/PlatformHelper';
 import { AuthlibInjector } from './AuthlibInjector';
 import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
+import { SettingsHelper } from '../../main/helpers/SettingsHelper';
 
 @Service()
 export class Starter {
@@ -26,7 +27,8 @@ export class Starter {
         private authlibInjector: AuthlibInjector,
     ) {}
 
-    async start(profile: Profile, libraries: ProfileLibrary[]) {
+    async start(profile: Profile, libraries: ProfileLibrary[], server: Server) {
+        const settings = SettingsHelper.getAllFields();
         const clientDir = join(StorageHelper.clientsDir, profile.clientDir);
 
         const clientVersion = coerce(profile.version);
@@ -49,6 +51,7 @@ export class Starter {
                 profile,
                 clientVersion.version,
                 userArgs,
+                server,
             );
         } else {
             gameArgs.push(userArgs.username);
@@ -66,6 +69,7 @@ export class Starter {
         jvmArgs.push(
             `-javaagent:${this.authlibInjector.authlibFilePath}=${apiConfig.web}`,
         );
+        jvmArgs.push(`-Xmx` + settings.memory + `M`)
 
         const nativesDirectory = join(clientDir, 'natives');
         const nativesFiles = this.prepareNatives(nativesDirectory, libraries);
@@ -137,12 +141,28 @@ export class Starter {
         clientArgs: Profile,
         clientVersion: string,
         userArgs: Session,
+        server: Server,
     ): void {
+        const settings = SettingsHelper.getAllFields();
         gameArgs.push('--username', userArgs.username);
 
         if (gte(clientVersion, '1.7.2')) {
             gameArgs.push('--uuid', userArgs.userUUID);
             gameArgs.push('--accessToken', userArgs.accessToken);
+            if (settings.fullScreen) gameArgs.push('--fullscreen', 'true');
+
+            if (settings.autoLogin) {
+                if (gte(clientVersion, '1.20.0')) {
+                    if ('hostname' in server) gameArgs.push('--quickPlayMultiplayer', server.hostname); 
+                    else gameArgs.push('--quickPlayMultiplayer', server.ip + ':' + server.port);
+                } else {
+                    if ('hostname' in server) gameArgs.push('--server', server.hostname); 
+                    else {
+                        gameArgs.push('--server', server.ip);
+                        gameArgs.push('--port', server.port.toString());
+                    }
+                }
+            }
 
             if (gte(clientVersion, '1.7.3')) {
                 gameArgs.push('--assetIndex', clientArgs.assetIndex);

@@ -1,11 +1,12 @@
 import { Server } from '@aurora-launcher/core';
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { SetStateAction, MutableRefObject, useEffect, useRef, useState } from 'react';
 
 import { LoadProgress } from '../../../../common/types';
 import If from '../../components/If';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import { usePingServer } from '../../hooks/pingServer';
 import classes from './index.module.sass';
+import { SettingsFormat } from '../../../../main/helpers/ISettings';
 
 // TODO Refactoring scene
 export default function ServerPanel() {
@@ -19,18 +20,26 @@ export default function ServerPanel() {
     const consoleRef = useRef() as MutableRefObject<HTMLPreElement>;
     const progressLine = useRef() as MutableRefObject<HTMLDivElement>;
     const progressInfo = useRef() as MutableRefObject<HTMLDivElement>;
+    const [settings, setSettings] = useState<SettingsFormat>({});
 
-    const { showTitlebarBackBtn, hideTitlebarBackBtn } = useTitlebar();
+    const { showTitlebarBackBtn, hideTitlebarBackBtn, hideTitlebarSettingsBtn, showTitlebarSettingsBtn, resetTitlebarTitleText } = useTitlebar();
 
     useEffect(() => {
         launcherAPI.scenes.serverPanel.getServer().then(setSelectedServer);
-
+        showTitlebarSettingsBtn();
         showTitlebarBackBtn();
+        resetTitlebarTitleText();
+        launcherAPI.scenes.settings
+            .getAllFields()
+            .then((res: SetStateAction<SettingsFormat>) => {
+                setSettings(res);
+            });
     }, []);
 
     const startGame = () => {
+        hideTitlebarSettingsBtn();
         hideTitlebarBackBtn();
-        setShowConsole(true);
+        if (settings.startDebug) setShowConsole(true);
         consoleRef.current?.replaceChildren();
         setGameStarted(true);
         launcherAPI.scenes.serverPanel.startGame(
@@ -41,6 +50,7 @@ export default function ServerPanel() {
     };
 
     const stopGame = () => {
+        showTitlebarSettingsBtn();
         setGameStarted(false);
         showTitlebarBackBtn();
     };

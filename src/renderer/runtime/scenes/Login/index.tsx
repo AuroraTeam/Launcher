@@ -14,7 +14,7 @@ interface AuthData {
 
 export default function Login() {
     const { showModal } = useModal();
-    const { setTitlebarUserText, showTitlebarUser } = useTitlebar();
+    const { setTitlebarUserText, showTitlebarUser, showTitlebarSettingsBtn } = useTitlebar();
     const navigate = useNavigate();
 
     // Example for custom DiscordRPC
@@ -59,6 +59,7 @@ export default function Login() {
 
         setTitlebarUserText(userData.username);
         showTitlebarUser();
+        showTitlebarSettingsBtn();
         navigate('ServersList');
     };
 
