@@ -13,7 +13,7 @@ export class SettingsHelper {
         };
     }
 
-    static get(): SettingsFormat {
+    static getAllFields(): SettingsFormat {
         return StorageHelper.getStore().get('client');
     }
 

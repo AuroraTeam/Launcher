@@ -1,10 +1,9 @@
 import { SetStateAction, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import If from '../../components/If';
 import { MemoryRange } from '../../components/MemoryRange';
 import { useTitlebar } from '../../components/TitleBar/hooks';
-import { settingsVersion } from '../../components/TitleBar/states';
+import { version } from '../../../../../package.json'
 import classes from './index.module.sass';
 import logo from '../../assets/images/logo.png';
 import { SettingsFormat } from '../../../../main/helpers/ISettings';
@@ -31,7 +30,6 @@ export default function Settings() {
 
     const [main, EditButtonMain] = useState(true);
     const [info, EditButtonInfo] = useState(false);
-    const version = useRecoilValue(settingsVersion);
 
     const [totalMemory, SetTotalMemory] = useState<number>(0);
     const [settings, setSettings] = useState<SettingsFormat>({});
@@ -187,7 +185,7 @@ export default function Settings() {
                         </button>
                     </div>
                     <div className={classes.version}>
-                        <h5>Версия лаунчера: {version.text}</h5>
+                        <h5>Версия лаунчера: {version}</h5>
                     </div>
                 </div>
             </If>

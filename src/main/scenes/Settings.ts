@@ -3,10 +3,10 @@ import { ipcMain } from 'electron'
 import { SettingsHelper } from '../helpers/SettingsHelper'
 import { Service } from 'typedi'
 
-import { IHandleable } from './IHandleable'
+import { IHandleable } from '../core/IHandleable'
 
 @Service()
-export class LauncherSettings implements IHandleable {
+export class SettingsScene implements IHandleable {
     initHandlers(): void {
         ipcMain.handle(
             EVENTS.SCENES.SETTINGS.SET_FIELD,
@@ -17,7 +17,7 @@ export class LauncherSettings implements IHandleable {
             SettingsHelper.getField(field),
         );
         ipcMain.handle(EVENTS.SCENES.SETTINGS.GET_ALL_FIELDS, () =>
-            SettingsHelper.get(),
+            SettingsHelper.getAllFields(),
         );
         ipcMain.handle(EVENTS.SCENES.SETTINGS.GET_TOTAL_MEMORY, () =>
             SettingsHelper.getTotalMemory(),

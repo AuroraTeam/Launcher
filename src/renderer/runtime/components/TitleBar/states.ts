@@ -1,5 +1,4 @@
 import { atom } from 'recoil';
-import { version } from '../../../../../package.json'
 
 export const titlebarBackBtn = atom({
     key: 'titlebar.backBtn',
@@ -20,14 +19,6 @@ export const titlebarTitle = atom({
     default: {
         show: true,
         text: 'AuroraLauncher',
-    },
-});
-
-export const settingsVersion = atom({
-    key: 'settings.version',
-    default: {
-        show: true,
-        text: `v${version}`,
     },
 });
 
