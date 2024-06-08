@@ -17,6 +17,7 @@ export default function Login() {
     const { showModal } = useModal();
     const { showTitlebarSettingsBtn } = useTitlebar();
     const navigate = useNavigate();
+    const { setTitlebarUserText } = useTitlebar();
 
     // Example for custom DiscordRPC
     // launcherAPI.rpc.updateActivity({
@@ -38,7 +39,12 @@ export default function Login() {
         }
 
         try {
-            setUserData(await launcherAPI.scenes.login.auth(login, password));
+            const userData = await launcherAPI.scenes.login.auth(
+                login,
+                password,
+            );
+            setUserData(userData);
+            setTitlebarUserText(userData.username);
         } catch (error) {
             console.error(error);
             return showModal('Ошибка авторизации', (error as Error).message);

@@ -1,17 +1,21 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import { getUserData } from '../../../utils';
 import If from '../If';
 import classes from './index.module.sass';
-import { titlebarBackBtn, titlebarSettingsBtn, titlebarTitle } from './states';
+import {
+    titlebarBackBtn,
+    titlebarSettingsBtn,
+    titlebarTitle,
+    titlebarUser,
+} from './states';
 
 export default function TitleBar() {
     const backBtn = useRecoilValue(titlebarBackBtn);
     const title = useRecoilValue(titlebarTitle);
     const settings = useRecoilValue(titlebarSettingsBtn);
     const navigate = useNavigate();
+    const username = useRecoilValue(titlebarUser);
 
     function hide() {
         launcherAPI.window.hide();
@@ -25,11 +29,6 @@ export default function TitleBar() {
     function toSettings() {
         navigate('/Settings');
     }
-
-    const [username, setUsername] = useState('');
-    useEffect(() => {
-        setUsername(getUserData().username || '');
-    }, []);
 
     return (
         <div className={classes.titlebar}>

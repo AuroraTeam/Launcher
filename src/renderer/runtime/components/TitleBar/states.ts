@@ -1,5 +1,7 @@
 import { atom } from 'recoil';
 
+import { getUserData } from '../../../utils';
+
 export const titlebarBackBtn = atom({
     key: 'titlebar.backBtn',
     default: {
@@ -20,4 +22,9 @@ export const titlebarTitle = atom({
         show: true,
         text: 'AuroraLauncher',
     },
+});
+
+export const titlebarUser = atom({
+    key: 'titlebar.user',
+    default: getUserData().username || '',
 });
