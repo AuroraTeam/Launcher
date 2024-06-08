@@ -1,6 +1,7 @@
-import { StorageHelper } from './StorageHelper'
 import os from 'os';
+
 import { SettingsFormat } from './ISettings';
+import { StorageHelper } from './StorageHelper';
 
 export class SettingsHelper {
     static defaultsValue(): SettingsFormat {
@@ -9,7 +10,7 @@ export class SettingsHelper {
             autoLogin: false,
             fullScreen: false,
             memory: 1024,
-            startDebug: false
+            startDebug: false,
         };
     }
 
@@ -25,13 +26,13 @@ export class SettingsHelper {
         return StorageHelper.getStore().set('client.' + field, value);
     }
 
-    static getTotalMemory()  {
-        let total_memory = os.totalmem();
-        total_memory /= 2 ** 20;
-        let default_mem = 2048;
-        if (total_memory > 6e3) default_mem += 1024;
-        if (total_memory > 16e3) default_mem += 2048;
-    
-        return  default_mem;
+    static getTotalMemory() {
+        const remainingMemMegabytes = Math.floor(os.totalmem() / 1024 ** 2) / 2;
+
+        return (
+            remainingMemMegabytes -
+            (remainingMemMegabytes % 1024) +
+            (remainingMemMegabytes % 1024 ? 1024 : 0)
+        );
     }
 }
