@@ -8,7 +8,11 @@ import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
 
 export default function ServersList() {
-    const { hideTitlebarBackBtn, showTitlebarSettingsBtn, resetTitlebarTitleText } = useTitlebar();
+    const {
+        hideTitlebarBackBtn,
+        showTitlebarSettingsBtn,
+        resetTitlebarTitleText,
+    } = useTitlebar();
 
     const [servers, setServers] = useState<Server[]>([]);
     const navigate = useNavigate();

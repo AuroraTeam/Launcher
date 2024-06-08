@@ -21,11 +21,3 @@ export const titlebarTitle = atom({
         text: 'AuroraLauncher',
     },
 });
-
-export const titlebarUser = atom({
-    key: 'titlebar.user',
-    default: {
-        show: false,
-        username: 'Test',
-    },
-});

@@ -1,12 +1,12 @@
 import { SetStateAction, useEffect, useState } from 'react';
 
+import { version } from '../../../../../package.json';
+import { SettingsFormat } from '../../../../main/helpers/ISettings';
+import logo from '../../assets/images/logo.png';
 import If from '../../components/If';
 import { MemoryRange } from '../../components/MemoryRange';
 import { useTitlebar } from '../../components/TitleBar/hooks';
-import { version } from '../../../../../package.json'
 import classes from './index.module.sass';
-import logo from '../../assets/images/logo.png';
-import { SettingsFormat } from '../../../../main/helpers/ISettings';
 
 export default function Settings() {
     const {
@@ -25,7 +25,9 @@ export default function Settings() {
             .then((res: SetStateAction<SettingsFormat>) => {
                 setSettings(res);
             });
-        launcherAPI.scenes.settings.getTotalMemory().then((res: number) => SetTotalMemory(res));
+        launcherAPI.scenes.settings
+            .getTotalMemory()
+            .then((res: number) => SetTotalMemory(res));
     }, []);
 
     const [main, EditButtonMain] = useState(true);
@@ -74,7 +76,10 @@ export default function Settings() {
                             type="checkbox"
                             defaultChecked={settings.fullScreen}
                             onChange={(e) =>
-                                setValue('fullScreen', Boolean(e.target.checked))
+                                setValue(
+                                    'fullScreen',
+                                    Boolean(e.target.checked),
+                                )
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>
@@ -105,7 +110,9 @@ export default function Settings() {
                         <span className={classes.checkboxSwitch}></span>
                         Автоматический вход на сервер
                     </label>
-                    <label>Выделено оперативной памяти: {settings.memory}</label>
+                    <label>
+                        Выделено оперативной памяти: {settings.memory}MB
+                    </label>
                     <br />
                     <MemoryRange
                         limit={totalMemory}
