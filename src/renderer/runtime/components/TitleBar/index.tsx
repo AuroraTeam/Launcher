@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import If from '../If';
+import SkinView from '../SkinView';
 import classes from './index.module.sass';
 import {
     titlebarBackBtn,
@@ -9,6 +10,7 @@ import {
     titlebarTitle,
     titlebarUser,
 } from './states';
+import { SkinView2d } from '../SkinView2d'
 
 export default function TitleBar() {
     const backBtn = useRecoilValue(titlebarBackBtn);
@@ -50,33 +52,7 @@ export default function TitleBar() {
             <div>
                 <If state={username.length > 0}>
                     <div className={classes.user}>
-                        <svg
-                            width="22px"
-                            height="22px"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                        >
-                            <circle
-                                cx="12"
-                                cy="9"
-                                r="3"
-                                stroke="#fff"
-                                strokeWidth="1.5"
-                            />
-                            <circle
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="#fff"
-                                strokeWidth="1.5"
-                            />
-                            <path
-                                d="M17.9691 20C17.81 17.1085 16.9247 15 11.9999 15C7.07521 15 6.18991 17.1085 6.03076 20"
-                                stroke="#fff"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                            />
-                        </svg>
+                        <SkinView2d width={25} height={25} />
                         <div
                             className={[classes.username, classes.text].join(
                                 ' ',
