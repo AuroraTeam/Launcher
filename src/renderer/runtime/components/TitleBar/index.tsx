@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import If from '../If';
-import SkinView from '../SkinView';
 import classes from './index.module.sass';
 import {
     titlebarBackBtn,
