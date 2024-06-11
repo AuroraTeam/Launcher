@@ -1,4 +1,4 @@
-import { FormEvent } from 'react';
+import { FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { setUserData } from '../../../utils';
@@ -19,16 +19,22 @@ export default function Login() {
     const navigate = useNavigate();
     const { setTitlebarUserText } = useTitlebar();
 
-    // Example for custom DiscordRPC
-    // launcherAPI.rpc.updateActivity({
-    //       details: "Проходит этап авторизации"
-    // });
+    // Load remembered credentials
+    useEffect(() => {
+        const savedLogin = localStorage.getItem('login');
+        const savedPassword = localStorage.getItem('password');
+        if (savedLogin && savedPassword) {
+            (document.querySelector('input[name="login"]') as HTMLInputElement).value = savedLogin;
+            (document.querySelector('input[name="password"]') as HTMLInputElement).value = savedPassword;
+            (document.querySelector('input[name="rememberMe"]') as HTMLInputElement).checked = true;
+        }
+    }, []);
 
     const auth = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const { login, password } = Object.fromEntries(formData) as AuthData;
+        const { login, password, rememberMe } = Object.fromEntries(formData) as AuthData & { rememberMe: string };
 
         // Пример валидации
         if (login.length < 3) {
@@ -45,6 +51,15 @@ export default function Login() {
             );
             setUserData(userData);
             setTitlebarUserText(userData.username);
+
+            // Save credentials if "Remember me" is checked
+            if (rememberMe) {
+                localStorage.setItem('login', login);
+                localStorage.setItem('password', password);
+            } else {
+                localStorage.removeItem('login');
+                localStorage.removeItem('password');
+            }
         } catch (error) {
             console.error(error);
             return showModal('Ошибка авторизации', (error as Error).message);
@@ -66,6 +81,10 @@ export default function Login() {
             <form onSubmit={auth}>
                 <input type="text" placeholder="Логин" name="login" />
                 <input type="password" placeholder="Пароль" name="password" />
+                <div className={classes.rememberMe}>
+                    <input type="checkbox" name="rememberMe" id="rememberMe" />
+                    <label htmlFor="rememberMe">Запомнить меня</label>
+                </div>
                 <button>Войти</button>
             </form>
         </div>

@@ -1,5 +1,5 @@
 import { MutableRefObject, useEffect, useRef } from 'react';
-import { IdleAnimation, SkinViewer } from 'skinview3d';
+import { WalkingAnimation, SkinViewer } from 'skinview3d';
 
 import defaultSkin from '../assets/images/steve.png';
 
@@ -10,15 +10,22 @@ export default function SkinView() {
         const skinViewer = new SkinViewer({
             canvas: skinCanvas.current,
             width: 220,
-            height: 440,
+            height: 400,
         });
 
         skinViewer.camera.position.x = -20;
         skinViewer.camera.position.y = 20;
         skinViewer.zoom = 0.8;
-        skinViewer.controls.enableZoom = false;
 
-        skinViewer.animation = new IdleAnimation();
+        
+        skinViewer.controls.enableZoom = false; // Включает возможность масштабирования модели с помощью колесика мыши
+        skinViewer.controls.enableRotate = true; // Включает возможность вращения модели с помощью мыши
+        skinViewer.controls.rotateSpeed = 0.5; //  скорость вращения модели
+
+        // Установка анимации ходьбы
+        const walkingAnimation = new WalkingAnimation();
+        skinViewer.animation = walkingAnimation;
+        skinViewer.animation.speed = 0.3; // Настройка скорости для более плавной анимации
 
         // Поддержка загрузки и отображения скина
         const { skinUrl, capeUrl, isAlex } = JSON.parse(
@@ -27,7 +34,6 @@ export default function SkinView() {
         if (skinUrl) {
             skinViewer.loadSkin(skinUrl);
         } else {
-            // Fuck skinview (race condition moment)
             skinViewer.loadSkin(defaultSkin);
         }
         if (capeUrl) skinViewer.loadCape(capeUrl);
