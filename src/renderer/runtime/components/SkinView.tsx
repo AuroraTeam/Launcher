@@ -17,6 +17,7 @@ export default function SkinView() {
         skinViewer.camera.position.y = 20;
         skinViewer.zoom = 0.8;
         skinViewer.controls.enableZoom = false;
+    
 
         skinViewer.animation = new IdleAnimation();
 
