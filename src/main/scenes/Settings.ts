@@ -1,11 +1,11 @@
 import { EVENTS } from '../../common/channels'
 import { ipcMain } from 'electron'
 import { SettingsHelper } from '../helpers/SettingsHelper'
-import { Service } from 'typedi'
+import { Service } from '@freshgum/typedi'
 
 import { IHandleable } from '../core/IHandleable'
 
-@Service()
+@Service([])
 export class SettingsScene implements IHandleable {
     initHandlers(): void {
         ipcMain.handle(

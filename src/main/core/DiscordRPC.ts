@@ -1,13 +1,13 @@
 import { discordRPC as config } from '@config'
 import { Client, SetActivity } from '@xhayper/discord-rpc'
-import { Service } from 'typedi'
+import { Service } from '@freshgum/typedi'
 
 import { ipcMain } from 'electron'
 import { EVENTS } from '../../common/channels'
 import { LogHelper } from '../../main/helpers/LogHelper'
 import { IHandleable } from './IHandleable'
 
-@Service()
+@Service([])
 export class DiscordRPC implements IHandleable{
     private client = new Client({
         clientId: config.appId,

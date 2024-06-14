@@ -2,14 +2,14 @@ import { join } from 'path';
 
 import { ProfileLibrary } from '@aurora-launcher/core';
 import { watch } from 'chokidar';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { LogHelper } from '../../helpers/LogHelper';
 import { StorageHelper } from '../../helpers/StorageHelper';
 import { IProcess } from './IProcess';
 import { WatcherProfile } from './WatcherProfile';
 
-@Service()
+@Service([])
 export class Watcher {
     async watch(
         profile: WatcherProfile,

@@ -1,10 +1,10 @@
 import { AuroraAPI } from '@aurora-launcher/api';
 import { api as apiConfig } from '@config';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { LogHelper } from '../helpers/LogHelper';
 
-@Service()
+@Service([])
 export class APIManager {
     private api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370', {
         onClose: () => setTimeout(() => this.initConnection(), 2000),

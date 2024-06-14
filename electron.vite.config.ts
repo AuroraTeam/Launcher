@@ -1,12 +1,12 @@
 import { join } from 'path';
 
-import { defineConfig, swcPlugin } from 'electron-vite';
+import { defineConfig } from 'electron-vite';
 
 const toDir = (dir: string) => join(__dirname, dir);
 
 export default defineConfig({
     main: {
-        plugins: [swcPlugin()],
+        plugins: [],
         build: {
             sourcemap: true,
         },

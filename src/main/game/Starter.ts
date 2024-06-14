@@ -7,7 +7,7 @@ import { LauncherWindow } from '../../main/core/LauncherWindow';
 import { LogHelper } from '../../main/helpers/LogHelper';
 import { StorageHelper } from '../../main/helpers/StorageHelper';
 import { coerce, gte, lte } from 'semver';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { Session } from '../../common/types';
 import { AuthorizationService } from '../api/AuthorizationService';
@@ -17,7 +17,8 @@ import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
 import { SettingsHelper } from '../../main/helpers/SettingsHelper';
 
-@Service()
+@Service([LauncherWindow, AuthorizationService, 
+    GameWindow, JavaManager, AuthlibInjector])
 export class Starter {
     constructor(
         private LauncherWindow: LauncherWindow,

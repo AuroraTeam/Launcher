@@ -3,14 +3,14 @@ import { readdir, chmod } from 'fs/promises';
 import { join } from 'path';
 
 import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { Architecture, Platform } from '../core/System';
 import { PlatformHelper } from '../helpers/PlatformHelper';
 import { StorageHelper } from '../helpers/StorageHelper';
 import { GameWindow } from './GameWindow';
 
-@Service()
+@Service([GameWindow])
 export class JavaManager {
     // TODO Лишнее связывание, придумать как сделать лучше
     constructor(private gameWindow: GameWindow) {}

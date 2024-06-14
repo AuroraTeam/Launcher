@@ -6,7 +6,7 @@ import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
 import { autoUpdater } from 'electron-updater';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png?asset';
@@ -14,7 +14,7 @@ import { PlatformHelper } from '../helpers/PlatformHelper';
 
 const isDev = process.env.DEV === 'true' && !app.isPackaged;
 
-@Service()
+@Service([])
 export class LauncherWindow {
     private mainWindow?: BrowserWindow;
 

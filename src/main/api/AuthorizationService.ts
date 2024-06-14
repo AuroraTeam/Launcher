@@ -1,9 +1,9 @@
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { Session, UserData } from '../../common/types';
 import { APIManager } from './APIManager';
 
-@Service()
+@Service([APIManager])
 export class AuthorizationService {
     private currentSession?: Session;
 

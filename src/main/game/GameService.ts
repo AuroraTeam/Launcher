@@ -1,5 +1,5 @@
 import { Profile, Server } from '@aurora-launcher/core';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { APIManager } from '../api/APIManager';
 import { GameWindow } from './GameWindow';
@@ -8,7 +8,7 @@ import { Starter } from './Starter';
 import { Updater } from './Updater';
 import { Watcher } from './Watcher';
 
-@Service()
+@Service([APIManager, Updater, Watcher, Starter, GameWindow])
 export class GameService {
     private selectedServer?: Server;
     private selectedProfile?: Profile;

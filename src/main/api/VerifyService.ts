@@ -1,12 +1,12 @@
 import { publicDecrypt, publicEncrypt } from 'crypto';
 
 import { api as apiConfig } from '@config';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { LogHelper } from '../helpers/LogHelper';
 import { APIManager } from './APIManager';
 
-@Service()
+@Service([APIManager])
 export class VerifyService {
     constructor(private apiService: APIManager) {}
 

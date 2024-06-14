@@ -1,4 +1,4 @@
-import { Service } from 'typedi'
+import { Service } from '@freshgum/typedi'
 
 import { APIManager } from '../api/APIManager'
 import { VerifyService } from '../api/VerifyService'
@@ -11,7 +11,9 @@ import { SettingsScene } from '../scenes/Settings'
 import { DiscordRPC } from './DiscordRPC'
 import { LauncherWindow } from './LauncherWindow'
 
-@Service()
+@Service([LauncherWindow, APIManager, DiscordRPC, 
+    VerifyService, LoginScene, ServersListScene, 
+    ServerPanelScene, SettingsScene])
 export class Launcher {
     constructor(
         private window: LauncherWindow,

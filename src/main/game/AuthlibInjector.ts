@@ -2,12 +2,12 @@ import { existsSync } from 'fs';
 import { join } from 'path';
 
 import { HashHelper, HttpHelper } from '@aurora-launcher/core';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { LogHelper } from '../helpers/LogHelper';
 import { StorageHelper } from '../helpers/StorageHelper';
 
-@Service()
+@Service([])
 export class AuthlibInjector {
     readonly authlibFilePath = join(StorageHelper.storageDir, 'authlib.jar');
 

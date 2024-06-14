@@ -1,11 +1,11 @@
 import { ipcMain } from 'electron';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { EVENTS } from '../../common/channels';
 import { IHandleable } from '../core/IHandleable';
 import { GameService } from '../game/GameService';
 
-@Service()
+@Service([GameService])
 export class ServerPanelScene implements IHandleable {
     constructor(private gameService: GameService) {}
 

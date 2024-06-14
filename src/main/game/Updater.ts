@@ -13,14 +13,14 @@ import {
 import { api as apiConfig } from '@config';
 import { StorageHelper } from '../../main/helpers/StorageHelper';
 import pMap from 'p-map';
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { LoadProgress } from '../../common/types';
 import { APIManager } from '../api/APIManager';
 import { GameWindow } from './GameWindow';
 import { retry } from '../utils/retry'
 
-@Service()
+@Service([APIManager, GameWindow])
 export class Updater {
     constructor(
         private api: APIManager,

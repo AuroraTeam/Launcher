@@ -1,10 +1,10 @@
-import { Service } from 'typedi';
+import { Service } from '@freshgum/typedi';
 
 import { EVENTS } from '../../common/channels';
 import { LoadProgress } from '../../common/types';
 import { LauncherWindow } from '../core/LauncherWindow';
 
-@Service()
+@Service([LauncherWindow])
 export class GameWindow {
     constructor(private window: LauncherWindow) {}
 
