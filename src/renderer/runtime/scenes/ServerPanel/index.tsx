@@ -34,6 +34,7 @@ export default function ServerPanel() {
             .then((res: SetStateAction<SettingsFormat>) => {
                 setSettings(res);
             });
+        launcherAPI.rpc.updateActivity('profile');
     }, []);
 
     const startGame = () => {
@@ -47,12 +48,14 @@ export default function ServerPanel() {
             progress,
             stopGame,
         );
+        launcherAPI.rpc.updateActivity('game');
     };
 
     const stopGame = () => {
         showTitlebarSettingsBtn();
         setGameStarted(false);
         showTitlebarBackBtn();
+        launcherAPI.rpc.updateActivity('profile');
     };
 
     const textToConsole = (string: string) => {

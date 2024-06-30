@@ -22,6 +22,7 @@ export default function ServersList() {
         showTitlebarSettingsBtn();
         resetTitlebarTitleText();
         launcherAPI.scenes.serversList.getServers().then(setServers);
+        launcherAPI.rpc.updateActivity('default');
     }, []);
 
     const selectServer = async (server: Server) => {

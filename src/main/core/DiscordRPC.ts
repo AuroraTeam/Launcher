@@ -1,5 +1,5 @@
 import { discordRPC as config } from '@config'
-import { Client, SetActivity } from '@xhayper/discord-rpc'
+import { Client } from '@xhayper/discord-rpc'
 import { Service } from '@freshgum/typedi'
 
 import { ipcMain } from 'electron'
@@ -17,17 +17,17 @@ export class DiscordRPC implements IHandleable{
     async start() {
         this.client.on('ready', () => {
             this.client.user?.setActivity({
-                details: config.firstLineText,
-                state: config.secondLineText,
+                details: config.default.firstLineText,
+                state: config.default.secondLineText,
                 buttons:
-                    Array.isArray(config.buttons) && config.buttons.length
-                        ? config.buttons
+                    Array.isArray(config.default.buttons) && config.default.buttons.length
+                        ? config.default.buttons
                         : undefined,
                 startTimestamp: this.startTimestamp,
-                largeImageKey: config.largeImageKey,
-                smallImageKey: config.smallImageKey,
-                largeImageText: config.largeImageText,
-                smallImageText: config.smallImageText,
+                largeImageKey: config.default.largeImageKey,
+                smallImageKey: config.default.smallImageKey,
+                largeImageText: config.default.largeImageText,
+                smallImageText: config.default.smallImageText,
             });
         });
         LogHelper.info('Discord set status.');
@@ -38,21 +38,63 @@ export class DiscordRPC implements IHandleable{
         // либо забить как любые другие разрабы, что работают с Discord RPC
     }
 
-    private updateActivity(updatedActivity: SetActivity) {
-        const newActivity = {
-            details: updatedActivity.details ?? config.firstLineText,
-            state: updatedActivity.state ?? config.secondLineText,
-            buttons:
-            Array.isArray(config.buttons) && config.buttons.length
-                ? config.buttons
-                : undefined,
-            largeImageKey: updatedActivity.largeImageKey ?? config.largeImageKey,
-            smallImageKey: updatedActivity.smallImageKey ?? config.smallImageKey,
-            largeImageText: updatedActivity.largeImageText ?? config.largeImageText,
-            smallImageText: updatedActivity.smallImageText ?? config.smallImageText,
-        };
-       
-        this.client.user?.setActivity(newActivity);
+    private updateActivity(id: Status) {
+        switch(id){
+            case "default": {
+                const newActivity = {
+                details: config.default.firstLineText,
+                state: config.default.secondLineText,
+                buttons:
+                    Array.isArray(config.default.buttons) && config.default.buttons.length
+                        ? config.default.buttons
+                        : undefined,
+                startTimestamp: this.startTimestamp,
+                largeImageKey: config.default.largeImageKey,
+                smallImageKey: config.default.smallImageKey,
+                largeImageText: config.default.largeImageText,
+                smallImageText: config.default.smallImageText,
+                };
+                
+                this.client.user?.setActivity(newActivity);
+                break;
+            }
+            case "profile": {
+                const newActivity = {
+                details: config.profile.firstLineText,
+                state: config.profile.secondLineText,
+                buttons:
+                    Array.isArray(config.profile.buttons) && config.profile.buttons.length
+                        ? config.profile.buttons
+                        : undefined,
+                startTimestamp: this.startTimestamp,
+                largeImageKey: config.profile.largeImageKey,
+                smallImageKey: config.profile.smallImageKey,
+                largeImageText: config.profile.largeImageText,
+                smallImageText: config.profile.smallImageText,
+                };
+                
+                this.client.user?.setActivity(newActivity);
+                break;
+            }
+            case "game": {
+                const newActivity = {
+                details: config.game.firstLineText,
+                state: config.game.secondLineText,
+                buttons:
+                    Array.isArray(config.game.buttons) && config.game.buttons.length
+                        ? config.game.buttons
+                        : undefined,
+                startTimestamp: this.startTimestamp,
+                largeImageKey: config.game.largeImageKey,
+                smallImageKey: config.game.smallImageKey,
+                largeImageText: config.game.largeImageText,
+                smallImageText: config.game.smallImageText,
+                };
+                
+                this.client.user?.setActivity(newActivity);
+                break;
+            }
+        }
     }
     
     private clearActivity() {
@@ -69,3 +111,5 @@ export class DiscordRPC implements IHandleable{
         );
     }
 }
+
+export type Status = "default" | "game" | "profile";
