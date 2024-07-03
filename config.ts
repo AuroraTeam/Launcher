@@ -36,7 +36,7 @@ export const discordRPC = {
     },
     profile: {
         firstLineText: 'Выбираю тестируемый профиль игры',
-        secondLineText: 'Чувак, ты думал здесь что-то будет?',
+        secondLineText: 'Загружаю {server}',
         buttons: [
             {
                 label: 'Прекол',
@@ -49,8 +49,8 @@ export const discordRPC = {
         smallImageText: 'Minecraft',
     },
     game: {
-        firstLineText: 'Играю на тестовом лаунчере',
-        secondLineText: 'Чувак, ты думал здесь что-то будет?',
+        firstLineText: 'Играю на тестовом сервере',
+        secondLineText: 'Играю за {nickname}',
         buttons: [
             {
                 label: 'Прекол',

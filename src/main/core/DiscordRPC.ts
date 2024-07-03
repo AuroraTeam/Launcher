@@ -6,9 +6,16 @@ import { ipcMain } from 'electron'
 import { EVENTS } from '../../common/channels'
 import { LogHelper } from '../../main/helpers/LogHelper'
 import { IHandleable } from './IHandleable'
+import { AuthorizationService } from '../api/AuthorizationService';
+import { GameService } from '../game/GameService';
 
-@Service([])
+@Service([AuthorizationService, GameService])
 export class DiscordRPC implements IHandleable{
+    constructor(
+        private authorizationService: AuthorizationService,
+        private gameService: GameService
+    ) {}
+
     private client = new Client({
         clientId: config.appId,
     });
@@ -41,57 +48,57 @@ export class DiscordRPC implements IHandleable{
     private updateActivity(id: Status) {
         switch(id){
             case "default": {
-                const newActivity = {
-                details: config.default.firstLineText,
-                state: config.default.secondLineText,
-                buttons:
-                    Array.isArray(config.default.buttons) && config.default.buttons.length
-                        ? config.default.buttons
-                        : undefined,
-                startTimestamp: this.startTimestamp,
-                largeImageKey: config.default.largeImageKey,
-                smallImageKey: config.default.smallImageKey,
-                largeImageText: config.default.largeImageText,
-                smallImageText: config.default.smallImageText,
-                };
-                
-                this.client.user?.setActivity(newActivity);
+                this.client.user?.setActivity({
+                    details: config.default.firstLineText,
+                    state: config.default.secondLineText,
+                    buttons:
+                        Array.isArray(config.default.buttons) && config.default.buttons.length
+                            ? config.default.buttons
+                            : undefined,
+                    startTimestamp: this.startTimestamp,
+                    largeImageKey: config.default.largeImageKey,
+                    smallImageKey: config.default.smallImageKey,
+                    largeImageText: config.default.largeImageText,
+                    smallImageText: config.default.smallImageText,
+                });
+
+                LogHelper.dev('Discord status updated to default.');
                 break;
             }
             case "profile": {
-                const newActivity = {
-                details: config.profile.firstLineText,
-                state: config.profile.secondLineText,
-                buttons:
-                    Array.isArray(config.profile.buttons) && config.profile.buttons.length
-                        ? config.profile.buttons
-                        : undefined,
-                startTimestamp: this.startTimestamp,
-                largeImageKey: config.profile.largeImageKey,
-                smallImageKey: config.profile.smallImageKey,
-                largeImageText: config.profile.largeImageText,
-                smallImageText: config.profile.smallImageText,
-                };
-                
-                this.client.user?.setActivity(newActivity);
+                this.client.user?.setActivity({
+                    details: this.placeholders(config.profile.firstLineText),
+                    state: this.placeholders(config.profile.secondLineText),
+                    buttons:
+                        Array.isArray(config.profile.buttons) && config.profile.buttons.length
+                            ? config.profile.buttons
+                            : undefined,
+                    startTimestamp: this.startTimestamp,
+                    largeImageKey: config.profile.largeImageKey,
+                    smallImageKey: config.profile.smallImageKey,
+                    largeImageText: config.profile.largeImageText,
+                    smallImageText: config.profile.smallImageText,
+                });
+
+                LogHelper.dev('Discord status updated to profile.');
                 break;
             }
             case "game": {
-                const newActivity = {
-                details: config.game.firstLineText,
-                state: config.game.secondLineText,
-                buttons:
-                    Array.isArray(config.game.buttons) && config.game.buttons.length
-                        ? config.game.buttons
-                        : undefined,
-                startTimestamp: this.startTimestamp,
-                largeImageKey: config.game.largeImageKey,
-                smallImageKey: config.game.smallImageKey,
-                largeImageText: config.game.largeImageText,
-                smallImageText: config.game.smallImageText,
-                };
-                
-                this.client.user?.setActivity(newActivity);
+                this.client.user?.setActivity({
+                    details: this.placeholders(config.game.firstLineText),
+                    state: this.placeholders(config.game.secondLineText),
+                    buttons:
+                        Array.isArray(config.game.buttons) && config.game.buttons.length
+                            ? config.game.buttons
+                            : undefined,
+                    startTimestamp: this.startTimestamp,
+                    largeImageKey: config.game.largeImageKey,
+                    smallImageKey: config.game.smallImageKey,
+                    largeImageText: config.game.largeImageText,
+                    smallImageText: config.game.smallImageText,
+                });
+
+                LogHelper.dev('Discord status updated to game.');
                 break;
             }
         }
@@ -99,6 +106,19 @@ export class DiscordRPC implements IHandleable{
     
     private clearActivity() {
         this.client.user?.clearActivity()
+    }
+
+    private placeholders(text:string) {
+        const userArgs = this.authorizationService.getCurrentSession();
+        const server = this.gameService.getServer();
+
+        if (!userArgs) throw new Error('Auth requierd');
+        if (!server) throw new Error('No information about the server');
+        
+        const total = text
+            .replace('{nickname}', userArgs.username)
+            .replace('{server}', server.title);
+        return total;
     }
 
     initHandlers() {

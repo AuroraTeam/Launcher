@@ -4,7 +4,7 @@ import { ipcRenderer } from 'electron'
 
 export default class RPC {
 	static updateActivity(data: Status) {
-			ipcRenderer.invoke(EVENTS.RPC.UPDATE_ACTIVITY, data);
+		ipcRenderer.invoke(EVENTS.RPC.UPDATE_ACTIVITY, data);
 	}
 
 	static clearActivity() {

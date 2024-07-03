@@ -5,7 +5,7 @@
     "main": "out/main/index-obf.loader.js",
     "private": true,
     "scripts": {
-        "dev": "cross-env DEV=true electron-vite dev -w --entry ./out/main/index.js",
+        "dev": "cross-env DEV=true electron-vite dev -w --entry ./out/main/index.js -- --dev",
         "build": "electron-vite build && npm run obfuscator && npm run bytenode",
         "start": "electron-vite preview --entry ./out/main/index.js",
         "clean": "rimraf out dist",
