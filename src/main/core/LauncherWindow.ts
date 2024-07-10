@@ -69,6 +69,7 @@ export class LauncherWindow {
 
         ipcMain.on(EVENTS.WINDOW.EDIT_DIR, () =>{
             const dirPaths = dialog.showOpenDialogSync({
+                title: 'Укажите место хранения игры',
                 properties: ['openDirectory']
             })
             if (dirPaths) StorageHelper.migration(dirPaths.toString());

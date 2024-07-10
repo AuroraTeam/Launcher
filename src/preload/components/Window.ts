@@ -32,7 +32,7 @@ export default class Window {
     }
 
     /**
-     * Open external url
+     * Open directory path
      */
     static openDir(path: string) {
         ipcRenderer.send(EVENTS.WINDOW.OPEN_DIR, path);
