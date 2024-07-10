@@ -13,6 +13,8 @@ export const API = {
         hide: Window.hide,
         close: Window.close,
         openExternal: Window.openExternal,
+        editDir:Window.editDir,
+        openDir:Window.openDir,
     },
     rpc: {
         updateActivity: RPC.updateActivity,

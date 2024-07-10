@@ -121,6 +121,18 @@ export default function Settings() {
                         }
                         value={settings.memory}
                     />
+                    <label>
+                    Расположение игры
+                    </label>
+                    <br />
+                    <div className={classes.changeDir}>
+                        <button className={classes.openDir} onClick={() => launcherAPI.window.openDir(settings.dir)}>
+                        {settings.dir}
+                        </button>
+                        <button className={classes.editDir} onClick={() => launcherAPI.window.editDir()}>
+                            Смена директории
+                        </button>
+                    </div>
                 </div>
             </If>
             <If state={info}>

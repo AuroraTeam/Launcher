@@ -7,6 +7,7 @@ export class SettingsHelper {
     static defaultsValue(): SettingsFormat {
         return {
             token: '0',
+            dir: StorageHelper.getPlatformStorageDir(),
             autoLogin: false,
             fullScreen: false,
             memory: 1024,
@@ -18,7 +19,7 @@ export class SettingsHelper {
         return StorageHelper.getStore().get('client');
     }
 
-    static getField(name: string): SettingsFormat {
+    static getField(name: string) {
         return StorageHelper.getStore().get('client.' + name);
     }
 

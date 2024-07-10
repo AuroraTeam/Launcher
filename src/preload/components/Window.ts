@@ -23,4 +23,18 @@ export default class Window {
     static openExternal(url: string) {
         ipcRenderer.send(EVENTS.WINDOW.OPEN_EXTERNAL, url);
     }
+
+    /**
+     * Open dialog window
+     */
+    static editDir() {
+        ipcRenderer.send(EVENTS.WINDOW.EDIT_DIR);
+    }
+
+    /**
+     * Open external url
+     */
+    static openDir(path: string) {
+        ipcRenderer.send(EVENTS.WINDOW.OPEN_DIR, path);
+    }
 }

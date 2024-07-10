@@ -3,6 +3,8 @@ export const EVENTS = {
         HIDE: 'window:hide',
         CLOSE: 'window:close',
         OPEN_EXTERNAL: 'window:openExternal',
+        EDIT_DIR: 'window:editDir',
+        OPEN_DIR: 'window:openDir',
     },
     RPC: {
         UPDATE_ACTIVITY: 'discordrpc:updateactivty',

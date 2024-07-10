@@ -1,7 +1,7 @@
 import { join } from 'path';
 
 import { window as windowConfig } from '@config';
-import { BrowserWindow, Menu, Tray, app, ipcMain, shell } from 'electron';
+import { BrowserWindow, Menu, Tray, app, ipcMain, shell, dialog } from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
@@ -11,6 +11,7 @@ import { Service } from '@freshgum/typedi';
 import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png?asset';
 import { PlatformHelper } from '../helpers/PlatformHelper';
+import { StorageHelper } from '../helpers/StorageHelper'
 
 const isDev = process.env.DEV === 'true' && !app.isPackaged;
 
@@ -64,6 +65,18 @@ export class LauncherWindow {
 
         ipcMain.on(EVENTS.WINDOW.OPEN_EXTERNAL, (_, url: string) =>
             shell.openExternal(url),
+        );
+
+        ipcMain.on(EVENTS.WINDOW.EDIT_DIR, () =>{
+            const dirPaths = dialog.showOpenDialogSync({
+                properties: ['openDirectory']
+            })
+            if (dirPaths) StorageHelper.migration(dirPaths.toString());
+        }
+        );
+
+        ipcMain.on(EVENTS.WINDOW.OPEN_DIR, (_, path: string) =>
+            shell.openPath(path),
         );
     }
 
