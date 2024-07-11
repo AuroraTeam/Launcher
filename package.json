@@ -1,7 +1,7 @@
 {
     "name": "aurora-launcher-app",
-    "version": "0.0.5-dev",
-    "description": "Launcher for Minecraft",
+    "version": "0.0.62-dev",
+    "description": "Meh Launcher for Minecraft by Aurora",
     "main": "out/main/index-obf.loader.js",
     "private": true,
     "scripts": {
@@ -82,13 +82,13 @@
     },
     "build": {
         "appId": "ru.aurora.launcher",
-        "productName": "Aurora Launcher",
+        "productName": "Meh Launcher by Aurora",
         "publish": [
             {
                 "provider": "github",
                 "releaseType": "release",
-                "owner": "AuroraTeam",
-                "repo": "Launcher"
+                "owner": "MehanikTM_YT",
+                "repo": "auroraPublic"
             }
         ],
         "directories": {
@@ -102,7 +102,7 @@
             "node_modules/bytenode/**/*"
         ],
         "nsis": {
-            "artifactName": "${name}-Setup-${version}.${ext}"
+            "artifactName": "${name}-Setup.${ext}"
         },
         "mac": {
             "category": "public.app-category.games"
