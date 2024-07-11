@@ -11,22 +11,22 @@ export const window = {
 };
 
 export const api = {
-    ws: 'ws://127.0.0.1:1370/ws',
-    web: 'http://127.0.0.1:1370',
+    ws: 'ws://82.97.249.210:1370/ws',
+    web: 'http://82.97.249.210:1370',
     publicKey,
 };
 
 export const appPath = '.aurora-launcher';
 
 export const discordRPC = {
-    appId: '1214685301793103902',
+    appId: '1233096203395137677',
     default: {
         firstLineText: 'Тестирую лаунчер',
-        secondLineText: 'Чувак, ты думал здесь что-то будет?',
+        secondLineText: 'Проверка',
         buttons: [
             {
-                label: 'Прекол',
-                url: 'https://youtu.be/dQw4w9WgXcQ',
+                label: 'Сайт проекта',
+                url: 'http://mehhost.ru',
             },
         ],
         largeImageKey: 'logo',
@@ -39,8 +39,8 @@ export const discordRPC = {
         secondLineText: 'Загружаю {server}',
         buttons: [
             {
-                label: 'Прекол',
-                url: 'https://youtu.be/dQw4w9WgXcQ',
+                label: 'Сайт проекта',
+                url: 'http://mehhost.ru',
             },
         ],
         largeImageKey: 'logo',
@@ -53,8 +53,8 @@ export const discordRPC = {
         secondLineText: 'Играю за {nickname}',
         buttons: [
             {
-                label: 'Прекол',
-                url: 'https://youtu.be/dQw4w9WgXcQ',
+                label: 'Сайт проекта',
+                url: 'http://mehhost.ru',
             },
         ],
         largeImageKey: 'logo',
