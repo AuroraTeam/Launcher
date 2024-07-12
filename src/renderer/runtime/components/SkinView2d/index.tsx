@@ -2,6 +2,7 @@ import { MutableRefObject, useEffect, useRef } from 'react';
 
 import defaultSkin from '../../assets/images/steve.png';
 import { SkinViewer2D } from '../../libs/skinview2d/viewer';
+import { getUserData } from '../../../utils';
 interface SkinView2dProps {
     width: number;
     height: number;
@@ -12,9 +13,7 @@ export const SkinView2d = ({
 }: SkinView2dProps) => {
     const skinHeadRef = useRef() as MutableRefObject<HTMLDivElement>;
 
-		const { skinUrl } = JSON.parse(
-			localStorage.getItem('userData') || '{}',
-	);
+		const { skinUrl } = getUserData();
 
     useEffect(() => {
         renderSkinViewer();

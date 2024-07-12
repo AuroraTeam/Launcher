@@ -1,5 +1,6 @@
 import { MutableRefObject, useEffect, useRef } from 'react';
 import { IdleAnimation, SkinViewer } from 'skinview3d';
+import { getUserData } from '../../utils';
 
 import defaultSkin from '../assets/images/steve.png';
 
@@ -22,15 +23,8 @@ export default function SkinView() {
         skinViewer.animation = new IdleAnimation();
 
         // Поддержка загрузки и отображения скина
-        const { skinUrl, capeUrl, isAlex } = JSON.parse(
-            localStorage.getItem('userData') || '{}',
-        );
-        if (skinUrl) {
-            skinViewer.loadSkin(skinUrl);
-        } else {
-            // Fuck skinview (race condition moment)
-            skinViewer.loadSkin(defaultSkin);
-        }
+        const { skinUrl, capeUrl, isAlex } = getUserData();
+        skinViewer.loadSkin(skinUrl ?? defaultSkin);
         if (capeUrl) skinViewer.loadCape(capeUrl);
         if (isAlex) skinViewer.playerObject.skin.modelType = 'slim';
     }, []);
