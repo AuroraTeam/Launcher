@@ -56,7 +56,8 @@
         "sass": "^1.77.4",
         "source-map-support": "^0.5.21",
         "typescript": "^5.4.5",
-        "vitest": "^1.6.0"
+        "vitest": "^1.6.0",
+        "yaml": "^2.4.5"
     },
     "dependencies": {
         "@aurora-launcher/api": "^0.4.0",
