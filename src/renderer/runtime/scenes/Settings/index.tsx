@@ -13,9 +13,11 @@ export default function Settings() {
         showTitlebarBackBtn,
         setTitlebarTitleText,
         hideTitlebarSettingsBtn,
+        hideTitlebarLogoutBtn,
     } = useTitlebar();
 
     useEffect(() => {
+        hideTitlebarLogoutBtn();
         showTitlebarBackBtn();
         hideTitlebarSettingsBtn();
         setTitlebarTitleText('Настройки лаунчера');
@@ -102,9 +104,9 @@ export default function Settings() {
                     <label className={classes.checkbox}>
                         <input
                             type="checkbox"
-                            defaultChecked={settings.autoLogin}
+                            defaultChecked={settings.autoConnect}
                             onChange={(e) =>
-                                setValue('autoLogin', Boolean(e.target.checked))
+                                setValue('autoConnect', Boolean(e.target.checked))
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>

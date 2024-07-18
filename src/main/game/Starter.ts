@@ -152,7 +152,7 @@ export class Starter {
             gameArgs.push('--accessToken', userArgs.accessToken);
             if (settings.fullScreen) gameArgs.push('--fullscreen', 'true');
 
-            if (settings.autoLogin) {
+            if (settings.autoConnect) {
                 if (gte(clientVersion, '1.20.0')) {
                     if ('hostname' in server) gameArgs.push('--quickPlayMultiplayer', server.hostname); 
                     else gameArgs.push('--quickPlayMultiplayer', server.ip + ':' + server.port);

@@ -23,6 +23,7 @@ export const API = {
     scenes: {
         login: {
             auth: LoginScene.auth,
+            authToken: LoginScene.authToken,
         },
         serversList: {
             getServers: ServersList.getServers,

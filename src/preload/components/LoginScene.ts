@@ -7,4 +7,8 @@ export default class LoginScene {
     static auth(login: string, password: string): Promise<UserData> {
         return ipcRenderer.invoke(EVENTS.SCENES.LOGIN.AUTH, login, password);
     }
+
+    static authToken(): Promise<UserData> {
+        return ipcRenderer.invoke(EVENTS.SCENES.LOGIN.AUTH_TOKEN);
+    }
 }

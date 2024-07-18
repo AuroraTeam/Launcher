@@ -1,12 +1,13 @@
 {
     "name": "aurora-launcher-app",
-    "version": "0.0.62-dev",
+    "version": "0.0.70-dev",
     "description": "Meh Launcher for Minecraft by Aurora",
     "main": "out/main/index-obf.loader.js",
     "private": true,
     "scripts": {
         "dev": "cross-env DEV=true electron-vite dev -w --entry ./out/main/index.js -- --dev",
-        "build": "electron-vite build && npm run obfuscator && npm run bytenode",
+        "build:js": "electron-vite build && npm run obfuscator && npm run bytenode",
+        "build:bin": "electron-builder",
         "start": "electron-vite preview --entry ./out/main/index.js",
         "clean": "rimraf out dist",
         "prettier": "prettier --config .prettierrc.json --write src",
@@ -14,7 +15,7 @@
         "lint": "eslint src --ext .ts,.tsx",
         "lint:fix": "npm run lint -- --fix",
         "pack": "electron-builder --dir",
-        "release": "electron-builder",
+        "release": "esbuild ./upload-release.ts --bundle --log-level=error --loader:.pem=text --platform=node --packages=external --format=esm --outdir=./ --out-extension:.js=.mjs && node ./upload-release.mjs",
         "obfuscator": "javascript-obfuscator out/main/index.js --output out/main/index-obf.js --split-strings true --split-strings-chunk-length 8",
         "bytenode": "bytenode -c out/main/index-obf.js -e -l --compress",
         "test": "vitest"
@@ -59,7 +60,7 @@
     },
     "dependencies": {
         "@aurora-launcher/api": "^0.4.0",
-        "@aurora-launcher/core": "^0.22.0",
+        "@aurora-launcher/core": "^0.23.0",
         "@freshgum/typedi": "^0.7.2",
         "@xhayper/discord-rpc": "^1.1.2",
         "bytenode": "^1.5.6",
@@ -85,10 +86,9 @@
         "productName": "Meh Launcher by Aurora",
         "publish": [
             {
-                "provider": "github",
-                "releaseType": "release",
-                "owner": "MehanikTM_YT",
-                "repo": "auroraPublic"
+                "provider": "generic",
+                "url": "http://82.97.249.210:1370/files/release",
+                "channel": "latest"
             }
         ],
         "directories": {
