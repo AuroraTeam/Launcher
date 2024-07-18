@@ -12,6 +12,7 @@ export default function ServersList() {
         hideTitlebarBackBtn,
         showTitlebarSettingsBtn,
         resetTitlebarTitleText,
+        showTitlebarLogoutBtn,
     } = useTitlebar();
 
     const [servers, setServers] = useState<Server[]>([]);
@@ -19,6 +20,7 @@ export default function ServersList() {
 
     useEffect(() => {
         hideTitlebarBackBtn();
+        showTitlebarLogoutBtn();
         showTitlebarSettingsBtn();
         resetTitlebarTitleText();
         launcherAPI.scenes.serversList.getServers().then(setServers);

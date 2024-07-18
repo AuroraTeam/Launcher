@@ -1,7 +1,7 @@
 export interface SettingsFormat {
     token?: string;
     dir?: string;
-    autoLogin?: boolean;
+    autoConnect?: boolean;
     fullScreen?: boolean;
     memory?: number;
     startDebug?: boolean;

@@ -9,6 +9,13 @@ export const titlebarBackBtn = atom({
     },
 });
 
+export const titlebarLogout = atom({
+    key: 'titlebar.logout',
+    default: {
+        show: false,
+    },
+});
+
 export const titlebarSettingsBtn = atom({
     key: 'titlebar.settingsBtn',
     default: {

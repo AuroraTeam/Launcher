@@ -1,6 +1,7 @@
-import { FormEvent } from 'react';
+import { FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { SettingsFormat } from '../../../../main/helpers/ISettings';
 import { setUserData } from '../../../utils';
 import logo from '../../assets/images/logo.png?asset';
 import { useModal } from '../../components/Modal/hooks';
@@ -11,25 +12,34 @@ interface AuthData {
     [k: string]: string;
     login: string;
     password: string;
+    autoLogin: string;
 }
 
 export default function Login() {
     const { showModal } = useModal();
     const { showTitlebarSettingsBtn } = useTitlebar();
     const navigate = useNavigate();
-    const { setTitlebarUserText } = useTitlebar();
+    const { setTitlebarUserText, hideTitlebarLogoutBtn } = useTitlebar();
 
-    // Example for custom DiscordRPC
-    // launcherAPI.rpc.updateActivity({
-    //       details: "Проходит этап авторизации"
-    // });
+    useEffect(() => {
+        launcherAPI.scenes.settings
+            .getAllFields()
+            .then((res: SettingsFormat) => {
+                if (res.token!="0") launcherAPI.scenes.login.authToken().then((userData) => {
+                    setUserData(userData);
+                    setTitlebarUserText(userData.username);
+                    showTitlebarSettingsBtn();
+                    navigate('ServersList');
+                })
+            });
+        hideTitlebarLogoutBtn();
+    }, []);
 
     const auth = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const { login, password } = Object.fromEntries(formData) as AuthData;
-
+        const { login, password, autoLogin } = Object.fromEntries(formData) as AuthData;
         // Пример валидации
         if (login.length < 3) {
             return showModal(
@@ -43,6 +53,7 @@ export default function Login() {
                 login,
                 password,
             );
+            if (autoLogin) launcherAPI.scenes.settings.setField('token', userData.token)
             setUserData(userData);
             setTitlebarUserText(userData.username);
         } catch (error) {
@@ -67,6 +78,13 @@ export default function Login() {
                 <input type="text" placeholder="Логин" name="login" />
                 <input type="password" placeholder="Пароль" name="password" />
                 <button>Войти</button>
+                <label className={classes.autoLogin}>
+                <input 
+                    type="checkbox"
+                    name="autoLogin"
+                    defaultChecked={false}
+                />Автоматическая авторизация
+            </label>
             </form>
         </div>
     );

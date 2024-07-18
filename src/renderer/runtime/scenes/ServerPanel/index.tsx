@@ -22,11 +22,14 @@ export default function ServerPanel() {
     const progressInfo = useRef() as MutableRefObject<HTMLDivElement>;
     const [settings, setSettings] = useState<SettingsFormat>({});
 
-    const { showTitlebarBackBtn, hideTitlebarBackBtn, hideTitlebarSettingsBtn, showTitlebarSettingsBtn, resetTitlebarTitleText } = useTitlebar();
+    const { showTitlebarBackBtn, hideTitlebarBackBtn, 
+        hideTitlebarSettingsBtn, showTitlebarSettingsBtn, 
+        resetTitlebarTitleText, hideTitlebarLogoutBtn } = useTitlebar();
 
     useEffect(() => {
         launcherAPI.scenes.serverPanel.getServer().then(setSelectedServer);
         showTitlebarSettingsBtn();
+        hideTitlebarLogoutBtn();
         showTitlebarBackBtn();
         resetTitlebarTitleText();
         launcherAPI.scenes.settings

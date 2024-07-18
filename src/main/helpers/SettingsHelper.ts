@@ -8,7 +8,7 @@ export class SettingsHelper {
         return {
             token: '0',
             dir: StorageHelper.getPlatformStorageDir(),
-            autoLogin: false,
+            autoConnect: false,
             fullScreen: false,
             memory: 1024,
             startDebug: false,

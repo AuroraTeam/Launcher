@@ -13,6 +13,7 @@ export const EVENTS = {
     SCENES: {
         LOGIN: {
             AUTH: 'scenes:login:auth',
+            AUTH_TOKEN: 'scenes:login:authToken',
         },
         SERVERS_LIST: {
             GET_SERVERS: 'scenes:serversList:getServers',

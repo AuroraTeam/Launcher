@@ -5,6 +5,7 @@ import {
     titlebarSettingsBtn,
     titlebarTitle,
     titlebarUser,
+    titlebarLogout,
 } from './states';
 
 export function useTitlebar() {
@@ -16,6 +17,16 @@ export function useTitlebar() {
 
     function hideTitlebarBackBtn() {
         setTitlebarBackBtnState({ show: false });
+    }
+
+    const setTitlebarLogoutBtnState = useSetRecoilState(titlebarLogout);
+
+    function showTitlebarLogoutBtn() {
+        setTitlebarLogoutBtnState({ show: true });
+    }
+
+    function hideTitlebarLogoutBtn() {
+        setTitlebarLogoutBtnState({ show: false });
     }
 
     const setTitlebarSettingsBtnState = useSetRecoilState(titlebarSettingsBtn);
@@ -53,6 +64,8 @@ export function useTitlebar() {
     return {
         showTitlebarBackBtn,
         hideTitlebarBackBtn,
+        showTitlebarLogoutBtn,
+        hideTitlebarLogoutBtn,
         showTitlebarSettingsBtn,
         hideTitlebarSettingsBtn,
         showTitlebarTitle,

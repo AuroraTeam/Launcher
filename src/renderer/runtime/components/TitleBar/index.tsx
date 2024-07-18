@@ -5,18 +5,23 @@ import If from '../If';
 import classes from './index.module.sass';
 import {
     titlebarBackBtn,
+    titlebarLogout,
     titlebarSettingsBtn,
     titlebarTitle,
     titlebarUser,
 } from './states';
 import { SkinView2d } from '../SkinView2d'
+import { deleteUserData } from '../../../utils';
+import { useTitlebar } from './hooks';
 
 export default function TitleBar() {
     const backBtn = useRecoilValue(titlebarBackBtn);
+    const logoutBtn = useRecoilValue(titlebarLogout);
     const title = useRecoilValue(titlebarTitle);
     const settings = useRecoilValue(titlebarSettingsBtn);
     const navigate = useNavigate();
     const username = useRecoilValue(titlebarUser);
+    const { setTitlebarUserText, hideTitlebarSettingsBtn } = useTitlebar();
 
     function hide() {
         launcherAPI.window.hide();
@@ -27,6 +32,13 @@ export default function TitleBar() {
     function historyBack() {
         navigate(-1);
     }
+    function logout() {
+        deleteUserData();
+        hideTitlebarSettingsBtn();
+        setTitlebarUserText("");
+        launcherAPI.scenes.settings.setField('token', "0");
+        navigate('/');
+    }
     function toSettings() {
         navigate('/Settings');
     }
@@ -34,6 +46,16 @@ export default function TitleBar() {
     return (
         <div className={classes.titlebar}>
             <div>
+                <If state={logoutBtn.show}>
+                    <button className={classes.logout} onClick={logout}>
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path
+                                d="M4 18h2v2h12V4H6v2H4V3a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3zm2-7h7v2H6v3l-5-4 5-4v3z"
+                                fill="white"
+                            />
+                        </svg>
+                    </button>
+                </If>
                 <If state={backBtn.show}>
                     <button className={classes.back} onClick={historyBack}>
                         <svg width="24" height="24" viewBox="0 0 24 24">
