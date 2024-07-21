@@ -1,6 +1,6 @@
 import os from 'os';
 
-import { SettingsFormat } from './ISettings';
+import { SettingsFormat } from '../../common/types';
 import { StorageHelper } from './StorageHelper';
 
 export class SettingsHelper {
@@ -27,7 +27,7 @@ export class SettingsHelper {
         return StorageHelper.getStore().set('client.' + field, value);
     }
 
-    static getTotalMemory() {
+    static getTotalMemory(): number {
         const remainingMemMegabytes = Math.floor(os.totalmem() / 1024 ** 2) / 2;
 
         return (

@@ -11,7 +11,8 @@ import { Service } from '@freshgum/typedi';
 import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png?asset';
 import { PlatformHelper } from '../helpers/PlatformHelper';
-import { StorageHelper } from '../helpers/StorageHelper'
+import { StorageHelper } from '../helpers/StorageHelper';
+import { SettingsHelper } from '../helpers/SettingsHelper';
 
 const isDev = process.env.DEV === 'true' && !app.isPackaged;
 
@@ -72,7 +73,7 @@ export class LauncherWindow {
                 title: 'Укажите место хранения игры',
                 properties: ['openDirectory']
             })
-            if (dirPaths) StorageHelper.migration(dirPaths.toString());
+            if (dirPaths && SettingsHelper.getField('dir') != dirPaths.toString()) StorageHelper.migration(dirPaths.toString());
         }
         );
 

@@ -1,7 +1,6 @@
 import { FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { SettingsFormat } from '../../../../main/helpers/ISettings';
 import { setUserData } from '../../../utils';
 import logo from '../../assets/images/logo.png?asset';
 import { useModal } from '../../components/Modal/hooks';
@@ -24,7 +23,7 @@ export default function Login() {
     useEffect(() => {
         launcherAPI.scenes.settings
             .getAllFields()
-            .then((res: SettingsFormat) => {
+            .then((res) => {
                 if (res.token!="0") launcherAPI.scenes.login.authToken().then((userData) => {
                     setUserData(userData);
                     setTitlebarUserText(userData.username);

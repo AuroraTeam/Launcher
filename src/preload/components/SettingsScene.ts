@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron';
 
 import { EVENTS } from '../../common/channels';
+import { SettingsFormat } from '../../common/types';
 
 export default class SettingsScene {
     static setField(field: string, value: string) {
@@ -15,10 +16,10 @@ export default class SettingsScene {
         return ipcRenderer.invoke(EVENTS.SCENES.SETTINGS.GET_FIELD, field);
     }
 
-    static getAllFields() {
+    static getAllFields():Promise<SettingsFormat> {
         return ipcRenderer.invoke(EVENTS.SCENES.SETTINGS.GET_ALL_FIELDS);
     }
-    static getTotalMemory() {
+    static getTotalMemory():Promise<number> {
         return ipcRenderer.invoke(EVENTS.SCENES.SETTINGS.GET_TOTAL_MEMORY);
     }
 }

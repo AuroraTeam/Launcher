@@ -1,7 +1,7 @@
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { version } from '../../../../../package.json';
-import { SettingsFormat } from '../../../../main/helpers/ISettings';
+import { SettingsFormat } from '../../../../common/types';
 import logo from '../../assets/images/logo.png';
 import If from '../../components/If';
 import { MemoryRange } from '../../components/MemoryRange';
@@ -24,18 +24,18 @@ export default function Settings() {
 
         launcherAPI.scenes.settings
             .getAllFields()
-            .then((res: SetStateAction<SettingsFormat>) => {
+            .then((res) => {
                 setSettings(res);
             });
         launcherAPI.scenes.settings
             .getTotalMemory()
-            .then((res: number) => SetTotalMemory(res));
+            .then((res) => SetTotalMemory(res));
     }, []);
 
     const [main, EditButtonMain] = useState(true);
     const [info, EditButtonInfo] = useState(false);
 
-    const [totalMemory, SetTotalMemory] = useState<number>(0);
+    const [totalMemory, SetTotalMemory] = useState(0);
     const [settings, setSettings] = useState<SettingsFormat>({});
 
     const setValue = (field: string, value: any) => {
@@ -76,12 +76,13 @@ export default function Settings() {
                     <label className={classes.checkbox}>
                         <input
                             type="checkbox"
-                            defaultChecked={settings.fullScreen}
-                            onChange={(e) =>
+                            checked={settings.fullScreen}
+                            onChange={(e) =>{
                                 setValue(
                                     'fullScreen',
                                     Boolean(e.target.checked),
                                 )
+                            }
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>
@@ -90,7 +91,7 @@ export default function Settings() {
                     <label className={classes.checkbox}>
                         <input
                             type="checkbox"
-                            defaultChecked={settings.startDebug}
+                            checked={settings.startDebug}
                             onChange={(e) =>
                                 setValue(
                                     'startDebug',
@@ -104,7 +105,7 @@ export default function Settings() {
                     <label className={classes.checkbox}>
                         <input
                             type="checkbox"
-                            defaultChecked={settings.autoConnect}
+                            checked={settings.autoConnect}
                             onChange={(e) =>
                                 setValue('autoConnect', Boolean(e.target.checked))
                             }
@@ -131,7 +132,14 @@ export default function Settings() {
                         <button className={classes.openDir} onClick={() => launcherAPI.window.openDir(settings.dir)}>
                         {settings.dir}
                         </button>
-                        <button className={classes.editDir} onClick={() => launcherAPI.window.editDir()}>
+                        <button className={classes.editDir} onClick={() => {
+                            launcherAPI.window.editDir();
+                            launcherAPI.scenes.settings
+                            .getAllFields()
+                            .then((res) => {
+                                setSettings(res);
+                            });
+                        }}>
                             Смена директории
                         </button>
                     </div>
