@@ -48,7 +48,20 @@ async function checkVersion():Promise<boolean> {
 
   console.log('response received', statusCode)
   const file:YamlFile = parse(await body.text())
-  const localFile:YamlFile = parse(readFileSync('./dist/latest.yml').toString('utf-8'))
+  let localFile:YamlFile
+  switch(process.platform){
+    case 'win32':
+      localFile = parse(readFileSync('./dist/latest.yml').toString('utf-8'))
+      break
+    case 'linux':
+      localFile = parse(readFileSync('./dist/latest-linux.yml').toString('utf-8'))
+      break
+    case 'darwin':
+      localFile = parse(readFileSync('./dist/latest-mac.yml').toString('utf-8'))
+      break
+    default:
+      throw new Error('An error occurred during check version')
+  }
   if (file.version == localFile.version) {
     console.info('The versions are identical. Upload canceled')
     return false
