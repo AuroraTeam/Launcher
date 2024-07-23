@@ -7,7 +7,6 @@ import { basename, join } from 'path'
 import { publicDecrypt, publicEncrypt } from 'crypto';
 
 const regex = new RegExp(`${build.publish[0].channel}(\\.|-mac\\.|-linux\\.)yml|zip$|dmg$|AppImage$|rpm$|deb$|exe$`);
-console.log(regex)
 const dir = readdirSync('./dist').filter(file=>regex.exec(file))
 let globalToken:Buffer
 
