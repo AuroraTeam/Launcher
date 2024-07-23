@@ -1,17 +1,20 @@
 import { request } from 'undici'
 import { parse } from 'yaml'
 import { api } from './config'
+import { build } from './package.json';
 import { readFileSync, readdirSync } from 'fs'
 import { basename, join } from 'path'
 import { publicDecrypt, publicEncrypt } from 'crypto';
 
-const dir = readdirSync('./dist').filter(file=>/latest(\.|-mac\.|-linux\.)yml|zip$|dmg$|AppImage$|rpm$|deb$|exe$/.exec(file))
+const regex = new RegExp(`${build.publish[0].channel}(\\.|-mac\\.|-linux\\.)yml|zip$|dmg$|AppImage$|rpm$|deb$|exe$`);
+console.log(regex)
+const dir = readdirSync('./dist').filter(file=>regex.exec(file))
 let globalToken:Buffer
 
 if (await checkVersion()){
   await authorization()
   for (const file of dir) {
-    console.log(`Skipping ${file}`)
+    console.log(`Uploading ${file}`)
     upload(join('./dist', file))
   }
 }
@@ -36,11 +39,25 @@ async function upload(path:string){
 }
 
 async function checkVersion():Promise<boolean> {
+  let confignameYml:string
+  switch(process.platform){
+    case 'win32':
+      confignameYml = `${build.publish[0].channel}.yml`
+      break
+    case 'linux':
+      confignameYml = `${build.publish[0].channel}-linux.yml`
+      break
+    case 'darwin':
+      confignameYml = `${build.publish[0].channel}-mac.yml`
+      break
+    default:
+      throw new Error('An error occurred during check version')
+  }
 
   const {
     statusCode,
     body
-  } = await request(api.web + "/files/release/latest.yml",
+  } = await request(api.web + "/files/release/"+ confignameYml,
     {
       method: 'GET',
     }
@@ -48,20 +65,8 @@ async function checkVersion():Promise<boolean> {
 
   console.log('response received', statusCode)
   const file:YamlFile = parse(await body.text())
-  let localFile:YamlFile
-  switch(process.platform){
-    case 'win32':
-      localFile = parse(readFileSync('./dist/latest.yml').toString('utf-8'))
-      break
-    case 'linux':
-      localFile = parse(readFileSync('./dist/latest-linux.yml').toString('utf-8'))
-      break
-    case 'darwin':
-      localFile = parse(readFileSync('./dist/latest-mac.yml').toString('utf-8'))
-      break
-    default:
-      throw new Error('An error occurred during check version')
-  }
+  const localFile:YamlFile = parse(readFileSync('./dist/' + confignameYml).toString('utf-8'))
+  
   if (file.version == localFile.version) {
     console.info('The versions are identical. Upload canceled')
     return false

@@ -78,12 +78,12 @@ export default function Login() {
                 <input type="password" placeholder="Пароль" name="password" />
                 <button>Войти</button>
                 <label className={classes.autoLogin}>
-                <input 
-                    type="checkbox"
-                    name="autoLogin"
-                    defaultChecked={false}
-                />Автоматическая авторизация
-            </label>
+                    <input 
+                        type="checkbox"
+                        name="autoLogin"
+                        defaultChecked={false}
+                    />Автоматическая авторизация
+                </label>
             </form>
         </div>
     );
