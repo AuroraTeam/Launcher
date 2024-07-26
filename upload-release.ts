@@ -24,7 +24,7 @@ async function upload(path:string){
   const {
     statusCode,
     body
-  } = await request(api.web + "/release/upload?encryptedToken=" + publicEncrypt(api.publicKey, globalToken).toString("hex"),
+  } = await request(new URL (`/release/upload?encryptedToken=${publicEncrypt(api.publicKey, globalToken).toString("hex")}` , api.web),
     {
       method: 'POST',
       body: readFileSync(path),
@@ -56,7 +56,7 @@ async function checkVersion():Promise<boolean> {
   const {
     statusCode,
     body
-  } = await request(api.web + "/files/release/"+ confignameYml,
+  } = await request(new URL (`/files/release/${confignameYml}`, api.web),
     {
       method: 'GET',
     }
@@ -64,7 +64,7 @@ async function checkVersion():Promise<boolean> {
 
   console.log('response received', statusCode)
   const file:YamlFile = parse(await body.text())
-  const localFile:YamlFile = parse(readFileSync('./dist/' + confignameYml).toString('utf-8'))
+  const localFile:YamlFile = parse(readFileSync(join('./dist', confignameYml)).toString('utf-8'))
   
   if (file.version == localFile.version) {
     console.info('The versions are identical. Upload canceled')
@@ -81,7 +81,7 @@ async function authorization(){
   const {
     statusCode,
     body
-  } = await request(api.web + "/release/get_token",
+  } = await request(new URL ("/release/get_token", api.web),
     {
       method: 'GET',
     }
