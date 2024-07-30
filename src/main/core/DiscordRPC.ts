@@ -76,8 +76,8 @@ export class DiscordRPC implements IHandleable{
                     startTimestamp: this.startTimestamp,
                     largeImageKey: config.profile.largeImageKey,
                     smallImageKey: config.profile.smallImageKey,
-                    largeImageText: config.profile.largeImageText,
-                    smallImageText: config.profile.smallImageText,
+                    largeImageText: this.placeholders(config.profile.largeImageText),
+                    smallImageText: this.placeholders(config.profile.smallImageText),
                 });
 
                 LogHelper.dev('Discord status updated to profile.');
@@ -94,8 +94,8 @@ export class DiscordRPC implements IHandleable{
                     startTimestamp: this.startTimestamp,
                     largeImageKey: config.game.largeImageKey,
                     smallImageKey: config.game.smallImageKey,
-                    largeImageText: config.game.largeImageText,
-                    smallImageText: config.game.smallImageText,
+                    largeImageText: this.placeholders(config.game.largeImageText),
+                    smallImageText: this.placeholders(config.game.smallImageText),
                 });
 
                 LogHelper.dev('Discord status updated to game.');
