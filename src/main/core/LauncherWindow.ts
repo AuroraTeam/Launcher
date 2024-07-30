@@ -31,7 +31,7 @@ export class LauncherWindow {
         app.whenReady().then(() => {
             this.mainWindow = this.createMainWindow();
             if (isDev) {
-                installExtension(REACT_DEVELOPER_TOOLS, {
+                /*@__PURE__*/installExtension(REACT_DEVELOPER_TOOLS, {
                     loadExtensionOptions: {
                         allowFileAccess: true,
                     },

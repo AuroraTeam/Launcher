@@ -12,9 +12,6 @@ export default defineConfig({
                 build: {
                     sourcemap: true,
                     minify: true,
-                    rollupOptions: {
-                        external: ['electron-extension-installer']
-                    }
                 },
                 resolve: {
                     alias: [
@@ -30,6 +27,11 @@ export default defineConfig({
                 plugins: [],
                 build: {
                     sourcemap: true,
+                    rollupOptions: {
+                        treeshake: {
+                            annotations: false
+                        }
+                    }
                 },
                 resolve: {
                     alias: [
