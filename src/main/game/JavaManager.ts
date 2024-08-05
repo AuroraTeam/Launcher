@@ -53,7 +53,7 @@ export class JavaManager {
     async getJavaPath(majorVersion: number) {
         const path = ['bin', 'java'];
         if (PlatformHelper.isMac) {
-            path.unshift('Contents', 'Home');
+            path.unshift(`zulu-${majorVersion}.jre`, 'Contents', 'Home');
         }
 
         const javaVerPath = this.#getJavaDir(majorVersion);
