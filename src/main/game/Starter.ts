@@ -91,7 +91,8 @@ export class Starter {
                         '${library_directory}',
                         StorageHelper.librariesDir,
                     )
-                    .replaceAll('${classpath_separator}', delimiter),
+                    .replaceAll('${classpath_separator}', delimiter)
+                    .replaceAll('${version_name}', profile.gameJar.replace(".jar", "")),
             ),
         );
 
