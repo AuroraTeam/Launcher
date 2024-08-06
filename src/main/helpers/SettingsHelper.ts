@@ -7,7 +7,7 @@ export class SettingsHelper {
     static defaultsValue(): SettingsFormat {
         return {
             token: '0',
-            dir: StorageHelper.getPlatformStorageDir(),
+            dir: StorageHelper.storageDir,
             autoConnect: false,
             fullScreen: false,
             memory: 1024,
