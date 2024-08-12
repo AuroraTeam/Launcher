@@ -62,6 +62,7 @@
         "@aurora-launcher/core": "^0.23.0",
         "@freshgum/typedi": "^0.7.2",
         "@xhayper/discord-rpc": "^1.1.4",
+        "bufferutil": "^4.0.8",
         "bytenode": "^1.5.6",
         "chokidar": "^3.6.0",
         "electron-store": "^10.0.0",
@@ -72,7 +73,9 @@
         "react-router-dom": "^6.25.1",
         "recoil": "^0.7.7",
         "semver": "^7.6.3",
-        "skinview3d": "^3.0.1"
+        "skinview3d": "^3.0.1",
+        "utf-8-validate": "^6.0.4",
+        "ws": "^8.18.0"
     },
     "importSort": {
         ".tsx, .ts, .mjs, .js": {
