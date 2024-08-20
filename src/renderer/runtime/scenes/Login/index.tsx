@@ -6,6 +6,7 @@ import logo from '../../assets/images/logo.png?asset';
 import { useModal } from '../../components/Modal/hooks';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
+import { window } from '@config';
 
 interface AuthData {
     [k: string]: string;
@@ -67,7 +68,7 @@ export default function Login() {
     return (
         <div className={classes.block}>
             <img src={logo} />
-            <div>Aurora Launcher</div>
+            <div>{window.title}</div>
             <p>
                 Введите логин и пароль,
                 <br />

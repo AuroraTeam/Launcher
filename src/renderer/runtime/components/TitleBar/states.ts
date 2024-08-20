@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { window } from '@config';
 
 import { getUserData } from '../../../utils';
 
@@ -27,7 +28,7 @@ export const titlebarTitle = atom({
     key: 'titlebar.title',
     default: {
         show: true,
-        text: 'AuroraLauncher',
+        text: window.title,
     },
 });
 

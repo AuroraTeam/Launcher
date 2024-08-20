@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { version } from '../../../../../package.json';
+import { window } from '@config';
 import { SettingsFormat } from '../../../../common/types';
 import logo from '../../assets/images/logo.png';
 import If from '../../components/If';
@@ -151,7 +152,7 @@ export default function Settings() {
                     </div>
                     <div className={classes.launcherName}>
                         <center>
-                            <h1>AuroraLauncher</h1>
+                            <h1>{window.title}</h1>
                         </center>
                     </div>
                     <div className={classes.icons}>
