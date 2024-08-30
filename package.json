@@ -6,8 +6,7 @@
     "private": true,
     "scripts": {
         "dev": "cross-env DEV=true electron-vite dev -w --entry ./out/main/index.js -- --dev",
-        "build:js": "electron-vite build && npm run obfuscator && npm run bytenode",
-        "build:bin": "electron-builder",
+        "build": "electron-vite build && npm run obfuscator && npm run bytenode",
         "start": "electron-vite preview --entry ./out/main/index.js",
         "clean": "rimraf out dist",
         "prettier": "prettier --config .prettierrc.json --write src",
@@ -78,45 +77,6 @@
         ".tsx, .ts, .mjs, .js": {
             "style": "module",
             "parser": "typescript"
-        }
-    },
-    "build": {
-        "appId": "ru.aurora.launcher",
-        "productName": "Aurora Launcher",
-        "electronLanguages": [
-            "en-US"
-        ],
-        "publish": [
-            {
-                "provider": "generic",
-                "url": "http://127.0.0.1:1370/files/release",
-                "channel": "latest"
-            }
-        ],
-        "directories": {
-            "buildResources": "resources"
-        },
-        "files": [
-            "out/**/*",
-            "!out/main/index.js",
-            "!out/main/index-obf.js",
-            "!node_modules/**/*",
-            "node_modules/bytenode/**/*"
-        ],
-        "nsis": {
-            "artifactName": "${name}-Setup-${version}.${ext}"
-        },
-        "mac": {
-            "category": "public.app-category.games"
-        },
-        "linux": {
-            "target": [
-                "deb",
-                "rpm",
-                "AppImage"
-            ],
-            "category": "Game",
-            "maintainer": "AuroraTeam <null@aurora-team.ru>"
         }
     }
 }

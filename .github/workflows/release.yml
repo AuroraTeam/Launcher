@@ -39,11 +39,8 @@ jobs:
       - name: Download dependencies
         run: npm i
 
-      - name: Bundle Launcher
-        run: npm run build:js
-
-      - name: Build binary Launcher
-        run: npm run build:bin
+      - name: Build Launcher
+        run: npm run build
 
       - name: Publish Launcher
         run: npm run release

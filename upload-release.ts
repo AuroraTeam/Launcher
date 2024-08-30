@@ -1,12 +1,13 @@
 import { request } from 'undici'
 import { parse } from 'yaml'
-import { api } from './config'
-import { build } from './package.json';
+import { api, window } from './config'
 import { readFileSync, readdirSync } from 'fs'
 import { basename, join } from 'path'
 import { publicDecrypt, publicEncrypt } from 'crypto';
+import { build } from 'electron-builder';
 
-const regex = new RegExp(`${build.publish[0].channel}(\\.|-mac\\.|-linux\\.)yml|zip$|dmg$|AppImage$|rpm$|deb$|exe$`);
+await buildBin()
+const regex = new RegExp(`latest(\\.|-mac\\.|-linux\\.)yml|zip$|dmg$|AppImage$|rpm$|deb$|exe$`);
 const dir = readdirSync('./dist').filter(file=>regex.exec(file))
 let globalToken:Buffer
 
@@ -18,6 +19,9 @@ if (await checkVersion()){
   }
 }
 console.info('Uploading versions completed!!!')
+
+
+
 
 async function upload(path:string){
 
@@ -41,13 +45,13 @@ async function checkVersion():Promise<boolean> {
   let confignameYml:string
   switch(process.platform){
     case 'win32':
-      confignameYml = `${build.publish[0].channel}.yml`
+      confignameYml = 'latest.yml'
       break
     case 'linux':
-      confignameYml = `${build.publish[0].channel}-linux.yml`
+      confignameYml = 'latest-linux.yml'
       break
     case 'darwin':
-      confignameYml = `${build.publish[0].channel}-mac.yml`
+      confignameYml = 'latest-mac.yml'
       break
     default:
       throw new Error('An error occurred during check version')
@@ -91,6 +95,56 @@ async function authorization(){
   const token = await body.json() as BodyAuthorization
   globalToken = publicDecrypt(api.publicKey, Buffer.from(token.token, 'hex'),)
   if (statusCode !== 200) throw new Error('An error occurred during authorization')
+}
+
+async function buildBin(){
+  await build({
+    config: {
+      appId: "ru.aurora.launcher",
+      productName: window.title,
+      electronLanguages: [
+          "en-US"
+      ],
+      publish: [
+          {
+              provider: "generic",
+              url: new URL ("/files/release", api.web).toString(),
+              channel: "latest"
+          }
+      ],
+      directories: {
+          buildResources: "resources"
+      },
+      files: [
+          "out/**/*",
+          "!out/main/index.js",
+          "!out/main/index-obf.js",
+          "!node_modules/**/*",
+          "node_modules/bytenode/**/*"
+      ],
+      nsis: {
+          artifactName: "${productName}-Setup-${version}.${ext}"
+      },
+      mac: {
+          category: "public.app-category.games"
+      },
+      linux: {
+          target: [
+              "deb",
+              "rpm",
+              "AppImage"
+          ],
+          category: "Game",
+          maintainer: "AuroraTeam <null@aurora-team.ru>"
+      }
+  }
+  })
+  .then((result) => {
+    console.log(JSON.stringify(result))
+  })
+  .catch((error) => {
+    console.error(error)
+  })
 }
 
 interface BodyAuthorization {
