@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync } from 'fs';
-import { writeFile } from 'fs/promises';
-import { dirname, join } from 'path';
+import { existsSync, mkdirSync, readdirSync } from 'fs';
+import { writeFile, rm } from 'fs/promises';
+import { dirname, join, extname } from 'path';
 
 import {
     HashHelper,
@@ -121,6 +121,8 @@ export class Updater {
         const updateProgress = this.createProgressUpdater(total, 'size');
 
         const verifyArray = clientArgs.update.concat(clientArgs.updateVerify);
+        const dirArray = verifyArray.filter((path) => extname(path)[0] !== '.');
+        const filesCheck: string[] = [];
         await pMap(
             hashes,
             async (hash) => {
@@ -135,11 +137,12 @@ export class Updater {
                     .replace(`/${clientArgs.clientDir}/`, '');
 
                 if (
-                    verifyArray.find((u) => u.startsWith(filteredPath)) &&
+                    verifyArray.find((u) => filteredPath.startsWith(u)) &&
                     !clientArgs.updateExclusions.find((u) =>
-                        u.startsWith(filteredPath),
+                        filteredPath.startsWith(u),
                     )
                 ) {
+                    filesCheck.push(filteredPath);
                     await this.validateAndDownloadFile(
                         hash.path,
                         hash.sha1,
@@ -152,7 +155,23 @@ export class Updater {
             },
             { concurrency: 4 },
         );
-
+        if (dirArray.length > 0) {
+            for (const dir of dirArray) {
+                const path = join(StorageHelper.clientsDir, clientArgs.clientDir, dir);
+                const filesClient = readdirSync(path);
+                const dirFiles = filesCheck.filter(x => x.startsWith(dir));
+                const nameFiles:string[] = [];
+                for (const file of dirFiles) {
+                    nameFiles.push(file.replace(dir, ''));
+                }
+                
+                const fileRM = filesClient.filter(x => !nameFiles.includes(x))
+                .concat(nameFiles.filter(x => !filesClient.includes(x)));
+                for (const file of fileRM) {
+                    await rm(join(path, file));
+                }
+            }
+        }
         this.gameWindow.sendToConsole('Client files loaded');
     }
 
