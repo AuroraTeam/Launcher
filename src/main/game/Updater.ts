@@ -113,7 +113,7 @@ export class Updater {
     async validateGameFiles(clientArgs: Profile): Promise<void> {
         this.gameWindow.sendToConsole('Load client files');
 
-        const hashes = await this.api.getUpdates(clientArgs.clientDir);
+        const hashes = (await this.api.getUpdates(clientArgs.clientDir)).hashedFile;
         if (!hashes) throw new Error('Client not found');
 
         hashes.sort((a, b) => b.size - a.size);

@@ -1,8 +1,8 @@
-import { request } from 'undici'
+import { request,FormData } from 'undici'
 import { parse } from 'yaml'
 import { api } from './config'
 import { build } from './package.json';
-import { readFileSync, readdirSync } from 'fs'
+import { readFileSync, readdirSync, openAsBlob } from 'fs'
 import { basename, join } from 'path'
 import { publicDecrypt, publicEncrypt } from 'crypto';
 
@@ -20,6 +20,8 @@ if (await checkVersion()){
 console.info('Uploading versions completed!!!')
 
 async function upload(path:string){
+  const formData = new FormData()
+  formData.set(basename(path), await openAsBlob(path))
 
   const {
     statusCode,
@@ -27,8 +29,7 @@ async function upload(path:string){
   } = await request(new URL (`/release/upload?encryptedToken=${publicEncrypt(api.publicKey, globalToken).toString("hex")}` , api.web),
     {
       method: 'POST',
-      body: readFileSync(path),
-      headers: ['content-disposition', basename(path), 'content-type', 'buffer']
+      body: formData,
     }
   )
 
