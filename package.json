@@ -57,7 +57,7 @@
     },
     "dependencies": {
         "@aurora-launcher/proto": "^0.1.0",
-        "@aurora-launcher/core": "^0.23.0",
+        "@aurora-launcher/core": "^0.24.0",
         "@freshgum/typedi": "^0.7.2",
         "@xhayper/discord-rpc": "^1.1.4",
         "bufferutil": "^4.0.8",
