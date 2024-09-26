@@ -1,4 +1,4 @@
-import { Server } from '@aurora-launcher/core';
+import { Server } from '@aurora-launcher/proto';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ export default function ServersList() {
         showTitlebarLogoutBtn();
         showTitlebarSettingsBtn();
         resetTitlebarTitleText();
-        launcherAPI.scenes.serversList.getServers().then(setServers);
+        launcherAPI.scenes.serversList.getServers().then(servers => setServers(servers.servers));
         launcherAPI.rpc.updateActivity('default');
     }, []);
 

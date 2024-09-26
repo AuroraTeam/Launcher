@@ -32,7 +32,7 @@ export class Launcher {
     async init() {
         StorageHelper.createMissing();
 
-        await this.apiManager.initConnection();
+        //await this.apiManager.initConnection();
 
         this.loginScene.initHandlers();
         this.settingsScene.initHandlers();
@@ -40,7 +40,7 @@ export class Launcher {
         this.serverPanelScene.initHandlers();
         this.discordRPC.initHandlers();
 
-        this.verifyService.init();
+        //this.verifyService.init();
         this.window.createWindow();
         LogHelper.info('Launcher started');
         this.discordRPC.start();

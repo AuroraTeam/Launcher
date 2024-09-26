@@ -1,46 +1,37 @@
-import { AuroraAPI } from '@aurora-launcher/api';
+import * as proto from "@aurora-launcher/proto";
+import { createChannel, createClient } from 'nice-grpc';
 import { api as apiConfig } from '@config';
 import { Service } from '@freshgum/typedi';
 
-import { LogHelper } from '../helpers/LogHelper';
-
 @Service([])
 export class APIManager {
-    private api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370', {
-        onClose: () => setTimeout(() => this.initConnection(), 2000),
-    });
+    private client = createClient(
+        proto.AuroraLauncherServiceDefinition,
+        createChannel(apiConfig.ws),
+      );
 
     async initConnection() {
-        try {
-            await this.api.connect();
-            this.#onConnectListeners.forEach((listener) => listener());
-        } catch (error) {
-            LogHelper.error(error);
-        }
-    }
+        const channel = createChannel(apiConfig.ws);
 
-    #onConnectListeners: (() => void)[] = [];
-    onConnect(listener: () => void) {
-        this.#onConnectListeners.push(listener);
+        this.client = createClient(
+          proto.AuroraLauncherServiceDefinition,
+          channel,
+        );
     }
 
     public auth(login: string, password: string) {
-        return this.api.auth(login, password);
+        return this.client.auth({login, password});
     }
 
     public getServers() {
-        return this.api.getServers();
+        return this.client.getServers({});
     }
 
     public getProfile(uuid: string) {
-        return this.api.getProfile(uuid);
+        return this.client.getProfile({uuid});
     }
 
     public getUpdates(dir: string) {
-        return this.api.getUpdates(dir);
-    }
-
-    public verify(stage: number, token?: string) {
-        return this.api.verify(stage, token);
+        return this.client.getUpdates({dir});
     }
 }

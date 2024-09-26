@@ -37,7 +37,6 @@
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
         "@types/semver": "^7.5.8",
-        "@types/ws": "^8.5.11",
         "@typescript-eslint/eslint-plugin": "^7.17.0",
         "@typescript-eslint/parser": "^7.17.0",
         "cross-env": "^7.0.3",
@@ -57,7 +56,7 @@
         "yaml": "^2.5.0"
     },
     "dependencies": {
-        "@aurora-launcher/api": "^0.4.0",
+        "@aurora-launcher/proto": "^0.1.0",
         "@aurora-launcher/core": "^0.23.0",
         "@freshgum/typedi": "^0.7.2",
         "@xhayper/discord-rpc": "^1.1.4",
@@ -67,6 +66,7 @@
         "electron-store": "^10.0.0",
         "electron-updater": "^6.3.1",
         "minestat-es": "^1.1.7",
+        "nice-grpc": "^2.1.9",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-router-dom": "^6.25.1",

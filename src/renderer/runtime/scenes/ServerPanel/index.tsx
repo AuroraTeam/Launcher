@@ -93,7 +93,7 @@ export default function ServerPanel() {
     return (
         <div className={classes.window}>
             <div className={classes.info}>
-                <div className={classes.title}>{selectedServer?.title}</div>
+                <div className={classes.title}>{selectedServer?.serverInfo?.title}</div>
                 <div className={classes.status}>
                     <div className={classes.gamers}>
                         Игроков
