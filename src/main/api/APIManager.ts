@@ -8,16 +8,7 @@ export class APIManager {
     private client = createClient(
         proto.AuroraLauncherServiceDefinition,
         createChannel(apiConfig.ws),
-      );
-
-    async initConnection() {
-        const channel = createChannel(apiConfig.ws);
-
-        this.client = createClient(
-          proto.AuroraLauncherServiceDefinition,
-          channel,
-        );
-    }
+    );
 
     public auth(login: string, password: string) {
         return this.client.auth({login, password});

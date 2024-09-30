@@ -155,10 +155,10 @@ export class Starter {
 
             if (settings.autoConnect) {
                 if (gte(clientVersion, '1.20.0')) {
-                    if ('hostname' in server.serverInfo) gameArgs.push('--quickPlayMultiplayer', server.serverInfo.hostname); 
+                    if (server.serverInfo?.hostname !== undefined) gameArgs.push('--quickPlayMultiplayer', server.serverInfo.hostname); 
                     else gameArgs.push('--quickPlayMultiplayer', server.serverInfo.ip + ':' + server.serverInfo.port.toString());
                 } else {
-                    if ('hostname' in server.serverInfo) gameArgs.push('--server', server.serverInfo.hostname); 
+                    if (server.serverInfo?.hostname !== undefined) gameArgs.push('--server', server.serverInfo.hostname); 
                     else {
                         gameArgs.push('--server', server.serverInfo.ip);
                         gameArgs.push('--port', server.serverInfo.port.toString());
