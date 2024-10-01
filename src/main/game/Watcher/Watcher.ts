@@ -23,6 +23,7 @@ export class Watcher {
     #gameProcess?: IProcess;
 
     #filesList: WathedFile[] = [];
+    #clientDir!: string;
     #verifyList: string[] = [];
     #excludeList: string[] = [];
 
@@ -44,13 +45,13 @@ export class Watcher {
         gameFiles: HashedFile[],
     ) {
         this.#filesList = gameFiles;
-        const clientDir = join(StorageHelper.clientsDir, profile.clientDir);
+        this.#clientDir = join(StorageHelper.clientsDir, profile.clientDir);
 
         this.#verifyList = profile.updateVerify.map((path) =>
-            join(clientDir, path),
+            join(this.#clientDir, path),
         );
         this.#excludeList = profile.updateExclusions.map((path) =>
-            join(clientDir, path),
+            join(this.#clientDir, path),
         );
 
         // const libs = libraries
@@ -62,7 +63,7 @@ export class Watcher {
         // this.#filesList.push(...libs);
 
         // TODO natives
-        // const nativesDir = join(clientDir, 'natives');
+        // const nativesDir = join(this.#clientDir, 'natives');
 
         // const nativesWithHash = await pMap(
         //     natives,
@@ -77,14 +78,14 @@ export class Watcher {
         //
 
         // const whitelistedFiles: WathedFile[] = [
-        //     ...profile.updateVerify.map((path) => join(clientDir, path)),
+        //     ...profile.updateVerify.map((path) => join(this.#clientDir, path)),
         // ];
 
         // const updateExclusions = profile.updateExclusions.map((file) =>
-        //     join(clientDir, file),
+        //     join(this.#clientDir, file),
         // );
 
-        this.#watcher = watch(clientDir)
+        this.#watcher = watch(this.#clientDir)
             .on('add', (path) => this.#addEventChecker(path))
             .on('change', (path) => this.#modifyEventChecker(path))
             .on('unlink', (path) => this.#removeEventChecker(path));
@@ -110,7 +111,7 @@ export class Watcher {
                 !hash ||
                 (await HashHelper.getHashFromFile(path, 'sha1')) !== hash
             ) {
-                LogHelper.error('[Watcher] File tampering detected');
+                LogHelper.error('[Watcher] File tampering detected', path.replace(this.#clientDir, ''));
                 this.#killProcess();
             }
         }
@@ -130,7 +131,7 @@ export class Watcher {
                 !hash ||
                 (await HashHelper.getHashFromFile(path, 'sha1')) !== hash
             ) {
-                LogHelper.error('[Watcher] File tampering detected');
+                LogHelper.error('[Watcher] File tampering detected', path.replace(this.#clientDir, ''));
                 this.#killProcess();
             }
         }
@@ -142,7 +143,7 @@ export class Watcher {
             this.#includeOrContains(this.#verifyList, path) &&
             !this.#includeOrContains(this.#excludeList, path)
         ) {
-            LogHelper.error('[Watcher] File tampering detected');
+            LogHelper.error('[Watcher] File tampering detected', path.replace(this.#clientDir, ''));
             this.#killProcess();
         }
     }
