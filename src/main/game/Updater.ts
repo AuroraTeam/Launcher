@@ -1,9 +1,10 @@
 import { existsSync, mkdirSync, readdirSync } from 'fs';
-import { writeFile, rm } from 'fs/promises';
-import { dirname, join, extname } from 'path';
+import { rm, writeFile } from 'fs/promises';
+import { dirname, extname, join } from 'path';
 
 import {
     HashHelper,
+    HashedFile,
     HttpHelper,
     JsonHelper,
     MojangAssets,
@@ -11,14 +12,14 @@ import {
     ProfileLibrary,
 } from '@aurora-launcher/core';
 import { api as apiConfig } from '@config';
-import { StorageHelper } from '../../main/helpers/StorageHelper';
-import pMap from 'p-map';
 import { Service } from '@freshgum/typedi';
+import pMap from 'p-map';
 
 import { LoadProgress } from '../../common/types';
+import { StorageHelper } from '../../main/helpers/StorageHelper';
 import { APIManager } from '../api/APIManager';
+import { retry } from '../utils/retry';
 import { GameWindow } from './GameWindow';
-import { retry } from '../utils/retry'
 
 @Service([APIManager, GameWindow])
 export class Updater {
@@ -30,10 +31,10 @@ export class Updater {
     async validateClient(
         clientArgs: Profile,
         libraries: ProfileLibrary[],
-    ): Promise<void> {
+    ): Promise<HashedFile[]> {
         await this.validateAssets(clientArgs.assetIndex);
         await this.validateLibraries(libraries);
-        await this.validateGameFiles(clientArgs);
+        return await this.validateGameFiles(clientArgs);
     }
 
     async validateAssets(assetIndex: string): Promise<void> {
@@ -64,20 +65,21 @@ export class Updater {
                 assetsHashes,
                 async (hash) => {
                     await retry(
-                        () => this.checkAndDownloadFile(
-                            hash.path,
-                            StorageHelper.assetsDir,
-                            'assets',
-                        ),
-                        3, 
-                        1000 
+                        () =>
+                            this.checkAndDownloadFile(
+                                hash.path,
+                                StorageHelper.assetsDir,
+                                'assets',
+                            ),
+                        3,
+                        1000,
                     );
-            
+
                     updateProgress(hash.size);
                 },
                 { concurrency: 4 },
             );
-        } catch (error)  {
+        } catch (error) {
             throw new Error(`p-map error ${error}`);
         }
 
@@ -110,7 +112,7 @@ export class Updater {
         this.gameWindow.sendToConsole('Libraries files loaded');
     }
 
-    async validateGameFiles(clientArgs: Profile): Promise<void> {
+    async validateGameFiles(clientArgs: Profile): Promise<HashedFile[]> {
         this.gameWindow.sendToConsole('Load client files');
 
         const hashes = await this.api.getUpdates(clientArgs.clientDir);
@@ -121,8 +123,11 @@ export class Updater {
         const updateProgress = this.createProgressUpdater(total, 'size');
 
         const verifyArray = clientArgs.update.concat(clientArgs.updateVerify);
-        const dirArray = verifyArray.filter((path) => extname(path)[0] !== '.');
-        const filesCheck: string[] = [];
+        const verifyDirs = verifyArray.filter(
+            (path) => extname(path)[0] !== '.',
+        );
+        const verifyFiles: string[] = [];
+
         await pMap(
             hashes,
             async (hash) => {
@@ -142,7 +147,7 @@ export class Updater {
                         filteredPath.startsWith(u),
                     )
                 ) {
-                    filesCheck.push(filteredPath);
+                    verifyFiles.push(filteredPath);
                     await this.validateAndDownloadFile(
                         hash.path,
                         hash.sha1,
@@ -155,24 +160,46 @@ export class Updater {
             },
             { concurrency: 4 },
         );
-        if (dirArray.length > 0) {
-            for (const dir of dirArray) {
-                const path = join(StorageHelper.clientsDir, clientArgs.clientDir, dir);
-                const filesClient = readdirSync(path);
-                const dirFiles = filesCheck.filter(x => x.startsWith(dir));
-                const nameFiles:string[] = [];
-                for (const file of dirFiles) {
-                    nameFiles.push(file.replace(dir, ''));
-                }
-                
-                const fileRM = filesClient.filter(x => !nameFiles.includes(x))
-                .concat(nameFiles.filter(x => !filesClient.includes(x)));
+
+        if (verifyDirs.length > 0) {
+            for (const verifyDir of verifyDirs) {
+                const verifyDirPath = join(
+                    StorageHelper.clientsDir,
+                    clientArgs.clientDir,
+                    verifyDir,
+                );
+
+                const filesList = readdirSync(verifyDirPath, {
+                    withFileTypes: true,
+                    recursive: true,
+                })
+                    .filter((entry) => entry.isFile())
+                    .map((entry) =>
+                        join(entry.parentPath, entry.name)
+                            .replace(verifyDirPath, '')
+                            .replace(/\\/g, '/'),
+                    );
+
+                const whitelistedFiles = verifyFiles
+                    .filter((x) => x.startsWith(verifyDir))
+                    .map((x) => x.replace(verifyDir, ''));
+
+                const excludeList = clientArgs.updateExclusions
+                    .filter((x) => x.startsWith(verifyDir))
+                    .map((x) => x.replace(verifyDir, ''));
+
+                const fileRM = filesList.filter(
+                    (path) =>
+                        !whitelistedFiles.includes(path) &&
+                        !excludeList.some((ex) => path.startsWith(ex)),
+                );
                 for (const file of fileRM) {
-                    await rm(join(path, file));
+                    await rm(join(verifyDirPath, file));
                 }
             }
         }
         this.gameWindow.sendToConsole('Client files loaded');
+        return hashes;
     }
 
     private getFileUrl(
