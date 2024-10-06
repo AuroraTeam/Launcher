@@ -1,12 +1,12 @@
 import { join } from 'path';
 
-import { defineConfig, defineViteConfig  } from 'electron-vite';
+import { defineConfig, defineViteConfig } from 'electron-vite';
 
 const toDir = (dir: string) => join(__dirname, dir);
 
 export default defineConfig({
-    main: defineViteConfig(({command}) => {
-        if (command === "build") {
+    main: defineViteConfig(({ command }) => {
+        if (command === 'build') {
             return {
                 plugins: [],
                 build: {
@@ -21,7 +21,7 @@ export default defineConfig({
                         },
                     ],
                 },
-            }
+            };
         } else {
             return {
                 plugins: [],
@@ -29,9 +29,9 @@ export default defineConfig({
                     sourcemap: true,
                     rollupOptions: {
                         treeshake: {
-                            annotations: false
-                        }
-                    }
+                            annotations: false,
+                        },
+                    },
                 },
                 resolve: {
                     alias: [
@@ -41,7 +41,7 @@ export default defineConfig({
                         },
                     ],
                 },
-            }
+            };
         }
     }),
     preload: {
@@ -62,6 +62,11 @@ export default defineConfig({
                     replacement: toDir('config.ts'),
                 },
             ],
+        },
+        server: {
+            fs: {
+                strict: false,
+            },
         },
     },
 });
