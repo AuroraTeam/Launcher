@@ -44,7 +44,10 @@ export class Watcher {
         natives: string[],
         gameFiles: HashedFile[],
     ) {
-        this.#filesList = gameFiles;
+        this.#filesList = gameFiles.map(({ path, sha1 }) => ({
+            path: this.#normalizePath(path),
+            sha1,
+        }));
         this.#clientDir = join(StorageHelper.clientsDir, profile.clientDir);
 
         this.#verifyList = profile.updateVerify.map((path) =>
@@ -98,6 +101,7 @@ export class Watcher {
     }
 
     async #addEventChecker(path: string) {
+        path = this.#normalizePath(path);
         LogHelper.debug('[Watcher] File added: ' + path);
         if (
             this.#includeOrContains(this.#verifyList, path) &&
@@ -111,13 +115,17 @@ export class Watcher {
                 !hash ||
                 (await HashHelper.getHashFromFile(path, 'sha1')) !== hash
             ) {
-                LogHelper.error('[Watcher] File tampering detected', path.replace(this.#clientDir, ''));
+                LogHelper.error(
+                    '[Watcher] File tampering detected',
+                    path.replace(this.#clientDir, ''),
+                );
                 this.#killProcess();
             }
         }
     }
 
     async #modifyEventChecker(path: string) {
+        path = this.#normalizePath(path);
         LogHelper.debug('[Watcher] File modified: ' + path);
         if (
             this.#includeOrContains(this.#verifyList, path) &&
@@ -131,19 +139,26 @@ export class Watcher {
                 !hash ||
                 (await HashHelper.getHashFromFile(path, 'sha1')) !== hash
             ) {
-                LogHelper.error('[Watcher] File tampering detected', path.replace(this.#clientDir, ''));
+                LogHelper.error(
+                    '[Watcher] File tampering detected',
+                    path.replace(this.#clientDir, ''),
+                );
                 this.#killProcess();
             }
         }
     }
 
     #removeEventChecker(path: string) {
+        path = this.#normalizePath(path);
         LogHelper.debug('[Watcher] File removed: ' + path);
         if (
             this.#includeOrContains(this.#verifyList, path) &&
             !this.#includeOrContains(this.#excludeList, path)
         ) {
-            LogHelper.error('[Watcher] File tampering detected', path.replace(this.#clientDir, ''));
+            LogHelper.error(
+                '[Watcher] File tampering detected',
+                path.replace(this.#clientDir, ''),
+            );
             this.#killProcess();
         }
     }
@@ -162,5 +177,9 @@ export class Watcher {
         } else {
             this.#needKill = true;
         }
+    }
+
+    #normalizePath(path: string) {
+        return path.replace(/\\/g, '/');
     }
 }
