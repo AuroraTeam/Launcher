@@ -182,11 +182,11 @@ export class Updater {
 
                 const whitelistedFiles = verifyFiles
                     .filter((x) => x.startsWith(verifyDir))
-                    .map((x) => x.replace(verifyDir, ''));
+                    .map((x) => x.replace(verifyDir, '').replace(/\\/g, '/'));
 
                 const excludeList = clientArgs.updateExclusions
                     .filter((x) => x.startsWith(verifyDir))
-                    .map((x) => x.replace(verifyDir, ''));
+                    .map((x) => x.replace(verifyDir, '').replace(/\\/g, '/'));
 
                 const fileRM = filesList.filter(
                     (path) =>
