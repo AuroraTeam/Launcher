@@ -9,7 +9,7 @@ import { LogHelper } from '../helpers/LogHelper';
 export class APIManager {
     private client = createClient(
         proto.AuroraLauncherServiceDefinition,
-        createChannel(apiConfig.ws),
+        createChannel(apiConfig.grpc),
     );
     private token = '0';
 

@@ -11,7 +11,7 @@ export const window = {
 };
 
 export const api = {
-    ws: 'http://127.0.0.1:1371',
+    grpc: 'http://127.0.0.1:1371',
     web: 'http://127.0.0.1:1370',
     publicKey,
 };
