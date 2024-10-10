@@ -1,5 +1,5 @@
 import * as proto from "@aurora-launcher/proto";
-import { createChannel, createClient, Metadata } from 'nice-grpc';
+import { createChannel, createClient, Metadata, Status, ClientError } from 'nice-grpc';
 import { api as apiConfig } from '@config';
 import { Service } from '@freshgum/typedi';
 import { publicDecrypt, publicEncrypt } from 'crypto';
@@ -15,7 +15,6 @@ export class APIManager {
 
     public async initConnection() {
         const tokenOrig = (await this.client.getToken({})).token;
-        console.log(tokenOrig);
         const { publicKey } = apiConfig;
         if (!publicKey) {
             LogHelper.fatal('Verify public key required');
@@ -27,26 +26,57 @@ export class APIManager {
                 Buffer.from(tokenOrig, 'hex'),
             );
             this.token = publicEncrypt(publicKey, decryptedToken).toString('hex');
-            console.log(this.token);
         }
         catch(error) {
             LogHelper.error(error);
         }
     }
 
-    public auth(login: string, password: string) {
-        return this.client.auth({login, password}, {metadata: Metadata({Authorization: this.token})});
+    public async auth(login: string, password: string) {
+        try {
+            return await this.client.auth({login, password}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.auth({login, password}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 
-    public getServers() {
-        return this.client.getServers({}, {metadata: Metadata({Authorization: this.token})});
+    public async getServers() {
+        try {
+            return await this.client.getServers({}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.getServers({}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 
-    public getProfile(uuid: string) {
-        return this.client.getProfile({uuid}, {metadata: Metadata({Authorization: this.token})});
+    public async getProfile(uuid: string) {
+        try {
+            return await this.client.getProfile({uuid}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.getProfile({uuid}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 
-    public getUpdates(dir: string) {
-        return this.client.getUpdates({dir}, {metadata: Metadata({Authorization: this.token})});
+    public async getUpdates(dir: string) {
+        try {
+            return await this.client.getUpdates({dir}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.getUpdates({dir}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 }

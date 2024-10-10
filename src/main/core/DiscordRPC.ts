@@ -113,11 +113,11 @@ export class DiscordRPC implements IHandleable{
         const server = this.gameService.getServer();
 
         if (!userArgs) throw new Error('Auth requierd');
-        if (!server) throw new Error('No information about the server');
+        if (!server?.serverInfo) throw new Error('No information about the server');
         
         const total = text
             .replace('{nickname}', userArgs.username)
-            .replace('{server}', server.title);
+            .replace('{server}', server.serverInfo?.title);
         return total;
     }
 

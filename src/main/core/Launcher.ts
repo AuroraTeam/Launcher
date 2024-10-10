@@ -30,7 +30,7 @@ export class Launcher {
     async init() {
         StorageHelper.createMissing();
 
-        await this.apiManager.initConnection();
+        this.apiManager.initConnection();
 
         this.loginScene.initHandlers();
         this.settingsScene.initHandlers();
