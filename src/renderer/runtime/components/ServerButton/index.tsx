@@ -13,7 +13,7 @@ export function ServerButton({ onClick, server }: ServerButtonProps) {
 
     return (
         <button className={classes.button} onClick={onClick}>
-            <span className={classes.title}>{server.title}</span>
+            <span className={classes.title}>{server.serverInfo?.title}</span>
             <span className={classes.online}>
                 {online} / {max}
             </span>

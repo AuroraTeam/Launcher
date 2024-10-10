@@ -1,46 +1,82 @@
-import { AuroraAPI } from '@aurora-launcher/api';
+import * as proto from "@aurora-launcher/proto";
+import { createChannel, createClient, Metadata, Status, ClientError } from 'nice-grpc';
 import { api as apiConfig } from '@config';
 import { Service } from '@freshgum/typedi';
-
+import { publicDecrypt, publicEncrypt } from 'crypto';
 import { LogHelper } from '../helpers/LogHelper';
 
 @Service([])
 export class APIManager {
-    private api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370', {
-        onClose: () => setTimeout(() => this.initConnection(), 2000),
-    });
+    private client = createClient(
+        proto.AuroraLauncherServiceDefinition,
+        createChannel(apiConfig.grpc),
+    );
+    private token = '0';
 
-    async initConnection() {
+    public async initConnection() {
+        const tokenOrig = (await this.client.getToken({})).token;
+        const { publicKey } = apiConfig;
+        if (!publicKey) {
+            LogHelper.fatal('Verify public key required');
+        }
+
         try {
-            await this.api.connect();
-            this.#onConnectListeners.forEach((listener) => listener());
-        } catch (error) {
+            const decryptedToken = publicDecrypt(
+                publicKey,
+                Buffer.from(tokenOrig, 'hex'),
+            );
+            this.token = publicEncrypt(publicKey, decryptedToken).toString('hex');
+        }
+        catch(error) {
             LogHelper.error(error);
         }
     }
 
-    #onConnectListeners: (() => void)[] = [];
-    onConnect(listener: () => void) {
-        this.#onConnectListeners.push(listener);
+    public async auth(login: string, password: string) {
+        try {
+            return await this.client.auth({login, password}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.auth({login, password}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 
-    public auth(login: string, password: string) {
-        return this.api.auth(login, password);
+    public async getServers() {
+        try {
+            return await this.client.getServers({}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.getServers({}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 
-    public getServers() {
-        return this.api.getServers();
+    public async getProfile(uuid: string) {
+        try {
+            return await this.client.getProfile({uuid}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.getProfile({uuid}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 
-    public getProfile(uuid: string) {
-        return this.api.getProfile(uuid);
-    }
-
-    public getUpdates(dir: string) {
-        return this.api.getUpdates(dir);
-    }
-
-    public verify(stage: number, token?: string) {
-        return this.api.verify(stage, token);
+    public async getUpdates(dir: string) {
+        try {
+            return await this.client.getUpdates({dir}, {metadata: Metadata({Authorization: this.token})});
+        } catch(error) {
+            if (error instanceof ClientError && error.code == Status.UNAUTHENTICATED) {
+                await this.initConnection();
+                return await this.client.getUpdates({dir}, {metadata: Metadata({Authorization: this.token})});
+            }
+            throw error;
+        }
     }
 }
