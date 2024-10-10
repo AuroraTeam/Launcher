@@ -1,4 +1,4 @@
-import { request,FormData } from 'undici'
+import { request, FormData } from 'undici'
 import { parse } from 'yaml'
 import { api, window } from './config'
 import { readFileSync, readdirSync, openAsBlob } from 'fs'
