@@ -51,20 +51,28 @@ export class GameService {
         );
 
         try {
-            await this.gameUpdater.validateClient(profile, libraries);
-
-            const { nativesFiles, gameProcess } = await this.gameStarter.start(
+            const gameFiles = await this.gameUpdater.validateClient(
                 profile,
                 libraries,
-                server
             );
 
-            await this.gameWatcher.watch(
+            const { nativesFiles } = await this.gameStarter.prestart(profile);
+
+            await this.gameWatcher.start(
                 profile,
                 libraries,
                 nativesFiles,
-                gameProcess,
+                gameFiles,
             );
+
+            const { gameProcess } = await this.gameStarter.start(
+                profile,
+                libraries,
+                server,
+                this.gameWatcher,
+            );
+
+            this.gameWatcher.setGameProcess(gameProcess);
         } catch (error) {
             this.gameWindow.sendToConsole(`${error}`);
             this.gameWindow.stopGame();

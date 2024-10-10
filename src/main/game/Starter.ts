@@ -1,25 +1,40 @@
 import { spawn } from 'child_process';
 import { delimiter, join } from 'path';
 
-import { Profile, Server, ProfileLibrary, ZipHelper } from '@aurora-launcher/core';
+import {
+    Profile,
+    ProfileLibrary,
+    Server,
+    ZipHelper,
+} from '@aurora-launcher/core';
 import { api as apiConfig } from '@config';
-import { LauncherWindow } from '../../main/core/LauncherWindow';
-import { LogHelper } from '../../main/helpers/LogHelper';
-import { StorageHelper } from '../../main/helpers/StorageHelper';
-import { coerce, gte, lte } from 'semver';
 import { Service } from '@freshgum/typedi';
+import { app } from 'electron';
+import { coerce, gte, lte } from 'semver';
 
 import { Session } from '../../common/types';
+import { LauncherWindow } from '../../main/core/LauncherWindow';
+import { LogHelper } from '../../main/helpers/LogHelper';
+import { SettingsHelper } from '../../main/helpers/SettingsHelper';
+import { StorageHelper } from '../../main/helpers/StorageHelper';
 import { AuthorizationService } from '../api/AuthorizationService';
 import { PlatformHelper } from '../helpers/PlatformHelper';
 import { AuthlibInjector } from './AuthlibInjector';
 import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
-import { SettingsHelper } from '../../main/helpers/SettingsHelper';
+import { Watcher } from './Watcher';
 
-@Service([LauncherWindow, AuthorizationService, 
-    GameWindow, JavaManager, AuthlibInjector])
+@Service([
+    LauncherWindow,
+    AuthorizationService,
+    GameWindow,
+    JavaManager,
+    AuthlibInjector,
+])
 export class Starter {
+    #clientDir!: string;
+    #nativesDirectory!: string;
+
     constructor(
         private LauncherWindow: LauncherWindow,
         private authorizationService: AuthorizationService,
@@ -28,9 +43,33 @@ export class Starter {
         private authlibInjector: AuthlibInjector,
     ) {}
 
-    async start(profile: Profile, libraries: ProfileLibrary[], server: Server) {
+    async prestart(profile: Profile) {
+        this.#clientDir = join(StorageHelper.clientsDir, profile.clientDir);
+        this.#nativesDirectory = join(this.#clientDir, 'natives');
+
+        await this.authlibInjector.verify();
+
+        await this.javaManager.checkAndDownloadJava(
+            profile.javaVersion,
+            this.gameWindow,
+        );
+
+        const nativesFiles = this.prepareNatives(
+            this.#nativesDirectory,
+            profile.libraries,
+        );
+        // TODO: add support legacy assets
+
+        return { nativesFiles };
+    }
+
+    async start(
+        profile: Profile,
+        libraries: ProfileLibrary[],
+        server: Server,
+        watcher: Watcher,
+    ) {
         const settings = SettingsHelper.getAllFields();
-        const clientDir = join(StorageHelper.clientsDir, profile.clientDir);
 
         const clientVersion = coerce(profile.version);
         if (clientVersion === null) throw new Error('Invalig client version');
@@ -41,10 +80,8 @@ export class Starter {
         const gameArgs: string[] = [];
 
         gameArgs.push('--version', profile.version);
-        gameArgs.push('--gameDir', clientDir);
+        gameArgs.push('--gameDir', this.#clientDir);
         gameArgs.push('--assetsDir', StorageHelper.assetsDir);
-
-        // TODO: add support legacy assets
 
         if (gte(clientVersion, '1.6.0')) {
             this.gameLauncher(
@@ -62,25 +99,22 @@ export class Starter {
         const classPath = libraries
             .filter((lib) => lib.type === 'library' && !lib.ignoreClassPath)
             .map(({ path }) => join(StorageHelper.librariesDir, path));
-        classPath.push(join(clientDir, profile.gameJar));
+        classPath.push(join(this.#clientDir, profile.gameJar));
 
         const jvmArgs = [];
 
-        await this.authlibInjector.verify();
         jvmArgs.push(
             `-javaagent:${this.authlibInjector.authlibFilePath}=${apiConfig.web}`,
         );
-        jvmArgs.push(`-Xmx` + settings.memory + `M`)
+        jvmArgs.push(`-Xmx` + settings.memory + `M`);
 
-        const nativesDirectory = join(clientDir, 'natives');
-        const nativesFiles = this.prepareNatives(nativesDirectory, libraries);
-        jvmArgs.push(`-Djava.library.path=${nativesDirectory}`);
+        jvmArgs.push(`-Djava.library.path=${this.#nativesDirectory}`);
 
         if (gte(clientVersion, '1.20.0')) {
             jvmArgs.push(
-                `-Djna.tmpdir=${nativesDirectory}`,
-                `-Dorg.lwjgl.system.SharedLibraryExtractPath=${nativesDirectory}`,
-                `-Dio.netty.native.workdir=${nativesDirectory}`,
+                `-Djna.tmpdir=${this.#nativesDirectory}`,
+                `-Dorg.lwjgl.system.SharedLibraryExtractPath=${this.#nativesDirectory}`,
+                `-Dio.netty.native.workdir=${this.#nativesDirectory}`,
             );
         }
 
@@ -92,7 +126,10 @@ export class Starter {
                         StorageHelper.librariesDir,
                     )
                     .replaceAll('${classpath_separator}', delimiter)
-                    .replaceAll('${version_name}', profile.gameJar.replace(".jar", "")),
+                    .replaceAll(
+                        '${version_name}',
+                        profile.gameJar.replace('.jar', ''),
+                    ),
             ),
         );
 
@@ -106,12 +143,10 @@ export class Starter {
         jvmArgs.push(...gameArgs);
         jvmArgs.push(...profile.clientArgs);
 
-        await this.javaManager.checkAndDownloadJava(profile.javaVersion);
-
         const gameProcess = spawn(
             await this.javaManager.getJavaPath(profile.javaVersion),
             jvmArgs,
-            { cwd: clientDir },
+            { cwd: this.#clientDir },
         );
 
         gameProcess.on('spawn', () => {
@@ -132,11 +167,12 @@ export class Starter {
 
         gameProcess.on('close', () => {
             this.gameWindow.stopGame();
+            watcher.stop();
             LogHelper.info('Game stop');
             this.LauncherWindow.showWindow();
         });
 
-        return { nativesFiles, gameProcess };
+        return { gameProcess };
     }
     private gameLauncher(
         gameArgs: string[],
@@ -179,7 +215,11 @@ export class Starter {
             }
 
             if (gte(clientVersion, '1.9.0')) {
-                gameArgs.push('--versionType', 'AuroraLauncher v0.0.9');
+                // TODO get launcher name from config
+                gameArgs.push(
+                    '--versionType',
+                    `AuroraLauncher v${app.getVersion()}`,
+                );
             }
         } else {
             gameArgs.push('--session', userArgs.accessToken);

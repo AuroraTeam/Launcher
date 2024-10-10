@@ -1,18 +1,26 @@
 import { join } from 'path';
 
 import { window as windowConfig } from '@config';
-import { BrowserWindow, Menu, Tray, app, ipcMain, shell, dialog } from 'electron';
+import { Service } from '@freshgum/typedi';
+import {
+    BrowserWindow,
+    Menu,
+    Tray,
+    app,
+    dialog,
+    ipcMain,
+    shell,
+} from 'electron';
 import installExtension, {
     REACT_DEVELOPER_TOOLS,
 } from 'electron-extension-installer';
 import { autoUpdater } from 'electron-updater';
-import { Service } from '@freshgum/typedi';
 
 import { EVENTS } from '../../common/channels';
 import logo from '../../renderer/runtime/assets/images/logo.png?asset';
 import { PlatformHelper } from '../helpers/PlatformHelper';
-import { StorageHelper } from '../helpers/StorageHelper';
 import { SettingsHelper } from '../helpers/SettingsHelper';
+import { StorageHelper } from '../helpers/StorageHelper';
 
 const isDev = process.env.DEV === 'true' && !app.isPackaged;
 
@@ -31,7 +39,7 @@ export class LauncherWindow {
         app.whenReady().then(() => {
             this.mainWindow = this.createMainWindow();
             if (isDev) {
-                /*@__PURE__*/installExtension(REACT_DEVELOPER_TOOLS, {
+                /*@__PURE__*/ installExtension(REACT_DEVELOPER_TOOLS, {
                     loadExtensionOptions: {
                         allowFileAccess: true,
                     },
@@ -68,14 +76,17 @@ export class LauncherWindow {
             shell.openExternal(url),
         );
 
-        ipcMain.on(EVENTS.WINDOW.EDIT_DIR, () =>{
+        ipcMain.on(EVENTS.WINDOW.EDIT_DIR, () => {
             const dirPaths = dialog.showOpenDialogSync({
                 title: 'Укажите место хранения игры',
-                properties: ['openDirectory']
-            })
-            if (dirPaths && SettingsHelper.getField('dir') != dirPaths.toString()) StorageHelper.migration(dirPaths.toString());
-        }
-        );
+                properties: ['openDirectory'],
+            });
+            if (
+                dirPaths &&
+                SettingsHelper.getField('dir') != dirPaths.toString()
+            )
+                StorageHelper.migration(dirPaths.toString());
+        });
 
         ipcMain.on(EVENTS.WINDOW.OPEN_DIR, (_, path: string) =>
             shell.openPath(path),
@@ -123,8 +134,8 @@ export class LauncherWindow {
 
         mainWindow.webContents.setWindowOpenHandler((data) => {
             shell.openExternal(data.url);
-            return { action: "deny" };
-          });
+            return { action: 'deny' };
+        });
 
         // loading renderer code (runtime)
         if (isDev && process.env['ELECTRON_RENDERER_URL'])

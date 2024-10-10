@@ -1,7 +1,7 @@
 import { Server } from '@aurora-launcher/core';
+import { Service } from '@freshgum/typedi';
 import { ipcMain } from 'electron';
 import { fetchServerInfo } from 'minestat-es';
-import { Service } from '@freshgum/typedi';
 
 import { EVENTS } from '../../common/channels';
 import { APIManager } from '../api/APIManager';

@@ -1,8 +1,9 @@
-import { ipcMain } from 'electron';
-import { Service } from '@freshgum/typedi';
-import { JsonHelper } from '@aurora-launcher/core';
 import { publicDecrypt } from 'crypto';
+
+import { JsonHelper } from '@aurora-launcher/core';
 import { api } from '@config';
+import { Service } from '@freshgum/typedi';
+import { ipcMain } from 'electron';
 
 import { EVENTS } from '../../common/channels';
 import { AuthorizationService } from '../api/AuthorizationService';
@@ -20,16 +21,21 @@ export class LoginScene implements IHandleable {
                 this.authorizationService.authorize(login, password),
         );
 
-        ipcMain.handle(EVENTS.SCENES.LOGIN.AUTH_TOKEN, () =>{
-            const authData = publicDecrypt(api.publicKey, Buffer.from(SettingsHelper.getField('token'), 'hex')).toString('utf-8')
-            const jsonAuthData:TokenData = JsonHelper.fromJson(authData)
-            return this.authorizationService.authorize(jsonAuthData.login, jsonAuthData.password)
-        }
-        );
+        ipcMain.handle(EVENTS.SCENES.LOGIN.AUTH_TOKEN, () => {
+            const authData = publicDecrypt(
+                api.publicKey,
+                Buffer.from(SettingsHelper.getField('token'), 'hex'),
+            ).toString('utf-8');
+            const jsonAuthData: TokenData = JsonHelper.fromJson(authData);
+            return this.authorizationService.authorize(
+                jsonAuthData.login,
+                jsonAuthData.password,
+            );
+        });
     }
 }
 
 interface TokenData {
-    login:string
-    password:string
+    login: string;
+    password: string;
 }

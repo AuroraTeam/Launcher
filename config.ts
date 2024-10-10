@@ -61,5 +61,5 @@ export const discordRPC = {
         smallImageKey: 'logo_mc',
         largeImageText: 'Aurora Launcher',
         smallImageText: 'Minecraft',
-    }
+    },
 };

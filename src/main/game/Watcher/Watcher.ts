@@ -1,110 +1,185 @@
 import { join } from 'path';
 
-import { ProfileLibrary } from '@aurora-launcher/core';
-import { watch } from 'chokidar';
+import { HashHelper, HashedFile, ProfileLibrary } from '@aurora-launcher/core';
 import { Service } from '@freshgum/typedi';
+import { FSWatcher, watch } from 'chokidar';
 
 import { LogHelper } from '../../helpers/LogHelper';
 import { StorageHelper } from '../../helpers/StorageHelper';
 import { IProcess } from './IProcess';
 import { WatcherProfile } from './WatcherProfile';
 
+// import pMap from 'p-map';
+
+interface WathedFile {
+    path: string;
+    sha1: string;
+}
+
 @Service([])
 export class Watcher {
-    async watch(
+    #needKill = false;
+    #watcher?: FSWatcher;
+    #gameProcess?: IProcess;
+
+    #filesList: WathedFile[] = [];
+    #clientDir!: string;
+    #verifyList: string[] = [];
+    #excludeList: string[] = [];
+
+    setGameProcess(gameProcess: IProcess) {
+        LogHelper.debug('[Watcher] Game process set');
+        this.#gameProcess = gameProcess;
+        if (this.#needKill) {
+            gameProcess.kill();
+            this.stop();
+        }
+    }
+
+    async start(
         profile: WatcherProfile,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         libraries: ProfileLibrary[],
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         natives: string[],
-        gameProcess: IProcess,
+        gameFiles: HashedFile[],
     ) {
-        const libs = libraries
-            .filter((library) => library.type === 'library')
-            .map(({ path }) => join(StorageHelper.librariesDir, path));
+        this.#filesList = gameFiles.map(({ path, sha1 }) => ({
+            path: this.#normalizePath(path),
+            sha1,
+        }));
+        this.#clientDir = join(StorageHelper.clientsDir, profile.clientDir);
 
-        const clientDir = join(StorageHelper.clientsDir, profile.clientDir);
-        const nativesDir = join(clientDir, 'natives');
-
-        natives = natives.map((native) => join(nativesDir, native));
-
-        const whitelistedFiles = [
-            ...libs,
-            ...natives,
-            ...profile.updateVerify.map((path) => join(clientDir, path)),
-        ];
-
-        const updateExclusions = profile.updateExclusions.map((file) =>
-            join(clientDir, file),
+        this.#verifyList = profile.updateVerify.map((path) =>
+            join(this.#clientDir, path),
+        );
+        this.#excludeList = profile.updateExclusions.map((path) =>
+            join(this.#clientDir, path),
         );
 
-        watch(whitelistedFiles)
-            .on('add', (path) =>
-                this.addEventChecker(
-                    path,
-                    whitelistedFiles,
-                    updateExclusions,
-                    gameProcess,
-                ),
-            )
-            .on('change', (path) =>
-                this.modifyEventChecker(
-                    path,
-                    whitelistedFiles,
-                    updateExclusions,
-                    gameProcess,
-                ),
-            )
-            .on('unlink', (path) =>
-                this.removeEventChecker(
-                    path,
-                    whitelistedFiles,
-                    updateExclusions,
-                    gameProcess,
-                ),
+        // const libs = libraries
+        //     .filter((library) => library.type === 'library')
+        //     .map(({ path, sha1 }) => ({
+        //         path: join(StorageHelper.librariesDir, path),
+        //         sha1,
+        //     }));
+        // this.#filesList.push(...libs);
+
+        // TODO natives
+        // const nativesDir = join(this.#clientDir, 'natives');
+
+        // const nativesWithHash = await pMap(
+        //     natives,
+        //     async (native) => {
+        //         const path = join(nativesDir, native);
+        //         const sha1 = await HashHelper.getHashFromFile(path, 'sha1');
+        //         return { path, sha1 };
+        //     },
+        //     { concurrency: 4 },
+        // );
+
+        //
+
+        // const whitelistedFiles: WathedFile[] = [
+        //     ...profile.updateVerify.map((path) => join(this.#clientDir, path)),
+        // ];
+
+        // const updateExclusions = profile.updateExclusions.map((file) =>
+        //     join(this.#clientDir, file),
+        // );
+
+        this.#watcher = watch(this.#clientDir)
+            .on('add', (path) => this.#addEventChecker(path))
+            .on('change', (path) => this.#modifyEventChecker(path))
+            .on('unlink', (path) => this.#removeEventChecker(path));
+    }
+
+    stop() {
+        LogHelper.debug('[Watcher] Stopped');
+        this.#needKill = false;
+        this.#watcher?.close();
+    }
+
+    async #addEventChecker(path: string) {
+        path = this.#normalizePath(path);
+        LogHelper.debug('[Watcher] File added: ' + path);
+        if (
+            this.#includeOrContains(this.#verifyList, path) &&
+            !this.#includeOrContains(this.#excludeList, path)
+        ) {
+            const hash = this.#filesList.find((file) =>
+                path.includes(file.path),
+            )?.sha1;
+
+            if (
+                !hash ||
+                (await HashHelper.getHashFromFile(path, 'sha1')) !== hash
+            ) {
+                LogHelper.error(
+                    '[Watcher] File tampering detected',
+                    path.replace(this.#clientDir, ''),
+                );
+                this.#killProcess();
+            }
+        }
+    }
+
+    async #modifyEventChecker(path: string) {
+        path = this.#normalizePath(path);
+        LogHelper.debug('[Watcher] File modified: ' + path);
+        if (
+            this.#includeOrContains(this.#verifyList, path) &&
+            !this.#includeOrContains(this.#excludeList, path)
+        ) {
+            const hash = this.#filesList.find((file) =>
+                path.includes(file.path),
+            )?.sha1;
+
+            if (
+                !hash ||
+                (await HashHelper.getHashFromFile(path, 'sha1')) !== hash
+            ) {
+                LogHelper.error(
+                    '[Watcher] File tampering detected',
+                    path.replace(this.#clientDir, ''),
+                );
+                this.#killProcess();
+            }
+        }
+    }
+
+    #removeEventChecker(path: string) {
+        path = this.#normalizePath(path);
+        LogHelper.debug('[Watcher] File removed: ' + path);
+        if (
+            this.#includeOrContains(this.#verifyList, path) &&
+            !this.#includeOrContains(this.#excludeList, path)
+        ) {
+            LogHelper.error(
+                '[Watcher] File tampering detected',
+                path.replace(this.#clientDir, ''),
             );
+            this.#killProcess();
+        }
     }
 
-    addEventChecker(
-        path: string,
-        whitelistedFiles: string[],
-        updateExclusions: string[],
-        gameProcess: IProcess,
-    ) {
-        // LogHelper.debug('[Watcher] File added: ' + path);
-        // if (
-        //     whitelistedFiles.includes(path) //||
-        //     // (whitelistedFiles.some((file) => path.startsWith(file)))
-        // ) {
-        //     // ok
-        // } else {
-        //     LogHelper.error('[Watcher] File tampering detected');
-        //     gameProcess.kill();
-        //     return 'killed';
-        // }
+    #includeOrContains(list: string[], path: string): boolean {
+        return (
+            list.includes(path) || list.some((file) => path.startsWith(file))
+        );
     }
 
-    modifyEventChecker(
-        path: string,
-        whitelistedFiles: string[],
-        updateExclusions: string[],
-        gameProcess: IProcess,
-    ) {
-        // LogHelper.debug('[Watcher] File modified: ' + path);
-        // if (whitelistedFiles.includes(path)) {
-        //     LogHelper.error('[Watcher] File tampering detected');
-        //     gameProcess.kill();
-        // }
+    #killProcess() {
+        LogHelper.debug('[Watcher] Process killed');
+        if (this.#gameProcess) {
+            this.#gameProcess.kill();
+            this.stop();
+        } else {
+            this.#needKill = true;
+        }
     }
 
-    removeEventChecker(
-        path: string,
-        whitelistedFiles: string[],
-        updateExclusions: string[],
-        gameProcess: IProcess,
-    ) {
-        // LogHelper.debug('[Watcher] File removed: ' + path);
-        // if (whitelistedFiles.includes(path)) {
-        //     LogHelper.error('[Watcher] File tampering detected');
-        //     gameProcess.kill();
-        // }
+    #normalizePath(path: string) {
+        return path.replace(/\\/g, '/');
     }
 }

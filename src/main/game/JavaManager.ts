@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import { readdir, chmod } from 'fs/promises';
+import { chmod, readdir } from 'fs/promises';
 import { join } from 'path';
 
 import { HttpHelper, ZipHelper } from '@aurora-launcher/core';
@@ -10,19 +10,16 @@ import { PlatformHelper } from '../helpers/PlatformHelper';
 import { StorageHelper } from '../helpers/StorageHelper';
 import { GameWindow } from './GameWindow';
 
-@Service([GameWindow])
+@Service([])
 export class JavaManager {
-    // TODO Лишнее связывание, придумать как сделать лучше
-    constructor(private gameWindow: GameWindow) {}
-
-    async checkAndDownloadJava(majorVersion: number) {
+    async checkAndDownloadJava(majorVersion: number, gameWindow: GameWindow) {
         const javaDir = this.#getJavaDir(majorVersion);
         if (existsSync(javaDir)) return true;
 
         const javaLink =
             'https://api.azul.com/metadata/v1/zulu/packages/?java_version={version}&os={os}&arch={arch}&archive_type=zip&java_package_type=jre&javafx_bundled=false&latest=true&release_status=ga&availability_types=CA&certifications=tck&page=1&page_size=1';
 
-        this.gameWindow.sendToConsole('Download Java');
+        gameWindow.sendToConsole('Download Java');
         const javaData: JavaData[] = await HttpHelper.getResourceFromJson(
             javaLink
                 .replace('{version}', majorVersion.toString())
@@ -35,7 +32,7 @@ export class JavaManager {
             {
                 saveToTempFile: true,
                 onProgress: (progress) => {
-                    this.gameWindow.sendProgress({
+                    gameWindow.sendProgress({
                         total: progress.total,
                         loaded: progress.transferred,
                         type: 'size',
@@ -43,7 +40,7 @@ export class JavaManager {
                 },
             },
         );
-        this.gameWindow.sendToConsole('Unpacking Java');
+        gameWindow.sendToConsole('Unpacking Java');
         ZipHelper.unzip(javaFile, javaDir);
         if (PlatformHelper.isLinux || PlatformHelper.isMac) {
             await chmod(await this.getJavaPath(majorVersion), 744);
