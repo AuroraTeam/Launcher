@@ -50,6 +50,13 @@ export default defineConfig({
         },
     },
     renderer: {
+        css: {
+            preprocessorOptions: {
+                sass: {
+                    api: 'modern-compiler',
+                },
+            }
+        },
         build: {
             minify: true,
             chunkSizeWarningLimit: 1000,
