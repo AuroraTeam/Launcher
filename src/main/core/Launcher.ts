@@ -14,7 +14,6 @@ import { LauncherWindow } from './LauncherWindow';
     LauncherWindow,
     APIManager,
     DiscordRPC,
-    VerifyService,
     LoginScene,
     ServersListScene,
     ServerPanelScene,
