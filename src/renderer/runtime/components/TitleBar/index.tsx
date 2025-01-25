@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
 import If from '../If';
 import classes from './index.module.sass';
-import { useEffect } from 'react';
 import {
     titlebarBackBtn,
     titlebarLogout,
@@ -22,11 +21,6 @@ export default function TitleBar() {
     const navigate = useNavigate();
     const username = useAtomValue(titlebarUser);
     const { setTitlebarUserText, hideTitlebarSettingsBtn } = useTitlebar();
-    useEffect(() => {
-        if (title?.text) {
-            launcherAPI.window.setTitle(title.text);
-        }
-    }, [title.text]);
 
     function hide() {
         launcherAPI.window.hide();

@@ -10,7 +10,6 @@ import RPC from './components/RPC'
 // export для типизации
 export const API = {
     window: {
-        setTitle: Window.setTitle,
         hide: Window.hide,
         close: Window.close,
         openExternal: Window.openExternal,

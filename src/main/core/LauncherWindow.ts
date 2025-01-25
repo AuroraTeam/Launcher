@@ -67,11 +67,7 @@ export class LauncherWindow {
             if (!PlatformHelper.isMac) app.quit();
         });
 
-        ipcMain.on(EVENTS.WINDOW.SET_TITLE, (_, title: string) => {
-            if (this.mainWindow && title) {
-                this.mainWindow.setTitle(title);
-            }
-        });
+
 
         // hide the main window when the minimize button is pressed
         ipcMain.on(EVENTS.WINDOW.HIDE, () => this.mainWindow?.minimize());
@@ -135,7 +131,7 @@ export class LauncherWindow {
             title: windowConfig.title || 'Aurora Launcher',
             icon: iconImage,
             webPreferences: {
-                webSecurity: false, // disable cors check
+                webSecurity: true, // disable cors check
                 preload: join(__dirname, '../preload/index.js'),
                 devTools: isDev,
             },
@@ -168,6 +164,11 @@ export class LauncherWindow {
             // open developer tools when using development mode
             if (isDev) mainWindow.webContents.openDevTools();
         });
+
+        mainWindow.webContents.on('did-stop-loading', () => {
+            mainWindow.setTitle(windowConfig.title || 'Aurora Launcher');
+        });
+
 
         return mainWindow;
     }
