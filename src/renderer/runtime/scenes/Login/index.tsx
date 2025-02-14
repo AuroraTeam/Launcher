@@ -7,7 +7,6 @@ import { useModal } from '../../components/Modal/hooks';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
 import { window } from '@config';
-import LanguageSwitcher from '../../components/LanguageSwitcher'
 import { useTranslation } from 'react-i18next';
 
 interface AuthData {
@@ -89,7 +88,6 @@ export default function Login() {
                     />{t('login.rememberMe')}
                 </label>
             </form>
-            <LanguageSwitcher/>
         </div>
     );
 }
