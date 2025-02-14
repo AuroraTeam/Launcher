@@ -1,7 +1,7 @@
 {
     "settings": {
         "title": "Launcher settings",
-        "debag": "Launching the game in debug mode",
+        "debug": "Launching the game in debug mode",
         "fullscreen": "Launch the game in full screen",
         "autoconnect": "Automatic connection to the server",
         "dir": "Location of the game",

@@ -106,7 +106,7 @@ export default function Settings() {
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>
-                        {t('settings.debag')}
+                        {t('settings.debug')}
                     </label>
                     <label className={classes.checkbox}>
                         <input
