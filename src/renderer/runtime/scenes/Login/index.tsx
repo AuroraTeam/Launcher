@@ -7,6 +7,7 @@ import { useModal } from '../../components/Modal/hooks';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
 import { window } from '@config';
+import { useTranslation } from 'react-i18next';
 
 interface AuthData {
     [k: string]: string;
@@ -20,6 +21,7 @@ export default function Login() {
     const { showTitlebarSettingsBtn } = useTitlebar();
     const navigate = useNavigate();
     const { setTitlebarUserText, hideTitlebarLogoutBtn } = useTitlebar();
+    const { t } = useTranslation('common');
 
     useEffect(() => {
         launcherAPI.scenes.settings
@@ -70,20 +72,20 @@ export default function Login() {
             <img src={logo} />
             <div>{window.title}</div>
             <p>
-                Введите логин и пароль,
+                {t('login.description1')}
                 <br />
-                чтобы продолжить
+                {t('login.description2')}
             </p>
             <form onSubmit={auth}>
-                <input type="text" placeholder="Логин" name="login" />
-                <input type="password" placeholder="Пароль" name="password" />
-                <button>Войти</button>
+                <input type="text" placeholder={t('login.username')} name="login" />
+                <input type="password" placeholder={t('login.password')} name="password" />
+                <button>{t('login.login')}</button>
                 <label className={classes.autoLogin}>
                     <input 
                         type="checkbox"
                         name="autoLogin"
                         defaultChecked={false}
-                    />Автоматическая авторизация
+                    />{t('login.rememberMe')}
                 </label>
             </form>
         </div>

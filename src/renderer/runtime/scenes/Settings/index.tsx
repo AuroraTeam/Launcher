@@ -8,8 +8,10 @@ import If from '../../components/If';
 import { MemoryRange } from '../../components/MemoryRange';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
+import { useTranslation } from 'react-i18next';
 
 export default function Settings() {
+    const { t } = useTranslation('common');
     const {
         showTitlebarBackBtn,
         setTitlebarTitleText,
@@ -21,7 +23,7 @@ export default function Settings() {
         hideTitlebarLogoutBtn();
         showTitlebarBackBtn();
         hideTitlebarSettingsBtn();
-        setTitlebarTitleText('Настройки лаунчера');
+        setTitlebarTitleText(t('settings.title'));
 
         launcherAPI.scenes.settings
             .getAllFields()
@@ -66,13 +68,13 @@ export default function Settings() {
                         onClick={() => Button('main')}
                         className={main ? classes.active : ''}
                     >
-                        Основное
+                        {t('settings.sidebar.main')}
                     </button>
                     <button
                         onClick={() => Button('info')}
                         className={info ? classes.active : ''}
                     >
-                        О лаунчере
+                        {t('settings.sidebar.info')}
                     </button>
                 </div>
             </div>
@@ -90,7 +92,7 @@ export default function Settings() {
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>
-                        Запуск игры во весь экран
+                        {t('settings.fullscreen')}
                     </label>
                     <label className={classes.checkbox}>
                         <input
@@ -104,7 +106,7 @@ export default function Settings() {
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>
-                        Запуск игры в дебаг режиме
+                        {t('settings.debug')}
                     </label>
                     <label className={classes.checkbox}>
                         <input
@@ -118,10 +120,10 @@ export default function Settings() {
                             }
                         />
                         <span className={classes.checkboxSwitch}></span>
-                        Автоматический вход на сервер
+                        {t('settings.autoconnect')}
                     </label>
                     <label>
-                        Выделено оперативной памяти: {settings.memory}MB
+                        {t('settings.memory')} {settings.memory}MB
                     </label>
                     <br />
                     <MemoryRange
@@ -131,7 +133,7 @@ export default function Settings() {
                         }
                         value={settings.memory}
                     />
-                    <label>Расположение игры</label>
+                    <label>{t('settings.dir')}</label>
                     <br />
                     <div className={classes.changeDir}>
                         <button
@@ -154,7 +156,7 @@ export default function Settings() {
                                     });
                             }}
                         >
-                            Смена директории
+                            {t('settings.dirEdit')}
                         </button>
                     </div>
                 </div>
@@ -228,7 +230,7 @@ export default function Settings() {
                         </button>
                     </div>
                     <div className={classes.version}>
-                        <h5>Версия лаунчера: {version}</h5>
+                        <h5>{t('settings.version')} {version}</h5>
                     </div>
                 </div>
             </If>

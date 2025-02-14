@@ -7,6 +7,7 @@ import If from '../../components/If';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import { usePingServer } from '../../hooks/pingServer';
 import classes from './index.module.sass';
+import { useTranslation } from 'react-i18next';
 
 // TODO Refactoring scene
 export default function ServerPanel() {
@@ -21,6 +22,7 @@ export default function ServerPanel() {
     const progressLine = useRef<HTMLDivElement>(null);
     const progressInfo = useRef<HTMLDivElement>(null);
     const [settings, setSettings] = useState<SettingsFormat>({});
+    const { t } = useTranslation('common');
 
     const {
         showTitlebarBackBtn,
@@ -99,9 +101,9 @@ export default function ServerPanel() {
                 <div className={classes.title}>{selectedServer?.title}</div>
                 <div className={classes.status}>
                     <div className={classes.gamers}>
-                        Игроков
+                        {t('serverPanel.pingInfo1')}
                         <br />
-                        онлайн
+                        {t('serverPanel.pingInfo2')}
                     </div>
                     <div className={classes.line}></div>
                     <div className={classes.count}>
@@ -131,7 +133,7 @@ export default function ServerPanel() {
             </div>
             <div className={classes.buttons}>
                 <button onClick={startGame} disabled={gameStarted}>
-                    Играть
+                {t('serverPanel.startGame')}
                 </button>
             </div>
         </div>

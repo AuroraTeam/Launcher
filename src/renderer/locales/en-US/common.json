@@ -1,0 +1,29 @@
+{
+    "settings": {
+        "title": "Launcher settings",
+        "debug": "Launching the game in debug mode",
+        "fullscreen": "Launch the game in full screen",
+        "autoconnect": "Automatic connection to the server",
+        "dir": "Location of the game",
+        "dirEdit": "Change directory",
+        "memory": "Allocated RAM:",
+        "version": "Launcher version:",
+        "sidebar": {
+            "main": "Basic",
+            "info": "About Launcher"
+        }
+    },
+    "login": {
+        "description1": "Enter your login and password,",
+        "description2": "to continue",
+        "login": "Login",
+        "username": "Login",
+        "password": "Password",
+        "rememberMe": "Remember me"
+    },
+    "serverPanel": {
+        "startGame": "Start game",
+        "pingInfo1": "Players",
+        "pingInfo2": "online"
+    }
+}

@@ -1,4 +1,5 @@
 import './runtime/assets/sass/index.sass';
+import './runtime/libs/i18n';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
