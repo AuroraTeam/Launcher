@@ -1,14 +1,21 @@
+.button
+    :hover
+        fill: var(--primary-color)
+
 .menu
     position: absolute
     transform: translateY(-10px)
     transition: 0.3s
+    z-index: 1
+    :hover
+        color: var(--primary-color)
 
 .menuList
-    padding: 5px
+    padding: 4px 8px
     border-radius: 5px
     background: var(--background-color)
     list-style-type: none
 
 .menuElement
     cursor: pointer
-    margin: 2px 0 2px
+    margin: 4px 0
