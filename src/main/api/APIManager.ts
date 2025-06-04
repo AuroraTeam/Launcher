@@ -4,15 +4,35 @@ import { Service } from '@freshgum/typedi';
 
 import { LogHelper } from '../helpers/LogHelper';
 
+/**
+ * API Manager
+ *
+ * Отвечает за подключение к API, если первое подключение не удалось - попытки прекращаются и лаунчер уходит в Offline режим
+ *
+ * Если API подключается - лаунчер использует данное подключение и переподключается при разрыве соединения
+ */
 @Service([])
 export class APIManager {
+    private isConnected = false;
+    private reconnectTimeout?: NodeJS.Timeout;
+
     private api = new AuroraAPI(apiConfig.ws || 'ws://localhost:1370', {
-        onClose: () => setTimeout(() => this.initConnection(), 2000),
+        onClose: () => {
+            if (this.isConnected) {
+                this.reconnectTimeout = setTimeout(
+                    () => this.initConnection(),
+                    5000,
+                );
+            }
+        },
     });
 
     async initConnection() {
+        clearTimeout(this.reconnectTimeout);
+
         try {
             await this.api.connect();
+            this.isConnected = true;
             this.#onConnectListeners.forEach((listener) => listener());
         } catch (error) {
             LogHelper.error(error);
@@ -24,8 +44,8 @@ export class APIManager {
         this.#onConnectListeners.push(listener);
     }
 
-    public getAPIEndpoint() {
-        return this.api.getEndpoint();
+    public getAuthType() {
+        return this.api.getAuthType();
     }
 
     public auth(login: string, password: string) {

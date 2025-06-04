@@ -7,7 +7,6 @@ import {
     Server,
     ZipHelper,
 } from '@aurora-launcher/core';
-import { api as apiConfig } from '@config';
 import { Service } from '@freshgum/typedi';
 import { app } from 'electron';
 import { coerce, gte, lte } from 'semver';
@@ -46,8 +45,6 @@ export class Starter {
     async prestart(profile: Profile) {
         this.#clientDir = join(StorageHelper.clientsDir, profile.clientDir);
         this.#nativesDirectory = join(this.#clientDir, 'natives');
-
-        await this.authlibInjector.verify();
 
         await this.javaManager.checkAndDownloadJava(
             profile.javaVersion,
@@ -103,9 +100,14 @@ export class Starter {
 
         const jvmArgs = [];
 
-        jvmArgs.push(
-            `-javaagent:${this.authlibInjector.authlibFilePath}=${this.authorizationService.getAPIEndpoint() || apiConfig.web}`,
-        );
+        if (this.authorizationService.useInjector) {
+            await this.authlibInjector.verify();
+
+            jvmArgs.push(
+                `-javaagent:${this.authlibInjector.authlibFilePath}=${this.authorizationService.getInjectorEndpoint()}`,
+            );
+        }
+
         jvmArgs.push(`-Xmx` + settings.memory + `M`);
 
         jvmArgs.push(`-Djava.library.path=${this.#nativesDirectory}`);
@@ -243,11 +245,11 @@ export class Starter {
             .forEach(async ({ path }) => {
                 try {
                     nativesFiles.push(
-                        ...await ZipHelper.unzip(
+                        ...(await ZipHelper.unzip(
                             join(StorageHelper.librariesDir, path),
                             nativesDir,
-                            ['.so', '.dylib', '.jnilib', '.dll']
-                        ),
+                            ['.so', '.dylib', '.jnilib', '.dll'],
+                        )),
                     );
                 } catch (error) {
                     LogHelper.error(error);
