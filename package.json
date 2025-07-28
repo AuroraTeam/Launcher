@@ -6,7 +6,7 @@
     "private": true,
     "scripts": {
         "dev": "cross-env DEV=true electron-vite dev -w --entry ./out/main/index.js -- --dev",
-        "build": "electron-vite build && npm run obfuscator && npm run bytenode && esbuild ./script/electron-build.ts --bundle --log-level=error --loader:.pem=text --platform=node --packages=external --format=esm --outdir=./script/ --out-extension:.js=.mjs && node ./script/electron-build.mjs",
+        "build": "electron-vite build && pnpm run obfuscator && pnpm run bytenode && esbuild ./script/electron-build.ts --bundle --log-level=error --loader:.pem=text --platform=node --packages=external --format=esm --outdir=./script/ --out-extension:.js=.mjs && node ./script/electron-build.mjs",
         "start": "electron-vite preview --entry ./out/main/index.js",
         "clean": "rimraf out dist",
         "prettier": "prettier --config .prettierrc.json --write src",
@@ -59,8 +59,8 @@
         "yaml": "^2.7.0"
     },
     "dependencies": {
-        "@aurora-launcher/api": "^0.6.0",
-        "@aurora-launcher/core": "^0.28.2",
+        "@aurora-launcher/api": "workspace:^",
+        "@aurora-launcher/core": "workspace:^",
         "@freshgum/typedi": "^0.7.2",
         "@kostya-main/discord-rpc": "^1.2.1",
         "bytenode": "^1.5.6",
