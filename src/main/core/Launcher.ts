@@ -23,7 +23,6 @@ import { LauncherWindow } from './LauncherWindow';
 export class Launcher {
     constructor(
         private window: LauncherWindow,
-        private apiManager: APIManager,
         private discordRPC: DiscordRPC,
         private verifyService: VerifyService,
 
@@ -36,8 +35,6 @@ export class Launcher {
     }
 
     async init() {
-        await this.apiManager.initConnection();
-
         this.loginScene.initHandlers();
         this.settingsScene.initHandlers();
         this.serversListScene.initHandlers();

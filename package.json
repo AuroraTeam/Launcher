@@ -73,6 +73,7 @@
         "jotai": "^2.11.0",
         "minestat-es": "^2.2.5",
         "node-stream-zip": "^1.15.0",
+        "p-map": "^7.0.3",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-i18next": "^15.4.0",

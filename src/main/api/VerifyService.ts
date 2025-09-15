@@ -12,7 +12,6 @@ export class VerifyService {
 
     init() {
         this.verify();
-        this.apiService.onConnect(() => this.verify());
     }
 
     async verify() {
