@@ -1,8 +1,8 @@
-import { AuthResponseData } from '@aurora-launcher/core';
-
-export type UserData = Omit<Session, 'accessToken' | 'refreshToken'>;
-
-export type Session = AuthResponseData;
+export interface Session {
+    username: string;
+    userUUID: string;
+    accessToken: string;
+}
 
 export interface LoadProgress {
     total: number;

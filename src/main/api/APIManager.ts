@@ -6,28 +6,23 @@ import { Service } from '@freshgum/typedi';
 export class APIManager {
     private client = new AuroraAPI(api.web);
 
-    public async getAuthType() {
-        const response = await this.client.launcherRequest();
-        return response.settings.authType;
+    getLauncherInfo() {
+        return this.client.launcherRequest();
     }
 
-    public auth(login: string, password: string) {
-        return this.client.authRequest({ login, password });
-    }
-
-    public getServers() {
+    getServers() {
         return this.client.serversRequest();
     }
 
-    public getProfile(uuid: string) {
+    getProfile(uuid: string) {
         return this.client.profileRequest({ uuid });
     }
 
-    public getUpdates(dir: string) {
+    getUpdates(dir: string) {
         return this.client.updateRequest({ dir });
     }
 
-    public verify(stage: number, token?: string) {
+    verify(stage: number, token?: string) {
         return this.client.verifyRequest({ stage, token });
     }
 }

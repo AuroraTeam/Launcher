@@ -1,7 +1,6 @@
 import { Service } from '@freshgum/typedi';
 
-import { APIManager } from '../api/APIManager';
-import { VerifyService } from '../api/VerifyService';
+// import { VerifyService } from '../api/VerifyService';
 import { LogHelper } from '../helpers/LogHelper';
 import { LoginScene } from '../scenes/Login';
 import { ServerPanelScene } from '../scenes/ServerPanel';
@@ -12,9 +11,8 @@ import { LauncherWindow } from './LauncherWindow';
 
 @Service([
     LauncherWindow,
-    APIManager,
     DiscordRPC,
-    VerifyService,
+    // VerifyService,
     LoginScene,
     ServersListScene,
     ServerPanelScene,
@@ -24,7 +22,7 @@ export class Launcher {
     constructor(
         private window: LauncherWindow,
         private discordRPC: DiscordRPC,
-        private verifyService: VerifyService,
+        // private verifyService: VerifyService,
 
         private loginScene: LoginScene,
         private serversListScene: ServersListScene,
@@ -41,7 +39,7 @@ export class Launcher {
         this.serverPanelScene.initHandlers();
         this.discordRPC.initHandlers();
 
-        this.verifyService.init();
+        // this.verifyService.init();
         this.window.createWindow();
         LogHelper.info('Launcher started');
         this.discordRPC.start();

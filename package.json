@@ -79,7 +79,9 @@
         "react-i18next": "^15.4.0",
         "react-router-dom": "^7.1.1",
         "semver": "^7.6.3",
-        "skinview3d": "^3.1.0"
+        "skinview3d": "^3.1.0",
+        "undici": "^6.21.3",
+        "uuid": "^11.0.5"
     },
     "importSort": {
         ".tsx, .ts, .mjs, .js": {

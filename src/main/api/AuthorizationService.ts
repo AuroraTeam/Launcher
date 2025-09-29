@@ -1,34 +1,38 @@
-import { AuthType, AuthTypeResponseData } from '@aurora-launcher/core';
+import { AuthType } from '@aurora-launcher/core';
 import { Service } from '@freshgum/typedi';
 
-import { Session, UserData } from '../../common/types';
+import { Session } from '../../common/types';
 import { APIManager } from './APIManager';
-import { IAuthProvider } from './providers/IAuthProvider';
-import { InternalAuthProvider } from './providers/InternalAuthProvider';
-import { MicrosoftAuthProvider } from './providers/MicrosoftAuthProvider';
-import { OfflineAuthProvider } from './providers/OfflineAuthProvider';
+import {
+    IAuthProvider,
+    InternalAuthProvider,
+    MicrosoftAuthProvider,
+    OfflineAuthProvider,
+} from './authProviders';
 
 @Service([APIManager])
 export class AuthorizationService {
     private currentSession?: Session;
-    private _provider?: IAuthProvider;
+    private provider?: IAuthProvider;
 
-    get provider(): IAuthProvider | undefined {
-        return this._provider;
+    constructor(private apiService: APIManager) {
+        this.apiService.getLauncherInfo().then((info) => {
+            this.provider = this.createAuthProvider(info.settings.authType);
+        });
     }
 
-    constructor(private apiService: APIManager) {}
+    async authorize(login: string, password: string) {
+        if (!this.provider) throw new Error('No auth provider');
 
-    async authorize(login: string, password: string): Promise<UserData> {
-        const authType = await this.apiService.getAuthType();
-        this._provider = this.createAuthProvider(this.apiService, authType);
+        const userData = await this.provider.auth(login, password);
 
-        this.currentSession = await this._provider.login(login, password);
+        this.currentSession = {
+            username: userData.selectedProfile.name,
+            userUUID: userData.selectedProfile.id,
+            accessToken: userData.accessToken,
+        };
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { accessToken, refreshToken, ...publicData } =
-            this.currentSession;
-        return publicData;
+        return this.currentSession;
     }
 
     getCurrentSession() {
@@ -40,11 +44,11 @@ export class AuthorizationService {
     }
 
     get useInjector() {
-        return this.provider!.useInjector;
+        return this.provider?.useInjector;
     }
 
     getInjectorEndpoint() {
-        return this.provider!.injectorEndpoint;
+        return this.provider?.injectorEndpoint;
     }
 
     private providersMap = {
@@ -53,10 +57,7 @@ export class AuthorizationService {
         [AuthType.OFFLINE]: OfflineAuthProvider,
     };
 
-    private createAuthProvider(
-        apiService: APIManager,
-        data: AuthTypeResponseData,
-    ): IAuthProvider {
-        return new this.providersMap[data.type](apiService, data.extra);
+    private createAuthProvider(type: AuthType): IAuthProvider {
+        return new this.providersMap[type]();
     }
 }

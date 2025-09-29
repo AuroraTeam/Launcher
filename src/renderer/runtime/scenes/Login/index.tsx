@@ -1,4 +1,6 @@
+import { window } from '@config';
 import { FormEvent, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { setUserData } from '../../../utils';
@@ -6,8 +8,6 @@ import logo from '../../assets/images/logo.png?asset';
 import { useModal } from '../../components/Modal/hooks';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
-import { window } from '@config';
-import { useTranslation } from 'react-i18next';
 
 interface AuthData {
     [k: string]: string;
@@ -24,16 +24,15 @@ export default function Login() {
     const { t } = useTranslation('common');
 
     useEffect(() => {
-        launcherAPI.scenes.settings
-            .getAllFields()
-            .then((res) => {
-                if (res.token!="") launcherAPI.scenes.login.authToken().then((userData) => {
+        launcherAPI.scenes.settings.getAllFields().then((res) => {
+            if (res.token != '')
+                launcherAPI.scenes.login.authToken().then((userData) => {
                     setUserData(userData);
                     setTitlebarUserText(userData.username);
                     showTitlebarSettingsBtn();
                     navigate('ServersList');
-                })
-            });
+                });
+        });
         hideTitlebarLogoutBtn();
     }, []);
 
@@ -41,7 +40,9 @@ export default function Login() {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const { login, password, autoLogin } = Object.fromEntries(formData) as AuthData;
+        const { login, password /* autoLogin */ } = Object.fromEntries(
+            formData,
+        ) as AuthData;
         // Пример валидации
         if (login.length < 3) {
             return showModal(
@@ -55,7 +56,10 @@ export default function Login() {
                 login,
                 password,
             );
-            if (autoLogin) launcherAPI.scenes.settings.setField('token', userData.token)
+            console.log(userData);
+
+            // if (autoLogin)
+            //     launcherAPI.scenes.settings.setField('token', userData.token);
             setUserData(userData);
             setTitlebarUserText(userData.username);
         } catch (error) {
@@ -77,15 +81,24 @@ export default function Login() {
                 {t('login.description2')}
             </p>
             <form onSubmit={auth}>
-                <input type="text" placeholder={t('login.username')} name="login" />
-                <input type="password" placeholder={t('login.password')} name="password" />
+                <input
+                    type="text"
+                    placeholder={t('login.username')}
+                    name="login"
+                />
+                <input
+                    type="password"
+                    placeholder={t('login.password')}
+                    name="password"
+                />
                 <button>{t('login.login')}</button>
                 <label className={classes.autoLogin}>
-                    <input 
+                    <input
                         type="checkbox"
                         name="autoLogin"
                         defaultChecked={false}
-                    />{t('login.rememberMe')}
+                    />
+                    {t('login.rememberMe')}
                 </label>
             </form>
         </div>
