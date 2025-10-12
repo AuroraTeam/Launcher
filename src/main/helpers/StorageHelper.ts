@@ -1,40 +1,21 @@
-import { existsSync, mkdirSync } from 'fs';
 import { cp, rename, rm } from 'fs/promises';
 import { homedir } from 'os';
 import { resolve } from 'path';
 
+import { StorageHelper as CoreStorageHelper } from '@aurora-launcher/core';
 import { appPath } from '@config';
 import { app } from 'electron';
 
 import { PlatformHelper } from './PlatformHelper';
 
-export class StorageHelper {
-    static storageDir: string;
-    static assetsDir: string;
-    static clientsDir: string;
-    static librariesDir: string;
-    static javaDir: string;
+export class StorageHelper extends CoreStorageHelper {
+    static readonly storageDir = this.getStorageDir();
+    static readonly assetsDir = this.resolveDir('assets');
+    static readonly clientsDir = this.resolveDir('clients');
+    static readonly librariesDir = this.resolveDir('libraries');
+    static readonly javaDir = this.resolveDir('java');
 
-    static {
-        this.storageDir = this.getPlatformStorageDir();
-
-        this.resolveDirs();
-
-        if (!existsSync(this.storageDir)) mkdirSync(this.storageDir);
-        if (!existsSync(this.assetsDir)) mkdirSync(this.assetsDir);
-        if (!existsSync(this.clientsDir)) mkdirSync(this.clientsDir);
-        if (!existsSync(this.librariesDir)) mkdirSync(this.librariesDir);
-        if (!existsSync(this.javaDir)) mkdirSync(this.javaDir);
-    }
-
-    static resolveDirs() {
-        this.assetsDir = resolve(this.storageDir, 'assets');
-        this.clientsDir = resolve(this.storageDir, 'clients');
-        this.librariesDir = resolve(this.storageDir, 'libraries');
-        this.javaDir = resolve(this.storageDir, 'java');
-    }
-
-    private static getPlatformStorageDir() {
+    private static getStorageDir() {
         if (PlatformHelper.isMac) {
             return resolve(app.getPath('userData'), '../', appPath);
         }
@@ -51,5 +32,9 @@ export class StorageHelper {
             await cp(src, dest, { recursive: true });
             return rm(src, { recursive: true, force: true });
         }
+    }
+
+    static override resolveDir(dirname: string) {
+        return super.resolveDir(this.storageDir, dirname);
     }
 }
