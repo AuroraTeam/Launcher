@@ -3,6 +3,7 @@
 .user
     display: flex
     align-items: center
+    gap: 0.75rem
 
 .titlebar
     padding: 8px
@@ -15,29 +16,12 @@
         cursor: pointer
         height: 24px
         filter: drop-shadow(var(--default-shadow))
-.back
-    margin-right: 13px
-    &:hover path
-        fill: #ddd
-.logout
-    margin-right: 13px
-    &:hover path
-        fill: #ddd
-.settings
-    margin-right: 13px
-    &:hover path
-        fill: #2f80ed
-.hide
-    margin-left: 9px
-    &:hover path
-        fill: #2f80ed
-.close
-    margin-left: 7px
-    &:hover path
-        fill: #eb5757
-.user
-    margin-right: 27px
-.username
-    margin-left: 5px
-.text
-    margin-top: 2px
+
+button:hover path
+    color: #ccc
+
+.hide:hover path
+    color: #2f80ed
+
+.close:hover path
+    color: #eb5757

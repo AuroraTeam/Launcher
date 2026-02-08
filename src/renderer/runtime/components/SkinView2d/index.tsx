@@ -8,6 +8,7 @@ interface SkinView2dProps {
     width: number;
     height: number;
 }
+
 export const SkinView2d = ({ width = 64, height = 64 }: SkinView2dProps) => {
     const skinHeadRef = useRef<HTMLDivElement>(null);
 

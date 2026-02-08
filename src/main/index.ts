@@ -1,3 +1,5 @@
+import 'source-map-support/register';
+
 import { Container } from '@freshgum/typedi';
 
 import { Launcher } from './core/Launcher';

@@ -1,5 +1,6 @@
 import { Server } from '@aurora-launcher/core';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { LoadProgress } from '../../../../common/types';
 import { SettingsFormat } from '../../../../common/types';
@@ -7,10 +8,11 @@ import If from '../../components/If';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import { usePingServer } from '../../hooks/pingServer';
 import classes from './index.module.sass';
-import { useTranslation } from 'react-i18next';
 
 // TODO Refactoring scene
 export default function ServerPanel() {
+    const { t } = useTranslation('common');
+
     const [selectedServer, setSelectedServer] = useState<Server>();
     const players = usePingServer(selectedServer);
 
@@ -21,8 +23,7 @@ export default function ServerPanel() {
     const consoleRef = useRef<HTMLPreElement>(null);
     const progressLine = useRef<HTMLDivElement>(null);
     const progressInfo = useRef<HTMLDivElement>(null);
-    const [settings, setSettings] = useState<SettingsFormat>({});
-    const { t } = useTranslation('common');
+    const [settings, setSettings] = useState<SettingsFormat>();
 
     const {
         showTitlebarBackBtn,
@@ -48,7 +49,7 @@ export default function ServerPanel() {
     const startGame = () => {
         hideTitlebarSettingsBtn();
         hideTitlebarBackBtn();
-        if (settings.startDebug) setShowConsole(true);
+        if (settings?.startDebug) setShowConsole(true);
         consoleRef.current?.replaceChildren();
         setGameStarted(true);
         launcherAPI.scenes.serverPanel.startGame(
@@ -133,7 +134,7 @@ export default function ServerPanel() {
             </div>
             <div className={classes.buttons}>
                 <button onClick={startGame} disabled={gameStarted}>
-                {t('serverPanel.startGame')}
+                    {t('serverPanel.startGame')}
                 </button>
             </div>
         </div>

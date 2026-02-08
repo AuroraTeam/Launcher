@@ -3,42 +3,34 @@ import { FormEvent, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { setUserData } from '../../../utils';
 import logo from '../../assets/images/logo.png?asset';
 import { useModal } from '../../components/Modal/hooks';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
 
-interface AuthData {
-    [k: string]: string;
-    login: string;
-    password: string;
-    autoLogin: string;
-}
-
 export default function Login() {
-    const { showModal } = useModal();
-    const { showTitlebarSettingsBtn } = useTitlebar();
     const navigate = useNavigate();
-    const { setTitlebarUserText, hideTitlebarLogoutBtn } = useTitlebar();
     const { t } = useTranslation('common');
 
+    const { showModal } = useModal();
+    const { showTitlebarSettingsBtn } = useTitlebar();
+
     useEffect(() => {
+        showTitlebarSettingsBtn();
         launcherAPI.scenes.login.initialize().then(() => {
-            showTitlebarSettingsBtn();
             navigate('ServersList');
         });
-
-        hideTitlebarLogoutBtn();
     }, []);
 
-    const auth = async (event: FormEvent<HTMLFormElement>) => {
+    async function auth(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
-        const { login, password /* autoLogin */ } = Object.fromEntries(
-            formData,
-        ) as AuthData;
+        const { login, password } = Object.fromEntries(formData) as Record<
+            string,
+            string
+        >;
+
         // Пример валидации
         if (login.length < 3) {
             return showModal(
@@ -48,24 +40,18 @@ export default function Login() {
         }
 
         try {
-            const userData = await launcherAPI.scenes.login.auth(
-                login,
-                password,
-            );
-            console.log(userData);
-
-            // if (autoLogin)
-            //     launcherAPI.scenes.settings.setField('token', userData.token);
-            setUserData(userData);
-            setTitlebarUserText(userData.username);
+            await launcherAPI.scenes.login.auth(login, password);
         } catch (error) {
+            if (error instanceof Error) {
+                return showModal('Ошибка авторизации', error.message);
+            }
+
             console.error(error);
-            return showModal('Ошибка авторизации', (error as Error).message);
+            return showModal('Неизвестная ошибка', `${error}`);
         }
 
-        showTitlebarSettingsBtn();
         navigate('ServersList');
-    };
+    }
 
     return (
         <div className={classes.block}>
@@ -88,14 +74,6 @@ export default function Login() {
                     name="password"
                 />
                 <button>{t('login.login')}</button>
-                <label className={classes.autoLogin}>
-                    <input
-                        type="checkbox"
-                        name="autoLogin"
-                        defaultChecked={false}
-                    />
-                    {t('login.rememberMe')}
-                </label>
             </form>
         </div>
     );

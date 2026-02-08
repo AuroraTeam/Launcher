@@ -1,8 +1,8 @@
-import { ReactElement } from 'react';
+import { ReactNode } from 'react';
 
 interface IfProps {
     state: boolean;
-    children: ReactElement;
+    children: ReactNode;
 }
 
 export default function If({ state = false, children }: IfProps) {

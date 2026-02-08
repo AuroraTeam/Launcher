@@ -19,7 +19,6 @@ i18n.use(initReactI18next)
             caches: ['localStorage'],
             lookupLocalStorage: 'i18nextLng',
         },
-
         interpolation: {
             escapeValue: false,
         },

@@ -16,6 +16,10 @@ export class StorageHelper extends CoreStorageHelper {
     static librariesDir: string;
     static javaDir: string;
 
+    static {
+        this.resolveDirs();
+    }
+
     private static resolveDirs() {
         this.assetsDir = this.resolveDir('assets');
         this.clientsDir = this.resolveDir('clients');

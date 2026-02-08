@@ -3,10 +3,10 @@ import { useResetAtom } from 'jotai/utils';
 
 import {
     titlebarBackBtn,
+    titlebarLogout,
     titlebarSettingsBtn,
     titlebarTitle,
     titlebarUser,
-    titlebarLogout,
 } from './states';
 
 export function useTitlebar() {

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import If from '../../components/If';
 import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
-import { useTranslation } from 'react-i18next';
-import MainPage from './MainPage';
 import InfoPage from './InfoPage';
+import MainPage from './MainPage';
 
 export default function Settings() {
     const { t } = useTranslation('common');
@@ -14,6 +14,8 @@ export default function Settings() {
         setTitlebarTitleText,
         hideTitlebarSettingsBtn,
         hideTitlebarLogoutBtn,
+        resetTitlebarTitleText,
+        hideTitlebarBackBtn,
     } = useTitlebar();
 
     useEffect(() => {
@@ -21,6 +23,11 @@ export default function Settings() {
         showTitlebarBackBtn();
         hideTitlebarSettingsBtn();
         setTitlebarTitleText(t('settings.title'));
+
+        return () => {
+            resetTitlebarTitleText();
+            hideTitlebarBackBtn();
+        };
     }, []);
 
     const [main, EditButtonMain] = useState(true);
@@ -58,10 +65,10 @@ export default function Settings() {
                 </div>
             </div>
             <If state={main}>
-                <MainPage/>
+                <MainPage />
             </If>
             <If state={info}>
-                <InfoPage/>
+                <InfoPage />
             </If>
         </div>
     );

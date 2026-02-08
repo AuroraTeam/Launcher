@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import { useSetAtom } from 'jotai';
+import { ReactNode } from 'react';
 
 import { modalContent, modalShow, modalTitle } from './states';
 

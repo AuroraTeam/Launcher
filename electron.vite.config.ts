@@ -22,27 +22,26 @@ export default defineConfig({
                     ],
                 },
             };
-        } else {
-            return {
-                plugins: [],
-                build: {
-                    sourcemap: true,
-                    rollupOptions: {
-                        treeshake: {
-                            annotations: false,
-                        },
+        }
+        return {
+            plugins: [],
+            build: {
+                sourcemap: true,
+                rollupOptions: {
+                    treeshake: {
+                        annotations: false,
                     },
                 },
-                resolve: {
-                    alias: [
-                        {
-                            find: '@config',
-                            replacement: toDir('config.ts'),
-                        },
-                    ],
-                },
-            };
-        }
+            },
+            resolve: {
+                alias: [
+                    {
+                        find: '@config',
+                        replacement: toDir('config.ts'),
+                    },
+                ],
+            },
+        };
     }),
     preload: {
         build: {
@@ -50,13 +49,6 @@ export default defineConfig({
         },
     },
     renderer: {
-        css: {
-            preprocessorOptions: {
-                sass: {
-                    api: 'modern-compiler',
-                },
-            }
-        },
         build: {
             minify: true,
             chunkSizeWarningLimit: 1000,

@@ -8,32 +8,32 @@ import { useTitlebar } from '../../components/TitleBar/hooks';
 import classes from './index.module.sass';
 
 export default function ServersList() {
+    const navigate = useNavigate();
+    const [servers, setServers] = useState<Server[]>([]);
+
     const {
         hideTitlebarBackBtn,
         showTitlebarSettingsBtn,
         resetTitlebarTitleText,
-        showTitlebarLogoutBtn,
     } = useTitlebar();
-
-    const [servers, setServers] = useState<Server[]>([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         hideTitlebarBackBtn();
-        showTitlebarLogoutBtn();
         showTitlebarSettingsBtn();
         resetTitlebarTitleText();
+
         launcherAPI.scenes.serversList
             .getServers()
             .then(setServers)
             .catch(console.error);
+
         launcherAPI.rpc.updateActivity('default');
     }, []);
 
-    const selectServer = async (server: Server) => {
+    async function selectServer(server: Server) {
         await launcherAPI.scenes.serversList.selectServer(server);
         navigate('/ServerPanel');
-    };
+    }
 
     return (
         <div className={classes.window}>
