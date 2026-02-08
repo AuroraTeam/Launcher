@@ -1,6 +1,7 @@
-import { HttpHelper } from '@aurora-launcher/core';
+import { HttpHelper, JsonHelper } from '@aurora-launcher/core';
 import { api } from '@config';
 
+import { LogHelper } from '../../helpers/LogHelper';
 import { IAuthProvider } from './IAuthProvider';
 
 export class InternalAuthProvider implements IAuthProvider {
@@ -42,11 +43,18 @@ export class InternalAuthProvider implements IAuthProvider {
         });
     }
 
-    verify(accessToken: string, clientToken?: string) {
-        return HttpHelper.postJson<boolean>(
-            new URL('/authlib/authserver/validate', this.injectorEndpoint),
-            { accessToken, clientToken },
-        );
+    async verify(accessToken: string, clientToken?: string) {
+        try {
+            await HttpHelper.post(
+                new URL('/authlib/authserver/validate', this.injectorEndpoint),
+                JsonHelper.stringify({ accessToken, clientToken }),
+                { 'Content-Type': 'application/json' },
+            );
+            return true;
+        } catch (error) {
+            LogHelper.error('Failed to verify access token', error);
+            return false;
+        }
     }
 
     logout(accessToken: string, clientToken?: string) {

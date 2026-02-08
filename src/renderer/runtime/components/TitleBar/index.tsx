@@ -1,8 +1,13 @@
-import { useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
-import If from '../If';
-import classes from './index.module.sass';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { deleteUserData } from '../../../utils';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
+import If from '../If';
+import { SkinView2d } from '../SkinView2d';
+import { useTitlebar } from './hooks';
+import classes from './index.module.sass';
 import {
     titlebarBackBtn,
     titlebarLogout,
@@ -10,10 +15,6 @@ import {
     titlebarTitle,
     titlebarUser,
 } from './states';
-import { SkinView2d } from '../SkinView2d'
-import { deleteUserData } from '../../../utils';
-import { useTitlebar } from './hooks';
-import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 export default function TitleBar() {
     const backBtn = useAtomValue(titlebarBackBtn);
@@ -41,8 +42,8 @@ export default function TitleBar() {
     function logout() {
         deleteUserData();
         hideTitlebarSettingsBtn();
-        setTitlebarUserText("");
-        launcherAPI.scenes.settings.setField('token', "");
+        setTitlebarUserText('');
+        launcherAPI.scenes.settings.setField('token', '');
         navigate('/');
     }
     function toSettings() {
@@ -99,7 +100,7 @@ export default function TitleBar() {
                         </svg>
                     </button>
                 </If>
-                <LanguageSwitcher/>
+                <LanguageSwitcher />
                 <button className={classes.hide} onClick={hide}>
                     <svg width="24" height="24" viewBox="0 0 24 24">
                         <path d="M19 13H5V11H19V13Z" fill="white" />

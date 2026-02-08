@@ -121,7 +121,7 @@ export class DiscordRPC implements IHandleable {
     }
 
     private placeholders(text: string) {
-        const userArgs = this.authorizationService.getCurrentSession();
+        const userArgs = this.authorizationService.session;
         const server = this.gameService.getServer();
 
         if (!userArgs) throw new Error('Auth requierd');

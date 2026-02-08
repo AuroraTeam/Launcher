@@ -8,13 +8,13 @@ export const EVENTS = {
         OPEN_DIR: 'window:openDir',
     },
     RPC: {
-        UPDATE_ACTIVITY: 'discordrpc:updateactivty',
-        CLEAR_ACTIVITY: 'discordrpc:clearactivity'
+        UPDATE_ACTIVITY: 'discordrpc:updateActivity',
+        CLEAR_ACTIVITY: 'discordrpc:clearActivity',
     },
     SCENES: {
         LOGIN: {
+            INITIALIZE: 'scenes:login:initialize',
             AUTH: 'scenes:login:auth',
-            AUTH_TOKEN: 'scenes:login:authToken',
         },
         SERVERS_LIST: {
             GET_SERVERS: 'scenes:serversList:getServers',

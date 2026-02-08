@@ -71,7 +71,7 @@ export class Starter {
         const clientVersion = coerce(profile.version);
         if (clientVersion === null) throw new Error('Invalig client version');
 
-        const userArgs = this.authorizationService.getCurrentSession();
+        const userArgs = this.authorizationService.session;
         if (!userArgs) throw new Error('Auth requierd');
 
         const gameArgs: string[] = [];
@@ -104,11 +104,16 @@ export class Starter {
             await this.authlibInjector.verify();
 
             jvmArgs.push(
-                `-javaagent:${this.authlibInjector.authlibFilePath}=${this.authorizationService.getInjectorEndpoint()}`,
+                `-javaagent:${this.authlibInjector.authlibFilePath}=${this.authorizationService.injectorEndpoint}`,
             );
         }
 
-        jvmArgs.push(`-Xmx` + settings.memory + `M`);
+        const memory = settings.clients.find(
+            ({ clientId }) => clientId === profile.uuid,
+        )?.memory;
+        if (memory) {
+            jvmArgs.push(`-Xmx` + memory + `M`);
+        }
 
         jvmArgs.push(`-Djava.library.path=${this.#nativesDirectory}`);
 

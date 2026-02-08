@@ -23,7 +23,10 @@ export default function ServersList() {
         showTitlebarLogoutBtn();
         showTitlebarSettingsBtn();
         resetTitlebarTitleText();
-        launcherAPI.scenes.serversList.getServers().then(setServers);
+        launcherAPI.scenes.serversList
+            .getServers()
+            .then(setServers)
+            .catch(console.error);
         launcherAPI.rpc.updateActivity('default');
     }, []);
 

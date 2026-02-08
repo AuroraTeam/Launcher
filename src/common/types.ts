@@ -2,6 +2,7 @@ export interface Session {
     username: string;
     userUUID: string;
     accessToken: string;
+    clientToken: string;
 }
 
 export interface LoadProgress {
@@ -11,10 +12,16 @@ export interface LoadProgress {
 }
 
 export interface SettingsFormat {
-    token?: string;
-    dir?: string;
-    autoConnect?: boolean;
-    fullScreen?: boolean;
-    memory?: number;
-    startDebug?: boolean;
+    username: string;
+    userUUID: string;
+    accessToken: string;
+    clientToken: string;
+    dir: string;
+    startDebug: boolean;
+    autoConnect: boolean;
+    fullScreen: boolean;
+    clients: {
+        clientId: string;
+        memory: number;
+    }[];
 }

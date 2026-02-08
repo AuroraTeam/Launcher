@@ -1,6 +1,7 @@
 import { cp, rename, rm } from 'fs/promises';
 import { homedir } from 'os';
 import { resolve } from 'path';
+import { join } from 'path/posix';
 
 import { StorageHelper as CoreStorageHelper } from '@aurora-launcher/core';
 import { appPath } from '@config';
@@ -9,11 +10,30 @@ import { app } from 'electron';
 import { PlatformHelper } from './PlatformHelper';
 
 export class StorageHelper extends CoreStorageHelper {
-    static readonly storageDir = this.getStorageDir();
-    static readonly assetsDir = this.resolveDir('assets');
-    static readonly clientsDir = this.resolveDir('clients');
-    static readonly librariesDir = this.resolveDir('libraries');
-    static readonly javaDir = this.resolveDir('java');
+    static storageDir = this.getStorageDir();
+    static assetsDir: string;
+    static clientsDir: string;
+    static librariesDir: string;
+    static javaDir: string;
+
+    private static resolveDirs() {
+        this.assetsDir = this.resolveDir('assets');
+        this.clientsDir = this.resolveDir('clients');
+        this.librariesDir = this.resolveDir('libraries');
+        this.javaDir = this.resolveDir('java');
+    }
+
+    static changeStorageDir(newPath: string) {
+        this.storageDir = newPath;
+        this.resolveDirs();
+    }
+
+    static async migration(path: string) {
+        await this.move(this.assetsDir, join(path, 'assets'));
+        await this.move(this.clientsDir, join(path, 'clients'));
+        await this.move(this.librariesDir, join(path, 'libraries'));
+        await this.move(this.javaDir, join(path, 'java'));
+    }
 
     private static getStorageDir() {
         if (PlatformHelper.isMac) {

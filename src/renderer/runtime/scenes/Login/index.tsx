@@ -24,15 +24,11 @@ export default function Login() {
     const { t } = useTranslation('common');
 
     useEffect(() => {
-        launcherAPI.scenes.settings.getAllFields().then((res) => {
-            if (res.token != '')
-                launcherAPI.scenes.login.authToken().then((userData) => {
-                    setUserData(userData);
-                    setTitlebarUserText(userData.username);
-                    showTitlebarSettingsBtn();
-                    navigate('ServersList');
-                });
+        launcherAPI.scenes.login.initialize().then(() => {
+            showTitlebarSettingsBtn();
+            navigate('ServersList');
         });
+
         hideTitlebarLogoutBtn();
     }, []);
 

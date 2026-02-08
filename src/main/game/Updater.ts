@@ -48,7 +48,7 @@ export class Updater {
         const assetFile = await HttpHelper.getResource(assetIndexUrl);
         await writeFile(filePath, assetFile);
 
-        const { objects } = JsonHelper.fromJson<MojangAssets>(assetFile);
+        const { objects } = JsonHelper.parse<MojangAssets>(assetFile);
 
         const assetsHashes = Object.values(objects)
             .sort((a, b) => b.size - a.size)

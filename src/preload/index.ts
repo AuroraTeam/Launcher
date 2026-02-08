@@ -1,11 +1,11 @@
 import { contextBridge } from 'electron';
 
 import LoginScene from './components/LoginScene';
+import RPC from './components/RPC';
 import ServerPanel from './components/ServerPanelScene';
 import ServersList from './components/ServersListScene';
 import Settings from './components/SettingsScene';
 import Window from './components/Window';
-import RPC from './components/RPC'
 
 // export для типизации
 export const API = {
@@ -19,12 +19,12 @@ export const API = {
     },
     rpc: {
         updateActivity: RPC.updateActivity,
-        clearActivity: RPC.clearActivity
+        clearActivity: RPC.clearActivity,
     },
     scenes: {
         login: {
             auth: LoginScene.auth,
-            authToken: LoginScene.authToken,
+            initialize: LoginScene.initialize,
         },
         serversList: {
             getServers: ServersList.getServers,
