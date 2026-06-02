@@ -22,6 +22,7 @@ import { AuthlibInjector } from './AuthlibInjector';
 import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
 import { Watcher } from './Watcher';
+import { LibrariesMatcher } from './LibrariesMatcher';
 
 @Service([
     LauncherWindow,
@@ -246,7 +247,11 @@ export class Starter {
         const nativesFiles: { path: string; sha1: string }[] = [];
 
         libraries
-            .filter(({ type }) => type === 'native')
+            .filter(
+                (library) =>
+                    library.type === 'native' &&
+                    LibrariesMatcher.match(library.rules),
+            )
             .forEach(async ({ path }) => {
                 try {
                     nativesFiles.push(
