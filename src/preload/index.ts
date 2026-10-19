@@ -40,7 +40,7 @@ export const API = {
             setField: Settings.setField,
             getField: Settings.getField,
             getAllFields: Settings.getAllFields,
-            getTotalMemory: Settings.getTotalMemory,
+            getMemoryLimits: Settings.getMemoryLimits,
         },
     },
 };

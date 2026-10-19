@@ -1,12 +1,17 @@
+import { ChangeEventHandler } from 'react';
+
+import { MEMORY_STEP_MB, MIN_MEMORY_MB } from '../../../../common/memory';
 import classes from './index.module.sass';
 
 interface MemoryRangeProps {
-    value: any;
-    onChange: (e: any) => void;
+    id?: string;
+    value: number;
+    onChange: ChangeEventHandler<HTMLInputElement>;
     limit: number;
 }
 
 export function MemoryRange({
+    id,
     value,
     onChange,
     limit = 16384,
@@ -15,11 +20,12 @@ export function MemoryRange({
         <div>
             <div className={classes.wrapper}>
                 <input
+                    id={id}
                     className={classes.range}
-                    min={1024}
+                    min={MIN_MEMORY_MB}
                     max={limit}
-                    value={value ?? ''}
-                    step={256}
+                    value={value}
+                    step={MEMORY_STEP_MB}
                     onChange={onChange}
                     type="range"
                 />

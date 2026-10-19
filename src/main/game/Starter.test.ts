@@ -7,6 +7,7 @@ import { beforeEach, expect, it, vi } from 'vitest';
 import { Starter } from './Starter';
 
 const fixtures = vi.hoisted(() => ({
+    clients: [] as { clientId: string; memory: number }[],
     unzip: vi.fn(),
     match: vi.fn(),
     spawn: vi.fn(),
@@ -23,6 +24,7 @@ vi.mock('@aurora-launcher/core', () => ({
     ZipHelper: { unzip: fixtures.unzip },
 }));
 vi.mock('child_process', () => ({ spawn: fixtures.spawn }));
+vi.mock('os', () => ({ totalmem: () => 16 * 1024 ** 3 }));
 vi.mock('electron', () => ({ app: { getVersion: () => 'test' } }));
 vi.mock('../helpers/StorageHelper', () => ({
     StorageHelper: fixtures.storage,
@@ -30,7 +32,7 @@ vi.mock('../helpers/StorageHelper', () => ({
 vi.mock('../helpers/SettingsHelper', () => ({
     SettingsHelper: {
         getAllFields: () => ({
-            clients: [],
+            clients: fixtures.clients,
             fullScreen: false,
             autoConnect: false,
         }),
@@ -61,6 +63,7 @@ const native = (path: string): ProfileLibrary => ({
 const profile = (libraries: ProfileLibrary[] = []) =>
     ({
         clientDir: 'test',
+        uuid: 'test-profile',
         javaVersion: 17,
         version: '1.20.1',
         libraries,
@@ -97,11 +100,42 @@ function makeStarter(useInjector = false) {
 }
 
 beforeEach(() => {
+    fixtures.clients = [];
     vi.clearAllMocks();
     fixtures.unzip.mockReset().mockResolvedValue([]);
     fixtures.match.mockReset().mockReturnValue(true);
     fixtures.spawn.mockReset();
 });
+
+it.each([undefined, 3072, 10240, 12288])(
+    'passes the profile memory or its default to Java (%s)',
+    async (memory) => {
+        fixtures.clients = [{ clientId: 'other', memory: 4096 }];
+        if (memory !== undefined)
+            fixtures.clients.push({ clientId: 'test-profile', memory });
+        const child = Object.assign(new EventEmitter(), {
+            stdout: new EventEmitter(),
+            stderr: new EventEmitter(),
+        });
+        fixtures.spawn.mockImplementation(() => {
+            queueMicrotask(() => child.emit('spawn'));
+            return child;
+        });
+        const { starter } = makeStarter();
+        await starter.prestart(profile());
+        const args = [
+            profile(),
+            [],
+            {},
+            { stop: vi.fn() },
+        ] as unknown as Parameters<Starter['start']>;
+        await starter.start(...args);
+        expect(fixtures.spawn.mock.calls[0][1]).toContain(
+            `-Xmx${memory ?? 2048}M`,
+        );
+        expect(fixtures.spawn.mock.calls[0][1]).not.toContain('-Xmx4096M');
+    },
+);
 
 it('prestart waits for every native archive and preserves extraction order', async () => {
     let finish!: () => void;

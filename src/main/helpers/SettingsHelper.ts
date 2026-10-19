@@ -40,11 +40,7 @@ export class SettingsHelper {
         };
     }
 
-    static getStore() {
-        return this.store;
-    }
-
-    static getAllFields(): SettingsFormat {
+    static getAllFields(): Readonly<SettingsFormat> {
         return this.store.store;
     }
 

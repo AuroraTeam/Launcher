@@ -33,7 +33,7 @@ export const EVENTS = {
             SET_FIELD: 'scenes:settings:setField',
             GET_FIELD: 'scenes:settings:getField',
             GET_ALL_FIELDS: 'scenes:settings:getAllFields',
-            GET_TOTAL_MEMORY: 'scenes:settings:getTotalMemory',
+            GET_MEMORY_LIMITS: 'scenes:settings:getMemoryLimits',
         },
     },
 };

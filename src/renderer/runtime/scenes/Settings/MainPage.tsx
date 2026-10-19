@@ -1,41 +1,44 @@
-import classes from './index.module.sass';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { SettingsFormat } from '../../../../common/types';
-import { MemoryRange } from '../../components/MemoryRange';
+import classes from './index.module.sass';
 
 export default function MainPage() {
     const { t } = useTranslation('common');
-    const [settings, setSettings] = useState<SettingsFormat>({});
-    const [totalMemory, SetTotalMemory] = useState(0);
+    const [settings, setSettings] = useState<SettingsFormat>();
+    const [error, setError] = useState('');
 
     useEffect(() => {
         launcherAPI.scenes.settings
             .getAllFields()
-            .then((res) => setSettings(res));
-        launcherAPI.scenes.settings
-            .getTotalMemory()
-            .then((res) => SetTotalMemory(res));
+            .then(setSettings)
+            .catch(() => setError(t('settings.loadError')));
     }, []);
 
-    const setValue = (field: string, value: any) => {
+    const setValue = <T extends keyof SettingsFormat>(
+        field: T,
+        value: SettingsFormat[T],
+    ) => {
+        if (!settings) return;
         setSettings({
             ...settings,
             [field]: value,
         });
-        launcherAPI.scenes.settings.setField(field, value);
+        launcherAPI.scenes.settings
+            .setField(field, value)
+            .catch(() => setError(t('settings.saveError')));
     };
-    return(
+    if (!settings) return <p role="status">{error || t('settings.loading')}</p>;
+    return (
         <div className={classes.options}>
+            {error && <p role="alert">{error}</p>}
             <label className={classes.checkbox}>
                 <input
                     type="checkbox"
                     checked={settings.fullScreen}
                     onChange={(e) =>
-                        setValue(
-                            'fullScreen',
-                            Boolean(e.target.checked),
-                        )
+                        setValue('fullScreen', Boolean(e.target.checked))
                     }
                 />
                 <span className={classes.checkboxSwitch}></span>
@@ -46,10 +49,7 @@ export default function MainPage() {
                     type="checkbox"
                     checked={settings.startDebug}
                     onChange={(e) =>
-                        setValue(
-                            'startDebug',
-                            Boolean(e.target.checked),
-                        )
+                        setValue('startDebug', Boolean(e.target.checked))
                     }
                 />
                 <span className={classes.checkboxSwitch}></span>
@@ -60,26 +60,12 @@ export default function MainPage() {
                     type="checkbox"
                     checked={settings.autoConnect}
                     onChange={(e) =>
-                        setValue(
-                            'autoConnect',
-                            Boolean(e.target.checked),
-                        )
+                        setValue('autoConnect', Boolean(e.target.checked))
                     }
                 />
                 <span className={classes.checkboxSwitch}></span>
                 {t('settings.autoconnect')}
             </label>
-            <label>
-                {t('settings.memory')} {settings.memory}MB
-            </label>
-            <br />
-            <MemoryRange
-                limit={totalMemory}
-                onChange={(e) =>
-                    setValue('memory', Number(e.target.value))
-                }
-                value={settings.memory}
-            />
             <label>{t('settings.dir')}</label>
             <br />
             <div className={classes.changeDir}>

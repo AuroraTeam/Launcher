@@ -1,11 +1,10 @@
-import { totalmem } from 'os';
-
 import { Service } from '@freshgum/typedi';
 import { ipcMain } from 'electron';
 
 import { EVENTS } from '../../common/channels';
 import { SettingsFormat } from '../../common/types';
 import { IHandleable } from '../core/IHandleable';
+import { getMemoryLimits } from '../helpers/MemoryHelper';
 import { SettingsHelper } from '../helpers/SettingsHelper';
 
 @Service([])
@@ -30,15 +29,8 @@ export class SettingsScene implements IHandleable {
             SettingsHelper.getAllFields(),
         );
 
-        ipcMain.handle(EVENTS.SCENES.SETTINGS.GET_TOTAL_MEMORY, () => {
-            const remainingMemMegabytes =
-                Math.floor(totalmem() / 1024 ** 2) / 2;
-
-            return (
-                remainingMemMegabytes -
-                (remainingMemMegabytes % 1024) +
-                (remainingMemMegabytes % 1024 ? 1024 : 0)
-            );
-        });
+        ipcMain.handle(EVENTS.SCENES.SETTINGS.GET_MEMORY_LIMITS, () =>
+            getMemoryLimits(),
+        );
     }
 }

@@ -7,6 +7,11 @@
         "dir": "Location of the game",
         "dirEdit": "Change directory",
         "memory": "Allocated RAM:",
+        "memoryRecommended": "Recommended maximum: {{memory}} MB.",
+        "memoryWarning": "You have allocated more than half of your RAM to the game. This may slow down your system and other applications.",
+        "loading": "Loading settings…",
+        "loadError": "Could not load settings.",
+        "saveError": "Could not save settings.",
         "version": "Launcher version:",
         "sidebar": {
             "main": "Basic",

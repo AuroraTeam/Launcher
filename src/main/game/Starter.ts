@@ -11,12 +11,14 @@ import { Service } from '@freshgum/typedi';
 import { app } from 'electron';
 import { coerce, gte, lte } from 'semver';
 
+import { getClientMemory } from '../../common/memory';
 import { Session } from '../../common/types';
 import { LauncherWindow } from '../../main/core/LauncherWindow';
 import { LogHelper } from '../../main/helpers/LogHelper';
 import { SettingsHelper } from '../../main/helpers/SettingsHelper';
 import { StorageHelper } from '../../main/helpers/StorageHelper';
 import { AuthorizationService } from '../api/AuthorizationService';
+import { getMemoryLimits } from '../helpers/MemoryHelper';
 import { PlatformHelper } from '../helpers/PlatformHelper';
 import { AuthlibInjector } from './AuthlibInjector';
 import { GameWindow } from './GameWindow';
@@ -109,12 +111,12 @@ export class Starter {
             );
         }
 
-        const memory = settings.clients.find(
-            ({ clientId }) => clientId === profile.uuid,
-        )?.memory;
-        if (memory) {
-            jvmArgs.push(`-Xmx` + memory + `M`);
-        }
+        const memory = getClientMemory(
+            settings.clients,
+            profile.uuid,
+            getMemoryLimits().maximum,
+        );
+        jvmArgs.push(`-Xmx${memory}M`);
 
         jvmArgs.push(`-Djava.library.path=${this.#nativesDirectory}`);
 

@@ -5,11 +5,11 @@ import { EVENTS } from '../../common/channels';
 import { LoadProgress } from '../../common/types';
 
 export default class ServerPanelScene {
-    static getProfile(): Promise<Profile> {
+    static getProfile(): Promise<Profile | undefined> {
         return ipcRenderer.invoke(EVENTS.SCENES.SERVER_PANEL.GET_PROFILE);
     }
 
-    static getServer(): Promise<Server> {
+    static getServer(): Promise<Server | undefined> {
         return ipcRenderer.invoke(EVENTS.SCENES.SERVER_PANEL.GET_SERVER);
     }
 
