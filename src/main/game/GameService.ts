@@ -74,6 +74,7 @@ export class GameService {
 
             this.gameWatcher.setGameProcess(gameProcess);
         } catch (error) {
+            this.gameWatcher.stop();
             this.gameWindow.sendToConsole(`${error}`);
             this.gameWindow.stopGame();
             throw error;

@@ -1,61 +1,69 @@
-// import 'reflect-metadata';
+import { EventEmitter } from 'events';
+import { join } from 'path';
 
-// import { Container } from '@freshgum/typedi';
-// import { expect, test } from 'vitest';
+import { beforeEach, expect, it, vi } from 'vitest';
 
-// import { Watcher } from './Watcher';
+import { Watcher } from './Watcher';
 
-// const processStub = {
-//     kill: () => {
-//         console.log('killed');
-//     },
-// };
+const fixtures = vi.hoisted(() => ({ watch: vi.fn(), compare: vi.fn() }));
+vi.mock('@freshgum/typedi', () => ({
+    Service: () => (target: unknown) => target,
+}));
+vi.mock('@aurora-launcher/core', () => ({
+    HashHelper: { compareFileHash: fixtures.compare },
+}));
+vi.mock('chokidar', () => ({ watch: fixtures.watch }));
+vi.mock('../../helpers/LogHelper', () => ({
+    LogHelper: { debug() {}, error() {} },
+}));
+vi.mock('../../helpers/StorageHelper', () => ({
+    StorageHelper: { clientsDir: '/clients', librariesDir: '/libraries' },
+}));
 
-// const watcher = Container.get(Watcher);
+let events: EventEmitter & { close: ReturnType<typeof vi.fn> };
+const profile = { clientDir: 'test', updateVerify: [], updateExclusions: [] };
 
-// test('add correct file [lib example]', () => {
-//     expect(
-//         watcher.addEventChecker(
-//             'libraries/test/lib.jar',
-//             ['libraries/test/lib.jar'],
-//             [],
-//             processStub,
-//         ),
-//     ).not.toBe('killed');
-// });
+beforeEach(() => {
+    vi.clearAllMocks();
+    events = Object.assign(new EventEmitter(), {
+        close: vi.fn().mockResolvedValue(undefined),
+    });
+    fixtures.watch.mockReturnValue(events);
+    fixtures.compare.mockReset().mockResolvedValue(true);
+});
 
-// test('add correct file [updateVerify path example (mods)]', () => {
-//     expect(
-//         watcher.addEventChecker('mods/test/mod.jar', ['mods'], [], processStub),
-//     ).not.toBe('killed');
-// });
+it('uses the prepared native hash without stopping a valid game', async () => {
+    const watcher = new Watcher();
+    const game = { kill: vi.fn() };
+    await watcher.start(
+        profile,
+        [],
+        [{ path: 'native.dll', sha1: 'expected' }],
+        [],
+    );
+    watcher.setGameProcess(game);
+    events.emit('add', join('/clients', 'test', 'natives', 'native.dll'));
+    await vi.waitFor(() => expect(fixtures.compare).toHaveBeenCalledOnce());
+    expect(fixtures.compare.mock.calls[0]?.slice(1)).toEqual([
+        'sha1',
+        'expected',
+    ]);
+    expect(game.kill).not.toHaveBeenCalled();
+    watcher.stop();
+});
 
-// test('add incorrect file [lib example]', () => {
-//     expect(
-//         watcher.addEventChecker(
-//             'libraries/test/not-whitelisted.jar',
-//             ['libraries/test/lib.jar'],
-//             [],
-//             processStub,
-//         ),
-//     ).toBe('killed');
-// });
-
-// test('add incorrect file [updateVerify path example (mods)]', () => {
-//     expect(
-//         watcher.addEventChecker('mods/test/mod.jar', ['mods'], [], processStub),
-//     ).toBe('killed');
-// });
-
-// test('add correct file [updateExclusions example]', () => {
-//     expect(
-//         watcher.addEventChecker(
-//             'mods/test/mod.jar',
-//             ['mods'],
-//             ['mods/test'],
-//             processStub,
-//         ),
-//     ).not.toBe('killed');
-// });
-
-// // TODO: add more tests [modifyEventChecker, removeEventChecker]
+it('stops the process and watcher if an extracted native changes', async () => {
+    fixtures.compare.mockResolvedValue(false);
+    const watcher = new Watcher();
+    const game = { kill: vi.fn() };
+    await watcher.start(
+        profile,
+        [],
+        [{ path: 'native.dll', sha1: 'expected' }],
+        [],
+    );
+    watcher.setGameProcess(game);
+    events.emit('change', join('/clients', 'test', 'natives', 'native.dll'));
+    await vi.waitFor(() => expect(game.kill).toHaveBeenCalledOnce());
+    expect(events.close).toHaveBeenCalledOnce();
+});

@@ -21,8 +21,8 @@ import { PlatformHelper } from '../helpers/PlatformHelper';
 import { AuthlibInjector } from './AuthlibInjector';
 import { GameWindow } from './GameWindow';
 import { JavaManager } from './JavaManager';
-import { Watcher } from './Watcher';
 import { LibrariesMatcher } from './LibrariesMatcher';
+import { Watcher } from './Watcher';
 
 @Service([
     LauncherWindow,
@@ -52,7 +52,7 @@ export class Starter {
             this.gameWindow,
         );
 
-        const nativesFiles = this.prepareNatives(
+        const nativesFiles = await this.prepareNatives(
             this.#nativesDirectory,
             profile.libraries,
         );
@@ -180,6 +180,10 @@ export class Starter {
             this.LauncherWindow.showWindow();
         });
 
+        await new Promise<void>((resolve, reject) => {
+            gameProcess.once('spawn', resolve);
+            gameProcess.once('error', reject);
+        });
         return { gameProcess };
     }
     private gameLauncher(
@@ -243,29 +247,29 @@ export class Starter {
         }
     }
 
-    prepareNatives(nativesDir: string, libraries: ProfileLibrary[]) {
-        const nativesFiles: { path: string; sha1: string }[] = [];
+    async prepareNatives(nativesDir: string, libraries: ProfileLibrary[]) {
+        const nativesFiles = new Map<string, { path: string; sha1: string }>();
 
-        libraries
-            .filter(
-                (library) =>
-                    library.type === 'native' &&
-                    LibrariesMatcher.match(library.rules),
-            )
-            .forEach(async ({ path }) => {
-                try {
-                    nativesFiles.push(
-                        ...(await ZipHelper.unzip(
-                            join(StorageHelper.librariesDir, path),
-                            nativesDir,
-                            ['.so', '.dylib', '.jnilib', '.dll'],
-                        )),
-                    );
-                } catch (error) {
-                    LogHelper.error(error);
-                }
-            });
+        const nativeLibraries = libraries.filter(
+            (library) =>
+                library.type === 'native' &&
+                LibrariesMatcher.match(library.rules),
+        );
+        for (const { path } of nativeLibraries) {
+            try {
+                const extracted = await ZipHelper.unzip(
+                    join(StorageHelper.librariesDir, path),
+                    nativesDir,
+                    ['.so', '.dylib', '.jnilib', '.dll'],
+                );
+                for (const file of extracted) nativesFiles.set(file.path, file);
+            } catch (error) {
+                throw new Error(`Failed to unpack native library: ${path}`, {
+                    cause: error,
+                });
+            }
+        }
 
-        return nativesFiles;
+        return [...nativesFiles.values()];
     }
 }
