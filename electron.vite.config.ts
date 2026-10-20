@@ -1,48 +1,24 @@
-import { join } from 'path';
+import { join } from "path";
 
-import { defineConfig, defineViteConfig } from 'electron-vite';
+import { defineConfig } from "electron-vite";
 
 const toDir = (dir: string) => join(__dirname, dir);
 
 export default defineConfig({
-    main: defineViteConfig(({ command }) => {
-        if (command === 'build') {
-            return {
-                plugins: [],
-                build: {
-                    sourcemap: true,
-                    minify: true,
+    main: {
+        build: {
+            sourcemap: true,
+            minify: true,
+        },
+        resolve: {
+            alias: [
+                {
+                    find: "@config",
+                    replacement: toDir("config.ts"),
                 },
-                resolve: {
-                    alias: [
-                        {
-                            find: '@config',
-                            replacement: toDir('config.ts'),
-                        },
-                    ],
-                },
-            };
-        }
-        return {
-            plugins: [],
-            build: {
-                sourcemap: true,
-                rollupOptions: {
-                    treeshake: {
-                        annotations: false,
-                    },
-                },
-            },
-            resolve: {
-                alias: [
-                    {
-                        find: '@config',
-                        replacement: toDir('config.ts'),
-                    },
-                ],
-            },
-        };
-    }),
+            ],
+        },
+    },
     preload: {
         build: {
             sourcemap: true,
@@ -57,8 +33,8 @@ export default defineConfig({
         resolve: {
             alias: [
                 {
-                    find: '@config',
-                    replacement: toDir('config.ts'),
+                    find: "@config",
+                    replacement: toDir("config.ts"),
                 },
             ],
         },

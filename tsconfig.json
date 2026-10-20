@@ -8,16 +8,14 @@
         "useDefineForClassFields": true,
         "allowJs": false,
         "skipLibCheck": true,
-        "esModuleInterop": false,
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "isolatedModules": true,
         "noEmit": true,
-        "baseUrl": "src",
         "paths": {
-            "@config": ["../config.ts"]
+            "@config": ["./config.ts"]
         },
         "jsx": "react-jsx"
     },
