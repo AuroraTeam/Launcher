@@ -1,13 +1,13 @@
-import { join } from 'path';
+import { join } from "path";
 
-import { HashHelper, HashedFile, ProfileLibrary } from '@aurora-launcher/core';
-import { Service } from '@freshgum/typedi';
-import { FSWatcher, watch } from 'chokidar';
+import { HashHelper, HashedFile, ProfileLibrary } from "@aurora-launcher/core";
+import { Service } from "@freshgum/typedi";
+import { FSWatcher, watch } from "chokidar";
 
-import { LogHelper } from '../../helpers/LogHelper';
-import { StorageHelper } from '../../helpers/StorageHelper';
-import { IProcess } from './IProcess';
-import { WatcherProfile } from './WatcherProfile';
+import { LogHelper } from "../../helpers/LogHelper";
+import { StorageHelper } from "../../helpers/StorageHelper";
+import { IProcess } from "./IProcess";
+import { WatcherProfile } from "./WatcherProfile";
 
 interface WathedFile {
     path: string;
@@ -26,7 +26,7 @@ export class Watcher {
     #excludeList: string[] = [];
 
     setGameProcess(gameProcess: IProcess) {
-        LogHelper.debug('[Watcher] Game process set');
+        LogHelper.debug("[Watcher] Game process set");
         this.#gameProcess = gameProcess;
         if (this.#needKill) {
             gameProcess.kill();
@@ -54,17 +54,15 @@ export class Watcher {
         );
 
         const libs = libraries
-            .filter((library) => library.type === 'library')
+            .filter((library) => library.type === "library")
             .map(({ path, sha1 }) => ({
-                path: this.#normalizePath(
-                    join(StorageHelper.librariesDir, path),
-                ),
+                path: this.#normalizePath(join(StorageHelper.librariesDir, path)),
                 sha1,
             }));
         this.#filesList.push(...libs);
         libs.forEach(({ path }) => this.#verifyList.push(path));
 
-        const nativesDir = join(this.#clientDir, 'natives');
+        const nativesDir = join(this.#clientDir, "natives");
         const formattedNatives = natives.map(({ path, sha1 }) => ({
             path: this.#normalizePath(join(nativesDir, path)),
             sha1,
@@ -74,40 +72,29 @@ export class Watcher {
         formattedNatives.forEach(({ path }) => this.#verifyList.push(path));
 
         this.#watcher = watch(this.#verifyList)
-            .on('add', (path) =>
-                this.#addEventChecker(this.#normalizePath(path)),
-            )
-            .on('change', (path) =>
-                this.#modifyEventChecker(this.#normalizePath(path)),
-            )
-            .on('unlink', (path) =>
-                this.#removeEventChecker(this.#normalizePath(path)),
-            );
+            .on("add", (path) => this.#addEventChecker(this.#normalizePath(path)))
+            .on("change", (path) => this.#modifyEventChecker(this.#normalizePath(path)))
+            .on("unlink", (path) => this.#removeEventChecker(this.#normalizePath(path)));
     }
 
     stop() {
-        LogHelper.debug('[Watcher] Stopped');
+        LogHelper.debug("[Watcher] Stopped");
         this.#needKill = false;
         this.#watcher?.close();
     }
 
     async #addEventChecker(path: string) {
-        LogHelper.debug('[Watcher] File added: ' + path);
+        LogHelper.debug("[Watcher] File added: " + path);
         if (
             this.#includeOrContains(this.#verifyList, path) &&
             !this.#includeOrContains(this.#excludeList, path)
         ) {
-            const hash = this.#filesList.find((file) =>
-                path.includes(file.path),
-            )?.sha1;
+            const hash = this.#filesList.find((file) => path.includes(file.path))?.sha1;
 
-            if (
-                !hash ||
-                !(await HashHelper.compareFileHash(path, 'sha1', hash))
-            ) {
+            if (!hash || !(await HashHelper.compareFileHash(path, "sha1", hash))) {
                 LogHelper.error(
-                    '[Watcher] File tampering detected',
-                    path.replace(this.#clientDir, ''),
+                    "[Watcher] File tampering detected",
+                    path.replace(this.#clientDir, ""),
                 );
                 this.#killProcess();
             }
@@ -115,22 +102,17 @@ export class Watcher {
     }
 
     async #modifyEventChecker(path: string) {
-        LogHelper.debug('[Watcher] File modified: ' + path);
+        LogHelper.debug("[Watcher] File modified: " + path);
         if (
             this.#includeOrContains(this.#verifyList, path) &&
             !this.#includeOrContains(this.#excludeList, path)
         ) {
-            const hash = this.#filesList.find((file) =>
-                path.includes(file.path),
-            )?.sha1;
+            const hash = this.#filesList.find((file) => path.includes(file.path))?.sha1;
 
-            if (
-                !hash ||
-                !(await HashHelper.compareFileHash(path, 'sha1', hash))
-            ) {
+            if (!hash || !(await HashHelper.compareFileHash(path, "sha1", hash))) {
                 LogHelper.error(
-                    '[Watcher] File tampering detected',
-                    path.replace(this.#clientDir, ''),
+                    "[Watcher] File tampering detected",
+                    path.replace(this.#clientDir, ""),
                 );
                 this.#killProcess();
             }
@@ -138,27 +120,22 @@ export class Watcher {
     }
 
     #removeEventChecker(path: string) {
-        LogHelper.debug('[Watcher] File removed: ' + path);
+        LogHelper.debug("[Watcher] File removed: " + path);
         if (
             this.#includeOrContains(this.#verifyList, path) &&
             !this.#includeOrContains(this.#excludeList, path)
         ) {
-            LogHelper.error(
-                '[Watcher] File tampering detected',
-                path.replace(this.#clientDir, ''),
-            );
+            LogHelper.error("[Watcher] File tampering detected", path.replace(this.#clientDir, ""));
             this.#killProcess();
         }
     }
 
     #includeOrContains(list: string[], path: string): boolean {
-        return (
-            list.includes(path) || list.some((file) => path.startsWith(file))
-        );
+        return list.includes(path) || list.some((file) => path.startsWith(file));
     }
 
     #killProcess() {
-        LogHelper.debug('[Watcher] Process killed');
+        LogHelper.debug("[Watcher] Process killed");
         if (this.#gameProcess) {
             this.#gameProcess.kill();
             this.stop();
@@ -168,6 +145,6 @@ export class Watcher {
     }
 
     #normalizePath(path: string) {
-        return path.replace(/\\/g, '/');
+        return path.replace(/\\/g, "/");
     }
 }

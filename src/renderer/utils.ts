@@ -2,12 +2,12 @@
  * @deprecated
  */
 export function getUserData() {
-    return JSON.parse(sessionStorage.getItem('userData') || '{}');
+    return JSON.parse(sessionStorage.getItem("userData") || "{}");
 }
 
 /**
  * @deprecated
  */
 export function setUserData(userData: object) {
-    sessionStorage.setItem('userData', JSON.stringify(userData));
+    sessionStorage.setItem("userData", JSON.stringify(userData));
 }

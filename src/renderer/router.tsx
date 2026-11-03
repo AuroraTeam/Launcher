@@ -1,10 +1,10 @@
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from "react-router-dom";
 
-import Layout from './runtime/components/Layout';
-import Login from './runtime/scenes/Login';
-import ServerPanel from './runtime/scenes/ServerPanel';
-import ServersList from './runtime/scenes/ServersList';
-import Settings from './runtime/scenes/Settings';
+import Layout from "./runtime/components/Layout";
+import Login from "./runtime/scenes/Login";
+import ServerPanel from "./runtime/scenes/ServerPanel";
+import ServersList from "./runtime/scenes/ServersList";
+import Settings from "./runtime/scenes/Settings";
 
 export function Router() {
     return (

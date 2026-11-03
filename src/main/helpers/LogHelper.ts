@@ -1,18 +1,18 @@
-import { createWriteStream } from 'fs';
-import { EOL } from 'os';
-import { join } from 'path';
-import { format } from 'util';
+import { createWriteStream } from "fs";
+import { EOL } from "os";
+import { join } from "path";
+import { format } from "util";
 
-import { StorageHelper } from './StorageHelper';
+import { StorageHelper } from "./StorageHelper";
 
 export class LogHelper {
-    static readonly isDevEnabled = process.argv.includes('--dev');
+    static readonly isDevEnabled = process.argv.includes("--dev");
     static readonly isDebugEnabled =
-        process.argv.includes('--debug') || process.argv.includes('--dev');
+        process.argv.includes("--debug") || process.argv.includes("--dev");
 
     private static readonly logFileStream = createWriteStream(
-        join(StorageHelper.storageDir, 'launcher.log'),
-        { flags: 'a' },
+        join(StorageHelper.storageDir, "launcher.log"),
+        { flags: "a" },
     );
 
     static debug(msg: any, ...args: any): void {
@@ -60,11 +60,11 @@ export class LogHelper {
 }
 
 enum LogLevel {
-    DEBUG = 'debug',
-    DEV = 'dev',
-    ERROR = 'error',
-    FATAL = 'fatal',
-    INFO = 'info',
-    RAW = 'raw',
-    WARN = 'warn',
+    DEBUG = "debug",
+    DEV = "dev",
+    ERROR = "error",
+    FATAL = "fatal",
+    INFO = "info",
+    RAW = "raw",
+    WARN = "warn",
 }

@@ -1,13 +1,13 @@
-import { cp, rename, rm } from 'fs/promises';
-import { homedir } from 'os';
-import { resolve } from 'path';
-import { join } from 'path/posix';
+import { cp, rename, rm } from "fs/promises";
+import { homedir } from "os";
+import { resolve } from "path";
+import { join } from "path/posix";
 
-import { StorageHelper as CoreStorageHelper } from '@aurora-launcher/core';
-import { appPath } from '@config';
-import { app } from 'electron';
+import { StorageHelper as CoreStorageHelper } from "@aurora-launcher/core";
+import { appPath } from "@config";
+import { app } from "electron";
 
-import { PlatformHelper } from './PlatformHelper';
+import { PlatformHelper } from "./PlatformHelper";
 
 export class StorageHelper extends CoreStorageHelper {
     static storageDir = this.getStorageDir();
@@ -21,10 +21,10 @@ export class StorageHelper extends CoreStorageHelper {
     }
 
     private static resolveDirs() {
-        this.assetsDir = this.resolveDir('assets');
-        this.clientsDir = this.resolveDir('clients');
-        this.librariesDir = this.resolveDir('libraries');
-        this.javaDir = this.resolveDir('java');
+        this.assetsDir = this.resolveDir("assets");
+        this.clientsDir = this.resolveDir("clients");
+        this.librariesDir = this.resolveDir("libraries");
+        this.javaDir = this.resolveDir("java");
     }
 
     static changeStorageDir(newPath: string) {
@@ -33,15 +33,15 @@ export class StorageHelper extends CoreStorageHelper {
     }
 
     static async migration(path: string) {
-        await this.move(this.assetsDir, join(path, 'assets'));
-        await this.move(this.clientsDir, join(path, 'clients'));
-        await this.move(this.librariesDir, join(path, 'libraries'));
-        await this.move(this.javaDir, join(path, 'java'));
+        await this.move(this.assetsDir, join(path, "assets"));
+        await this.move(this.clientsDir, join(path, "clients"));
+        await this.move(this.librariesDir, join(path, "libraries"));
+        await this.move(this.javaDir, join(path, "java"));
     }
 
     private static getStorageDir() {
         if (PlatformHelper.isMac) {
-            return resolve(app.getPath('userData'), '../', appPath);
+            return resolve(app.getPath("userData"), "../", appPath);
         }
         return resolve(homedir(), appPath);
     }
@@ -50,7 +50,7 @@ export class StorageHelper extends CoreStorageHelper {
         try {
             await rename(src, dest);
         } catch (error: any) {
-            if (error.code !== 'EXDEV') {
+            if (error.code !== "EXDEV") {
                 throw error;
             }
             await cp(src, dest, { recursive: true });

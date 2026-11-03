@@ -1,13 +1,13 @@
-import { Service } from '@freshgum/typedi';
+import { Service } from "@freshgum/typedi";
 
 // import { VerifyService } from '../api/VerifyService';
-import { LogHelper } from '../helpers/LogHelper';
-import { LoginScene } from '../scenes/Login';
-import { ServerPanelScene } from '../scenes/ServerPanel';
-import { ServersListScene } from '../scenes/ServersList';
-import { SettingsScene } from '../scenes/Settings';
-import { DiscordRPC } from './DiscordRPC';
-import { LauncherWindow } from './LauncherWindow';
+import { LogHelper } from "../helpers/LogHelper";
+import { LoginScene } from "../scenes/Login";
+import { ServerPanelScene } from "../scenes/ServerPanel";
+import { ServersListScene } from "../scenes/ServersList";
+import { SettingsScene } from "../scenes/Settings";
+import { DiscordRPC } from "./DiscordRPC";
+import { LauncherWindow } from "./LauncherWindow";
 
 @Service([
     LauncherWindow,
@@ -41,7 +41,7 @@ export class Launcher {
 
         // this.verifyService.init();
         this.window.createWindow();
-        LogHelper.info('Launcher started');
+        LogHelper.info("Launcher started");
         this.discordRPC.start();
     }
 }

@@ -1,4 +1,4 @@
-import { Platform } from '../core/System';
+import { Platform } from "../core/System";
 
 export class PlatformHelper {
     public static isMac = process.platform == Platform.MACOS;

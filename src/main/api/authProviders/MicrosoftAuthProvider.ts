@@ -1,16 +1,16 @@
-import { HttpHelper } from '@aurora-launcher/core';
+import { HttpHelper } from "@aurora-launcher/core";
 
-import { IAuthProvider } from './IAuthProvider';
+import { IAuthProvider } from "./IAuthProvider";
 
 export class MicrosoftAuthProvider implements IAuthProvider {
     readonly useInjector = false;
 
-    private authorizationEndpoint = 'https://authserver.mojang.com/';
+    private authorizationEndpoint = "https://authserver.mojang.com/";
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     auth(login: string, password: string) {
         //// TODO
-        return Promise.reject('Not implemented');
+        return Promise.reject("Not implemented");
 
         // const { id, name, skins, capes } =
         //     await HttpHelper.getResourceFromJson<{
@@ -42,23 +42,23 @@ export class MicrosoftAuthProvider implements IAuthProvider {
                 id: string;
                 name: string;
             };
-        }>(new URL('/refresh', this.authorizationEndpoint), {
+        }>(new URL("/refresh", this.authorizationEndpoint), {
             accessToken,
             clientToken,
         });
     }
 
     verify(accessToken: string, clientToken?: string) {
-        return HttpHelper.postJson<boolean>(
-            new URL('/validate', this.authorizationEndpoint),
-            { accessToken, clientToken },
-        );
+        return HttpHelper.postJson<boolean>(new URL("/validate", this.authorizationEndpoint), {
+            accessToken,
+            clientToken,
+        });
     }
 
     logout(accessToken: string, clientToken?: string) {
-        return HttpHelper.postJson<void>(
-            new URL('/invalidate', this.authorizationEndpoint),
-            { accessToken, clientToken },
-        );
+        return HttpHelper.postJson<void>(new URL("/invalidate", this.authorizationEndpoint), {
+            accessToken,
+            clientToken,
+        });
     }
 }

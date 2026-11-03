@@ -1,17 +1,18 @@
-import { Server } from '@aurora-launcher/core';
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Server } from "@aurora-launcher/core";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import { LoadProgress } from '../../../../common/types';
-import { SettingsFormat } from '../../../../common/types';
-import If from '../../components/If';
-import { useTitlebar } from '../../components/TitleBar/hooks';
-import { usePingServer } from '../../hooks/pingServer';
-import classes from './index.module.sass';
+import { LoadProgress } from "../../../../common/types";
+import { SettingsFormat } from "../../../../common/types";
+import If from "../../components/If";
+import { useTitlebar } from "../../components/TitleBar/hooks";
+import { usePingServer } from "../../hooks/pingServer";
+
+import classes from "./index.module.sass";
 
 // TODO Refactoring scene
 export default function ServerPanel() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation("common");
 
     const [selectedServer, setSelectedServer] = useState<Server>();
     const players = usePingServer(selectedServer);
@@ -40,10 +41,8 @@ export default function ServerPanel() {
         hideTitlebarLogoutBtn();
         showTitlebarBackBtn();
         resetTitlebarTitleText();
-        launcherAPI.scenes.settings
-            .getAllFields()
-            .then((res) => setSettings(res));
-        launcherAPI.rpc.updateActivity('profile');
+        launcherAPI.scenes.settings.getAllFields().then((res) => setSettings(res));
+        launcherAPI.rpc.updateActivity("profile");
     }, []);
 
     const startGame = () => {
@@ -52,19 +51,15 @@ export default function ServerPanel() {
         if (settings?.startDebug) setShowConsole(true);
         consoleRef.current?.replaceChildren();
         setGameStarted(true);
-        launcherAPI.scenes.serverPanel.startGame(
-            textToConsole,
-            progress,
-            stopGame,
-        );
-        launcherAPI.rpc.updateActivity('game');
+        launcherAPI.scenes.serverPanel.startGame(textToConsole, progress, stopGame);
+        launcherAPI.rpc.updateActivity("game");
     };
 
     const stopGame = () => {
         showTitlebarSettingsBtn();
         setGameStarted(false);
         showTitlebarBackBtn();
-        launcherAPI.rpc.updateActivity('profile');
+        launcherAPI.rpc.updateActivity("profile");
     };
 
     const textToConsole = (string: string) => {
@@ -81,13 +76,13 @@ export default function ServerPanel() {
         const percent = (loaded / total) * 100;
 
         if (progressLine.current) {
-            progressLine.current.style.width = percent.toFixed(2) + '%';
+            progressLine.current.style.width = percent.toFixed(2) + "%";
         }
         setShowProgress(percent < 100);
 
         if (!progressInfo.current) return;
 
-        if (type === 'count') {
+        if (type === "count") {
             progressInfo.current.innerHTML = `Загружено ${loaded} из ${total}`;
         } else {
             progressInfo.current.innerHTML = `Загружено ${bytesToSize(
@@ -102,9 +97,9 @@ export default function ServerPanel() {
                 <div className={classes.title}>{selectedServer?.title}</div>
                 <div className={classes.status}>
                     <div className={classes.gamers}>
-                        {t('serverPanel.pingInfo1')}
+                        {t("serverPanel.pingInfo1")}
                         <br />
-                        {t('serverPanel.pingInfo2')}
+                        {t("serverPanel.pingInfo2")}
                     </div>
                     <div className={classes.line}></div>
                     <div className={classes.count}>
@@ -117,15 +112,9 @@ export default function ServerPanel() {
                 <If state={showProgress}>
                     <>
                         <div className={classes.progress}>
-                            <div
-                                className={classes['progress-line']}
-                                ref={progressLine}
-                            ></div>
+                            <div className={classes["progress-line"]} ref={progressLine}></div>
                         </div>
-                        <div
-                            className={classes['progress-info']}
-                            ref={progressInfo}
-                        ></div>
+                        <div className={classes["progress-info"]} ref={progressInfo}></div>
                     </>
                 </If>
                 <If state={showConsole}>
@@ -134,7 +123,7 @@ export default function ServerPanel() {
             </div>
             <div className={classes.buttons}>
                 <button onClick={startGame} disabled={gameStarted}>
-                    {t('serverPanel.startGame')}
+                    {t("serverPanel.startGame")}
                 </button>
             </div>
         </div>
@@ -142,8 +131,8 @@ export default function ServerPanel() {
 }
 
 function bytesToSize(bytes: number): string {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return 'n/a';
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    if (bytes === 0) return "n/a";
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     if (i === 0) return `${bytes} ${sizes[i]}`;
     return `${(bytes / 1024 ** i).toFixed(2)} ${sizes[i]}`;

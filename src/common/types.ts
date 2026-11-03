@@ -8,7 +8,7 @@ export interface Session {
 export interface LoadProgress {
     total: number;
     loaded: number;
-    type: 'count' | 'size';
+    type: "count" | "size";
 }
 
 export interface SettingsFormat {

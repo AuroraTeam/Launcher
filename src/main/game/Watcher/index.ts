@@ -1,1 +1,1 @@
-export * from './Watcher';
+export * from "./Watcher";

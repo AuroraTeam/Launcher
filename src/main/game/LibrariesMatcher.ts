@@ -1,6 +1,6 @@
-import { Action, LibraryRule, Name } from '@aurora-launcher/core';
+import { Action, LibraryRule, Name } from "@aurora-launcher/core";
 
-import { Architecture, Platform } from '../core/System';
+import { Architecture, Platform } from "../core/System";
 
 export class LibrariesMatcher {
     static match(rules?: LibraryRule[]) {
@@ -58,7 +58,7 @@ export class LibrariesMatcher {
     }
 
     private static mapArch(arch: string) {
-        if (['x32', 'x86'].includes(arch)) {
+        if (["x32", "x86"].includes(arch)) {
             return Architecture.X32;
         }
         return arch;

@@ -1,4 +1,4 @@
-import { SkinObject2D } from './model';
+import { SkinObject2D } from "./model";
 
 enum RenderPart {
     HEAD_FRONT = 0,
@@ -31,8 +31,8 @@ class SkinViewer2D {
 
     constructor(options: SkinViewer2DOptions) {
         this.domElement = options.domElement;
-        this.canvas = document.createElement('canvas');
-        this.ctx = this.canvas.getContext('2d');
+        this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext("2d");
 
         if (options.width !== undefined) {
             this.canvas.width = options.width;
@@ -57,9 +57,8 @@ class SkinViewer2D {
         this.skinObject = new SkinObject2D(this);
 
         // texture loading
-        this.skinImage.crossOrigin = 'anonymous';
-        this.skinImage.onerror = (): void =>
-            console.error(`Failed loading ${this.skinImage.src}`);
+        this.skinImage.crossOrigin = "anonymous";
+        this.skinImage.onerror = (): void => console.error(`Failed loading ${this.skinImage.src}`);
         this.skinImage.onload = (): void => this.render();
     }
 

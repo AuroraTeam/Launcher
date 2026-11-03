@@ -1,13 +1,13 @@
-import { discordRPC as config } from '@config';
-import { Service } from '@freshgum/typedi';
-import { Client } from '@kostya-main/discord-rpc';
-import { ipcMain } from 'electron';
+import { discordRPC as config } from "@config";
+import { Service } from "@freshgum/typedi";
+import { Client } from "@kostya-main/discord-rpc";
+import { ipcMain } from "electron";
 
-import { EVENTS } from '../../common/channels';
-import { LogHelper } from '../../main/helpers/LogHelper';
-import { AuthorizationService } from '../api/AuthorizationService';
-import { GameService } from '../game/GameService';
-import { IHandleable } from './IHandleable';
+import { EVENTS } from "../../common/channels";
+import { LogHelper } from "../../main/helpers/LogHelper";
+import { AuthorizationService } from "../api/AuthorizationService";
+import { GameService } from "../game/GameService";
+import { IHandleable } from "./IHandleable";
 
 @Service([AuthorizationService, GameService])
 export class DiscordRPC implements IHandleable {
@@ -22,13 +22,12 @@ export class DiscordRPC implements IHandleable {
     private startTimestamp = new Date();
 
     async start() {
-        this.client.on('ready', () => {
+        this.client.on("ready", () => {
             this.client.user?.setActivity({
                 details: config.default.firstLineText,
                 state: config.default.secondLineText,
                 buttons:
-                    Array.isArray(config.default.buttons) &&
-                    config.default.buttons.length
+                    Array.isArray(config.default.buttons) && config.default.buttons.length
                         ? config.default.buttons
                         : undefined,
                 startTimestamp: this.startTimestamp,
@@ -38,7 +37,7 @@ export class DiscordRPC implements IHandleable {
                 smallImageText: config.default.smallImageText,
             });
         });
-        LogHelper.info('Discord set status.');
+        LogHelper.info("Discord set status.");
         this.client.login().catch(console.error);
         // Из-за капризов Discord RPC скорее всего придётся реализовывать gracefull shutdown
         // хотя c nodemon это в любом случае не будет работать
@@ -48,13 +47,12 @@ export class DiscordRPC implements IHandleable {
 
     private updateActivity(id: Status) {
         switch (id) {
-            case 'default': {
+            case "default": {
                 this.client.user?.setActivity({
                     details: config.default.firstLineText,
                     state: config.default.secondLineText,
                     buttons:
-                        Array.isArray(config.default.buttons) &&
-                        config.default.buttons.length
+                        Array.isArray(config.default.buttons) && config.default.buttons.length
                             ? config.default.buttons
                             : undefined,
                     startTimestamp: this.startTimestamp,
@@ -64,53 +62,43 @@ export class DiscordRPC implements IHandleable {
                     smallImageText: config.default.smallImageText,
                 });
 
-                LogHelper.dev('Discord status updated to default.');
+                LogHelper.dev("Discord status updated to default.");
                 break;
             }
-            case 'profile': {
+            case "profile": {
                 this.client.user?.setActivity({
                     details: this.placeholders(config.profile.firstLineText),
                     state: this.placeholders(config.profile.secondLineText),
                     buttons:
-                        Array.isArray(config.profile.buttons) &&
-                        config.profile.buttons.length
+                        Array.isArray(config.profile.buttons) && config.profile.buttons.length
                             ? config.profile.buttons
                             : undefined,
                     startTimestamp: this.startTimestamp,
                     largeImageKey: config.profile.largeImageKey,
                     smallImageKey: config.profile.smallImageKey,
-                    largeImageText: this.placeholders(
-                        config.profile.largeImageText,
-                    ),
-                    smallImageText: this.placeholders(
-                        config.profile.smallImageText,
-                    ),
+                    largeImageText: this.placeholders(config.profile.largeImageText),
+                    smallImageText: this.placeholders(config.profile.smallImageText),
                 });
 
-                LogHelper.dev('Discord status updated to profile.');
+                LogHelper.dev("Discord status updated to profile.");
                 break;
             }
-            case 'game': {
+            case "game": {
                 this.client.user?.setActivity({
                     details: this.placeholders(config.game.firstLineText),
                     state: this.placeholders(config.game.secondLineText),
                     buttons:
-                        Array.isArray(config.game.buttons) &&
-                        config.game.buttons.length
+                        Array.isArray(config.game.buttons) && config.game.buttons.length
                             ? config.game.buttons
                             : undefined,
                     startTimestamp: this.startTimestamp,
                     largeImageKey: config.game.largeImageKey,
                     smallImageKey: config.game.smallImageKey,
-                    largeImageText: this.placeholders(
-                        config.game.largeImageText,
-                    ),
-                    smallImageText: this.placeholders(
-                        config.game.smallImageText,
-                    ),
+                    largeImageText: this.placeholders(config.game.largeImageText),
+                    smallImageText: this.placeholders(config.game.smallImageText),
                 });
 
-                LogHelper.dev('Discord status updated to game.');
+                LogHelper.dev("Discord status updated to game.");
                 break;
             }
         }
@@ -124,22 +112,20 @@ export class DiscordRPC implements IHandleable {
         const userArgs = this.authorizationService.session;
         const server = this.gameService.getServer();
 
-        if (!userArgs) throw new Error('Auth requierd');
-        if (!server) throw new Error('No information about the server');
+        if (!userArgs) throw new Error("Auth requierd");
+        if (!server) throw new Error("No information about the server");
 
         const total = text
-            .replace('{nickname}', userArgs.username)
-            .replace('{server}', server.title);
+            .replace("{nickname}", userArgs.username)
+            .replace("{server}", server.title);
         return total;
     }
 
     initHandlers() {
-        ipcMain.handle(EVENTS.RPC.UPDATE_ACTIVITY, (_, activity) =>
-            this.updateActivity(activity),
-        );
+        ipcMain.handle(EVENTS.RPC.UPDATE_ACTIVITY, (_, activity) => this.updateActivity(activity));
         //Может не чистить, а ставить стандарт ?
         ipcMain.handle(EVENTS.RPC.CLEAR_ACTIVITY, () => this.clearActivity());
     }
 }
 
-export type Status = 'default' | 'game' | 'profile';
+export type Status = "default" | "game" | "profile";

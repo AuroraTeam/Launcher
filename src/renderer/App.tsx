@@ -1,6 +1,6 @@
-import { Provider } from 'jotai';
+import { Provider } from "jotai";
 
-import { Router } from './router';
+import { Router } from "./router";
 
 export default function App() {
     return (

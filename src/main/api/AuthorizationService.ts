@@ -1,15 +1,15 @@
-import { AuthType } from '@aurora-launcher/core';
-import { Service } from '@freshgum/typedi';
+import { AuthType } from "@aurora-launcher/core";
+import { Service } from "@freshgum/typedi";
 
-import { Session } from '../../common/types';
-import { SettingsHelper } from '../helpers/SettingsHelper';
-import { APIManager } from './APIManager';
+import { Session } from "../../common/types";
+import { SettingsHelper } from "../helpers/SettingsHelper";
+import { APIManager } from "./APIManager";
 import {
     IAuthProvider,
     InternalAuthProvider,
     MicrosoftAuthProvider,
     OfflineAuthProvider,
-} from './authProviders';
+} from "./authProviders";
 
 @Service([APIManager])
 export class AuthorizationService {
@@ -48,8 +48,8 @@ export class AuthorizationService {
             this.provider = this.createAuthProvider(AuthType.OFFLINE);
         }
 
-        const accessToken = SettingsHelper.getField('accessToken');
-        const clientToken = SettingsHelper.getField('clientToken');
+        const accessToken = SettingsHelper.getField("accessToken");
+        const clientToken = SettingsHelper.getField("clientToken");
 
         // const authData = publicDecrypt(
         //     api.publicKey,
@@ -60,13 +60,13 @@ export class AuthorizationService {
         try {
             isValid = await this.provider.verify(accessToken, clientToken);
         } catch {
-            throw new Error('Failed to verify tokens');
+            throw new Error("Failed to verify tokens");
         }
 
         if (isValid) {
             return this.setCurrentSession({
-                username: SettingsHelper.getField('username'),
-                userUUID: SettingsHelper.getField('userUUID'),
+                username: SettingsHelper.getField("username"),
+                userUUID: SettingsHelper.getField("userUUID"),
                 accessToken,
                 clientToken,
             });
@@ -76,7 +76,7 @@ export class AuthorizationService {
         try {
             refresh = await this.provider.refresh(accessToken, clientToken);
         } catch {
-            throw new Error('Failed to refresh tokens');
+            throw new Error("Failed to refresh tokens");
         }
 
         this.setCurrentSession({
@@ -88,13 +88,13 @@ export class AuthorizationService {
     }
 
     async authorize(login: string, password: string) {
-        if (!this.provider) throw new Error('No auth provider');
+        if (!this.provider) throw new Error("No auth provider");
 
         let userData;
         try {
             userData = await this.provider.auth(login, password);
         } catch {
-            throw new Error('Failed to authorize user');
+            throw new Error("Failed to authorize user");
         }
 
         this.setCurrentSession({
@@ -109,9 +109,9 @@ export class AuthorizationService {
 
     private setCurrentSession(session: Session) {
         this.currentSession = session;
-        SettingsHelper.setField('username', session.username);
-        SettingsHelper.setField('userUUID', session.userUUID);
-        SettingsHelper.setField('accessToken', session.accessToken);
-        SettingsHelper.setField('clientToken', session.clientToken);
+        SettingsHelper.setField("username", session.username);
+        SettingsHelper.setField("userUUID", session.userUUID);
+        SettingsHelper.setField("accessToken", session.accessToken);
+        SettingsHelper.setField("clientToken", session.clientToken);
     }
 }

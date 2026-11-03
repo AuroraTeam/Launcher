@@ -1,4 +1,4 @@
-import { SkinViewer2D } from './viewer';
+import { SkinViewer2D } from "./viewer";
 
 class SkinObject2D {
     private skinview: SkinViewer2D;
@@ -7,10 +7,7 @@ class SkinObject2D {
         this.skinview = skinview;
     }
 
-    drawHeadFront(
-        ctx: CanvasRenderingContext2D,
-        skinTexture: HTMLImageElement,
-    ): void {
+    drawHeadFront(ctx: CanvasRenderingContext2D, skinTexture: HTMLImageElement): void {
         const { width, height } = this.skinview.getCanvas();
         ctx.drawImage(
             skinTexture,
@@ -25,10 +22,7 @@ class SkinObject2D {
         );
     }
 
-    drawHeadBack(
-        ctx: CanvasRenderingContext2D,
-        skinTexture: HTMLImageElement,
-    ): void {
+    drawHeadBack(ctx: CanvasRenderingContext2D, skinTexture: HTMLImageElement): void {
         const { width, height } = this.skinview.getCanvas();
         ctx.drawImage(
             skinTexture,

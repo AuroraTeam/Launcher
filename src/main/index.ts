@@ -1,7 +1,6 @@
-import 'source-map-support/register';
+import "source-map-support/register";
+import { Container } from "@freshgum/typedi";
 
-import { Container } from '@freshgum/typedi';
-
-import { Launcher } from './core/Launcher';
+import { Launcher } from "./core/Launcher";
 
 Container.get(Launcher);

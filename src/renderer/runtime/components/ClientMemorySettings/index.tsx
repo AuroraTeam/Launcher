@@ -1,8 +1,8 @@
-import { useId } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
 
-import { MemoryLimits } from '../../../../common/memory';
-import { MemoryRange } from '../MemoryRange';
+import { MemoryLimits } from "../../../../common/memory";
+import { MemoryRange } from "../MemoryRange";
 
 interface ClientMemorySettingsProps {
     value: number;
@@ -10,18 +10,14 @@ interface ClientMemorySettingsProps {
     onChange: (memory: number) => void;
 }
 
-export function ClientMemorySettings({
-    value,
-    limits,
-    onChange,
-}: ClientMemorySettingsProps) {
-    const { t } = useTranslation('common');
+export function ClientMemorySettings({ value, limits, onChange }: ClientMemorySettingsProps) {
+    const { t } = useTranslation("common");
     const id = useId();
 
     return (
         <div>
             <label htmlFor={id}>
-                {t('settings.memory')} {value}MB
+                {t("settings.memory")} {value}MB
             </label>
             <MemoryRange
                 id={id}
@@ -30,13 +26,11 @@ export function ClientMemorySettings({
                 onChange={(event) => onChange(Number(event.target.value))}
             />
             <p>
-                {t('settings.memoryRecommended', {
+                {t("settings.memoryRecommended", {
                     memory: limits.recommended,
                 })}
             </p>
-            {value > limits.recommended && (
-                <p role="status">{t('settings.memoryWarning')}</p>
-            )}
+            {value > limits.recommended && <p role="status">{t("settings.memoryWarning")}</p>}
         </div>
     );
 }

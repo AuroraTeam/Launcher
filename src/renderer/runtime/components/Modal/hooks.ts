@@ -1,7 +1,7 @@
-import { useSetAtom } from 'jotai';
-import { ReactNode } from 'react';
+import { useSetAtom } from "jotai";
+import { ReactNode } from "react";
 
-import { modalContent, modalShow, modalTitle } from './states';
+import { modalContent, modalShow, modalTitle } from "./states";
 
 export function useModal() {
     const setShow = useSetAtom(modalShow);

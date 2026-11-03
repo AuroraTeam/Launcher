@@ -1,9 +1,9 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
-import { api } from '@config';
-import { v5 } from 'uuid';
+import { api } from "@config";
+import { v5 } from "uuid";
 
-import { IAuthProvider } from './IAuthProvider';
+import { IAuthProvider } from "./IAuthProvider";
 
 export class OfflineAuthProvider implements IAuthProvider {
     readonly useInjector = false;
@@ -24,7 +24,7 @@ export class OfflineAuthProvider implements IAuthProvider {
             selectedProfile: {
                 id: v5(
                     `OfflinePlayer:${login}`,
-                    v5(api.publicKey, '00000000-0000-0000-0000-000000000000'),
+                    v5(api.publicKey, "00000000-0000-0000-0000-000000000000"),
                 ),
                 name: login,
             },

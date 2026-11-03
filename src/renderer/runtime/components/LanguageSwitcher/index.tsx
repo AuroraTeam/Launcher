@@ -1,9 +1,10 @@
-import { Languages } from 'lucide-react';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Languages } from "lucide-react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import If from '../If';
-import classes from './index.module.sass';
+import If from "../If";
+
+import classes from "./index.module.sass";
 
 export default function LanguageSwitcher() {
     const [open, setOpen] = useState(false);
@@ -16,12 +17,12 @@ export default function LanguageSwitcher() {
 
     const languagesList = [
         {
-            lang: 'en-US',
-            text: 'EN',
+            lang: "en-US",
+            text: "EN",
         },
         {
-            lang: 'ru-RU',
-            text: 'RU',
+            lang: "ru-RU",
+            text: "RU",
         },
     ];
 

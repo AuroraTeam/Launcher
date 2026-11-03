@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-import { getUserData } from '../../../utils';
-import defaultSkin from '../../assets/images/steve.png';
-import { SkinViewer2D } from '../../libs/skinview2d/viewer';
+import { getUserData } from "../../../utils";
+import defaultSkin from "../../assets/images/steve.png";
+import { SkinViewer2D } from "../../libs/skinview2d/viewer";
 
 interface SkinView2dProps {
     width: number;
@@ -28,10 +28,5 @@ export const SkinView2d = ({ width = 64, height = 64 }: SkinView2dProps) => {
         });
     };
 
-    return (
-        <div
-            ref={skinHeadRef}
-            style={{ maxWidth: `${width}px`, maxHeight: `${height}px` }}
-        />
-    );
+    return <div ref={skinHeadRef} style={{ maxWidth: `${width}px`, maxHeight: `${height}px` }} />;
 };

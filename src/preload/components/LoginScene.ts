@@ -1,7 +1,7 @@
-import { ipcRenderer } from 'electron';
+import { ipcRenderer } from "electron";
 
-import { EVENTS } from '../../common/channels';
-import { Session } from '../../common/types';
+import { EVENTS } from "../../common/channels";
+import { Session } from "../../common/types";
 
 export default class LoginScene {
     static auth(login: string, password: string): Promise<Session> {

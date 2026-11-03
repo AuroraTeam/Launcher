@@ -1,11 +1,11 @@
-import { contextBridge } from 'electron';
+import { contextBridge } from "electron";
 
-import LoginScene from './components/LoginScene';
-import RPC from './components/RPC';
-import ServerPanel from './components/ServerPanelScene';
-import ServersList from './components/ServersListScene';
-import Settings from './components/SettingsScene';
-import Window from './components/Window';
+import LoginScene from "./components/LoginScene";
+import RPC from "./components/RPC";
+import ServerPanel from "./components/ServerPanelScene";
+import ServersList from "./components/ServersListScene";
+import Settings from "./components/SettingsScene";
+import Window from "./components/Window";
 
 // export для типизации
 export const API = {
@@ -45,4 +45,4 @@ export const API = {
     },
 };
 
-contextBridge.exposeInMainWorld('launcherAPI', API);
+contextBridge.exposeInMainWorld("launcherAPI", API);

@@ -13,7 +13,7 @@ import {
     VERIFY_METHOD,
     VerifyRequestData,
     VerifyResponseData,
-} from '@aurora-launcher/core';
+} from "@aurora-launcher/core";
 
 // TODO Отвязать от внутренних хелперов ???
 
@@ -47,9 +47,6 @@ export class AuroraAPI {
     }
 
     verifyRequest(data: VerifyRequestData): Promise<VerifyResponseData> {
-        return HttpHelper.postJson<VerifyResponseData>(
-            new URL(VERIFY_METHOD, this.baseUrl),
-            data,
-        );
+        return HttpHelper.postJson<VerifyResponseData>(new URL(VERIFY_METHOD, this.baseUrl), data);
     }
 }

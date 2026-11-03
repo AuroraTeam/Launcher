@@ -1,7 +1,8 @@
-import { ChangeEventHandler } from 'react';
+import { ChangeEventHandler } from "react";
 
-import { MEMORY_STEP_MB, MIN_MEMORY_MB } from '../../../../common/memory';
-import classes from './index.module.sass';
+import { MEMORY_STEP_MB, MIN_MEMORY_MB } from "../../../../common/memory";
+
+import classes from "./index.module.sass";
 
 interface MemoryRangeProps {
     id?: string;
@@ -10,12 +11,7 @@ interface MemoryRangeProps {
     limit: number;
 }
 
-export function MemoryRange({
-    id,
-    value,
-    onChange,
-    limit = 16384,
-}: MemoryRangeProps) {
+export function MemoryRange({ id, value, onChange, limit = 16384 }: MemoryRangeProps) {
     return (
         <div>
             <div className={classes.wrapper}>
@@ -30,21 +26,17 @@ export function MemoryRange({
                     type="range"
                 />
                 <div className={classes.label}>
-                    {[...Array(Math.floor(limit / 1024))].map(
-                        (_: any, ix: number) => (
-                            <div key={ix} className={classes.dot} />
-                        ),
-                    )}
+                    {[...Array(Math.floor(limit / 1024))].map((_: any, ix: number) => (
+                        <div key={ix} className={classes.dot} />
+                    ))}
                 </div>
 
                 <div className={classes.tips}>
-                    {[...Array(Math.floor(limit / 1024))].map(
-                        (_: any, ix: number) => (
-                            <p key={ix} className={classes.gb}>
-                                {ix + 1}G
-                            </p>
-                        ),
-                    )}
+                    {[...Array(Math.floor(limit / 1024))].map((_: any, ix: number) => (
+                        <p key={ix} className={classes.gb}>
+                            {ix + 1}G
+                        </p>
+                    ))}
                 </div>
             </div>
         </div>

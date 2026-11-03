@@ -1,5 +1,5 @@
-import { useSetAtom } from 'jotai';
-import { useResetAtom } from 'jotai/utils';
+import { useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import {
     titlebarBackBtn,
@@ -7,7 +7,7 @@ import {
     titlebarSettingsBtn,
     titlebarTitle,
     titlebarUser,
-} from './states';
+} from "./states";
 
 export function useTitlebar() {
     const setTitlebarBackBtnState = useSetAtom(titlebarBackBtn);

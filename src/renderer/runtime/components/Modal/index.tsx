@@ -1,8 +1,9 @@
-import { useAtom, useAtomValue } from 'jotai';
-import { useEffect } from 'react';
+import { useAtom, useAtomValue } from "jotai";
+import { useEffect } from "react";
 
-import classes from './index.module.sass';
-import { modalContent, modalShow, modalTitle } from './states';
+import { modalContent, modalShow, modalTitle } from "./states";
+
+import classes from "./index.module.sass";
 
 export default function Modal() {
     const [show, setShow] = useAtom(modalShow);
@@ -14,17 +15,16 @@ export default function Modal() {
     }
 
     function closeOnEscapeKeyDown(event: KeyboardEvent) {
-        if (event.code === 'Escape' || event.key === 'Escape') closeModal();
+        if (event.code === "Escape" || event.key === "Escape") closeModal();
     }
 
     useEffect(() => {
-        document.addEventListener('keydown', closeOnEscapeKeyDown);
-        return () =>
-            document.removeEventListener('keydown', closeOnEscapeKeyDown);
+        document.addEventListener("keydown", closeOnEscapeKeyDown);
+        return () => document.removeEventListener("keydown", closeOnEscapeKeyDown);
     }, []);
 
     return (
-        <div className={`${classes.modalOverlay} ${show ? classes.show : ''}`}>
+        <div className={`${classes.modalOverlay} ${show ? classes.show : ""}`}>
             <div className={classes.modal}>
                 <div className={classes.title}>{title}</div>
                 <div className={classes.content}>{content}</div>

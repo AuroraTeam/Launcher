@@ -1,7 +1,7 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet } from "react-router-dom";
 
-import Modal from './Modal';
-import TitleBar from './TitleBar';
+import Modal from "./Modal";
+import TitleBar from "./TitleBar";
 
 export default function Layout() {
     return (

@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { IdleAnimation, SkinViewer } from 'skinview3d';
+import { useEffect, useRef } from "react";
+import { IdleAnimation, SkinViewer } from "skinview3d";
 
-import { getUserData } from '../../utils';
-import defaultSkin from '../assets/images/steve.png';
+import { getUserData } from "../../utils";
+import defaultSkin from "../assets/images/steve.png";
 
 export default function SkinView() {
     const skinCanvas = useRef<HTMLCanvasElement>(null);
@@ -26,7 +26,7 @@ export default function SkinView() {
         const { skinUrl, capeUrl, isAlex } = getUserData();
         skinViewer.loadSkin(skinUrl ?? defaultSkin);
         if (capeUrl) skinViewer.loadCape(capeUrl);
-        if (isAlex) skinViewer.playerObject.skin.modelType = 'slim';
+        if (isAlex) skinViewer.playerObject.skin.modelType = "slim";
     }, []);
 
     return <canvas ref={skinCanvas} />;

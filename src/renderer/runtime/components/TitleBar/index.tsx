@@ -1,17 +1,13 @@
-import { useAtomValue } from 'jotai';
-import { ArrowLeft, Minus, Settings, User, X } from 'lucide-react';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAtomValue } from "jotai";
+import { ArrowLeft, Minus, Settings, User, X } from "lucide-react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import LanguageSwitcher from '../../components/LanguageSwitcher';
-import If from '../If';
-import classes from './index.module.sass';
-import {
-    titlebarBackBtn,
-    titlebarSettingsBtn,
-    titlebarTitle,
-    titlebarUser,
-} from './states';
+import LanguageSwitcher from "../../components/LanguageSwitcher";
+import If from "../If";
+import { titlebarBackBtn, titlebarSettingsBtn, titlebarTitle, titlebarUser } from "./states";
+
+import classes from "./index.module.sass";
 
 export default function TitleBar() {
     const backBtn = useAtomValue(titlebarBackBtn);
@@ -46,7 +42,7 @@ export default function TitleBar() {
     // }
 
     function goToSettings() {
-        navigate('/Settings');
+        navigate("/Settings");
     }
 
     return (
@@ -65,13 +61,7 @@ export default function TitleBar() {
                 <If state={username.length > 0}>
                     <div className={classes.user}>
                         <User />
-                        <div
-                            className={[classes.username, classes.text].join(
-                                ' ',
-                            )}
-                        >
-                            {username}
-                        </div>
+                        <div className={[classes.username, classes.text].join(" ")}>{username}</div>
                     </div>
                 </If>
                 <If state={settings.show}>

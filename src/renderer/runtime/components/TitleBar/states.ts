@@ -1,6 +1,6 @@
-import { window } from '@config';
-import { atom } from 'jotai';
-import { atomWithReset } from 'jotai/utils';
+import { window } from "@config";
+import { atom } from "jotai";
+import { atomWithReset } from "jotai/utils";
 
 export const titlebarBackBtn = atom({
     show: false,
@@ -19,4 +19,4 @@ export const titlebarTitle = atomWithReset({
     text: window.title,
 });
 
-export const titlebarUser = atom('');
+export const titlebarUser = atom("");

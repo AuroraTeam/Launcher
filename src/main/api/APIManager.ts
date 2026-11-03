@@ -1,7 +1,7 @@
-import { api } from '@config';
-import { Service } from '@freshgum/typedi';
+import { api } from "@config";
+import { Service } from "@freshgum/typedi";
 
-import { AuroraAPI } from './AuroraAPI';
+import { AuroraAPI } from "./AuroraAPI";
 
 @Service([])
 export class APIManager {

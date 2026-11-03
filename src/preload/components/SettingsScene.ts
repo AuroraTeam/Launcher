@@ -1,24 +1,18 @@
-import { ipcRenderer } from 'electron';
+import { ipcRenderer } from "electron";
 
-import { EVENTS } from '../../common/channels';
-import { MemoryLimits } from '../../common/memory';
-import { SettingsFormat } from '../../common/types';
+import { EVENTS } from "../../common/channels";
+import { MemoryLimits } from "../../common/memory";
+import { SettingsFormat } from "../../common/types";
 
 export default class SettingsScene {
     static setField<T extends keyof SettingsFormat>(
         field: T,
         value: SettingsFormat[T],
     ): Promise<void> {
-        return ipcRenderer.invoke(
-            EVENTS.SCENES.SETTINGS.SET_FIELD,
-            field,
-            value,
-        );
+        return ipcRenderer.invoke(EVENTS.SCENES.SETTINGS.SET_FIELD, field, value);
     }
 
-    static getField<T extends keyof SettingsFormat>(
-        field: T,
-    ): Promise<SettingsFormat[T]> {
+    static getField<T extends keyof SettingsFormat>(field: T): Promise<SettingsFormat[T]> {
         return ipcRenderer.invoke(EVENTS.SCENES.SETTINGS.GET_FIELD, field);
     }
 

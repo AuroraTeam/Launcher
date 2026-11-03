@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-import If from '../../components/If';
-import { useTitlebar } from '../../components/TitleBar/hooks';
-import classes from './index.module.sass';
-import InfoPage from './InfoPage';
-import MainPage from './MainPage';
+import If from "../../components/If";
+import { useTitlebar } from "../../components/TitleBar/hooks";
+import InfoPage from "./InfoPage";
+import MainPage from "./MainPage";
+
+import classes from "./index.module.sass";
 
 export default function Settings() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation("common");
     const {
         showTitlebarBackBtn,
         setTitlebarTitleText,
@@ -22,7 +23,7 @@ export default function Settings() {
         hideTitlebarLogoutBtn();
         showTitlebarBackBtn();
         hideTitlebarSettingsBtn();
-        setTitlebarTitleText(t('settings.title'));
+        setTitlebarTitleText(t("settings.title"));
 
         return () => {
             resetTitlebarTitleText();
@@ -35,11 +36,11 @@ export default function Settings() {
 
     const Button = (type: string) => {
         switch (type) {
-            case 'main':
+            case "main":
                 EditButtonMain(true);
                 EditButtonInfo(false);
                 return;
-            case 'info':
+            case "info":
                 EditButtonMain(false);
                 EditButtonInfo(true);
                 return;
@@ -50,17 +51,11 @@ export default function Settings() {
         <div className={classes.window}>
             <div className={classes.buttonsList}>
                 <div className={classes.buttons}>
-                    <button
-                        onClick={() => Button('main')}
-                        className={main ? classes.active : ''}
-                    >
-                        {t('settings.sidebar.main')}
+                    <button onClick={() => Button("main")} className={main ? classes.active : ""}>
+                        {t("settings.sidebar.main")}
                     </button>
-                    <button
-                        onClick={() => Button('info')}
-                        className={info ? classes.active : ''}
-                    >
-                        {t('settings.sidebar.info')}
+                    <button onClick={() => Button("info")} className={info ? classes.active : ""}>
+                        {t("settings.sidebar.info")}
                     </button>
                 </div>
             </div>
