@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync, readdirSync } from 'fs';
-import { rm, writeFile } from 'fs/promises';
-import { dirname, extname, join } from 'path';
+import { existsSync, readdirSync } from "fs";
+import { mkdir, mkdtemp, rename, rm, writeFile } from "fs/promises";
+import { dirname, extname, join } from "path";
 
 import {
     HashHelper,
@@ -10,16 +10,16 @@ import {
     MojangAssets,
     Profile,
     ProfileLibrary,
-} from '@aurora-launcher/core';
-import { api as apiConfig } from '@config';
-import { Service } from '@freshgum/typedi';
-import pMap from 'p-map';
+} from "@aurora-launcher/core";
+import { api as apiConfig } from "@config";
+import { Service } from "@freshgum/typedi";
+import pMap from "p-map";
 
-import { LoadProgress } from '../../common/types';
-import { StorageHelper } from '../../main/helpers/StorageHelper';
-import { APIManager } from '../api/APIManager';
-import { retry } from '../utils/retry';
-import { GameWindow } from './GameWindow';
+import { LoadProgress } from "../../common/types";
+import { StorageHelper } from "../../main/helpers/StorageHelper";
+import { APIManager } from "../api/APIManager";
+import { retry } from "../utils/retry";
+import { GameWindow } from "./GameWindow";
 
 @Service([APIManager, GameWindow])
 export class Updater {
@@ -28,29 +28,49 @@ export class Updater {
         private gameWindow: GameWindow,
     ) {}
 
-    async validateClient(
-        clientArgs: Profile,
-        libraries: ProfileLibrary[],
-    ): Promise<HashedFile[]> {
+    async validateClient(clientArgs: Profile, libraries: ProfileLibrary[]): Promise<HashedFile[]> {
         await this.validateAssets(clientArgs.assetIndex);
         await this.validateLibraries(libraries);
         return await this.validateGameFiles(clientArgs);
     }
 
     async validateAssets(assetIndex: string): Promise<void> {
-        this.gameWindow.sendToConsole('Load assets files');
+        this.gameWindow.sendToConsole("Load assets files");
 
         const assetIndexPath = `indexes/${assetIndex}.json`;
         const filePath = join(StorageHelper.assetsDir, assetIndexPath);
-        mkdirSync(dirname(filePath), { recursive: true });
 
-        const assetIndexUrl = this.getFileUrl(assetIndexPath, 'assets');
+        const assetIndexUrl = this.getFileUrl(assetIndexPath, "assets");
         const assetFile = await HttpHelper.getResource(assetIndexUrl);
-        await writeFile(filePath, assetFile);
-
         const { objects } = JsonHelper.parse<MojangAssets>(assetFile);
+        if (
+            !objects ||
+            typeof objects !== "object" ||
+            Array.isArray(objects) ||
+            Object.values(objects).some(
+                (entry) =>
+                    !entry ||
+                    !/^[a-f\d]{40}$/i.test(entry.hash) ||
+                    !Number.isSafeInteger(entry.size) ||
+                    entry.size < 0,
+            )
+        ) {
+            throw new Error(`Invalid asset index: ${assetIndex}`);
+        }
 
-        const assetsHashes = Object.values(objects)
+        await mkdir(dirname(filePath), { recursive: true });
+        const temporaryDir = await mkdtemp(join(dirname(filePath), ".index-"));
+        try {
+            const temporaryFile = join(temporaryDir, "index.json");
+            await writeFile(temporaryFile, assetFile);
+            await rename(temporaryFile, filePath);
+        } finally {
+            await rm(temporaryDir, { recursive: true, force: true });
+        }
+
+        const assetsHashes = [
+            ...new Map(Object.values(objects).map((entry) => [entry.hash, entry])).values(),
+        ]
             .sort((a, b) => b.size - a.size)
             .map((hash) => ({
                 ...hash,
@@ -58,41 +78,34 @@ export class Updater {
             }));
 
         const total = assetsHashes.reduce((prev, cur) => prev + cur.size, 0);
-        const updateProgress = this.createProgressUpdater(total, 'size');
+        const updateProgress = this.createProgressUpdater(total, "size");
 
         try {
             await pMap(
                 assetsHashes,
                 async (hash) => {
-                    await retry(
-                        () =>
-                            this.checkAndDownloadFile(
-                                hash.path,
-                                StorageHelper.assetsDir,
-                                'assets',
-                            ),
-                        3,
-                        1000,
+                    await this.validateAndDownloadFile(
+                        hash.path,
+                        hash.hash,
+                        StorageHelper.assetsDir,
+                        "assets",
                     );
 
                     updateProgress(hash.size);
                 },
-                { concurrency: 4 },
+                { concurrency: 4, stopOnError: false },
             );
         } catch (error) {
-            throw new Error(`p-map error ${error}`);
+            throw new Error("Failed to update assets", { cause: error });
         }
 
-        this.gameWindow.sendToConsole('Assets files loaded');
+        this.gameWindow.sendToConsole("Assets files loaded");
     }
 
     async validateLibraries(libraries: ProfileLibrary[]): Promise<void> {
-        this.gameWindow.sendToConsole('Load libraries files');
+        this.gameWindow.sendToConsole("Load libraries files");
 
-        const updateProgress = this.createProgressUpdater(
-            libraries.length,
-            'count',
-        );
+        const updateProgress = this.createProgressUpdater(libraries.length, "count");
 
         await pMap(
             libraries,
@@ -101,65 +114,56 @@ export class Updater {
                     library.path,
                     library.sha1,
                     StorageHelper.librariesDir,
-                    'libraries',
+                    "libraries",
                 );
 
                 updateProgress();
             },
-            { concurrency: 4 },
+            { concurrency: 4, stopOnError: false },
         );
 
-        this.gameWindow.sendToConsole('Libraries files loaded');
+        this.gameWindow.sendToConsole("Libraries files loaded");
     }
 
     async validateGameFiles(clientArgs: Profile): Promise<HashedFile[]> {
-        this.gameWindow.sendToConsole('Load client files');
+        this.gameWindow.sendToConsole("Load client files");
 
         const files = await this.api.getUpdates(clientArgs.clientDir);
-        if (!Array.isArray(files))
-            throw new Error('Invalid client files response');
+        if (!Array.isArray(files)) throw new Error("Invalid client files response");
 
         const hashes = [...files].sort((a, b) => b.size - a.size);
         const total = hashes.reduce((prev, cur) => prev + cur.size, 0);
-        const updateProgress = this.createProgressUpdater(total, 'size');
+        const updateProgress = this.createProgressUpdater(total, "size");
 
         const verifyArray = clientArgs.update.concat(clientArgs.updateVerify);
-        const verifyDirs = verifyArray.filter(
-            (path) => extname(path)[0] !== '.',
-        );
+        const verifyDirs = verifyArray.filter((path) => extname(path)[0] !== ".");
         const verifyFiles: string[] = [];
 
         await pMap(
             hashes,
             async (hash) => {
-                await this.checkAndDownloadFile(
-                    hash.path,
-                    StorageHelper.clientsDir,
-                    'clients',
-                );
-
                 const filteredPath = hash.path
-                    .replace(/\\/g, '/')
-                    .replace(`/${clientArgs.clientDir}/`, '');
+                    .replace(/\\/g, "/")
+                    .replace(`/${clientArgs.clientDir}/`, "");
 
-                if (
+                const verifyExisting = Boolean(
                     verifyArray.find((u) => filteredPath.startsWith(u)) &&
-                    !clientArgs.updateExclusions.find((u) =>
-                        filteredPath.startsWith(u),
-                    )
-                ) {
+                    !clientArgs.updateExclusions.find((u) => filteredPath.startsWith(u)),
+                );
+                if (verifyExisting) {
                     verifyFiles.push(filteredPath);
-                    await this.validateAndDownloadFile(
-                        hash.path,
-                        hash.sha1,
-                        StorageHelper.clientsDir,
-                        'clients',
-                    );
                 }
+                await this.validateAndDownloadFile(
+                    hash.path,
+                    hash.sha1,
+                    StorageHelper.clientsDir,
+                    "clients",
+                    verifyExisting,
+                );
 
                 updateProgress(hash.size);
             },
-            { concurrency: 4 },
+            { concurrency: 4, stopOnError: false },
         );
 
         if (verifyDirs.length > 0) {
@@ -177,17 +181,17 @@ export class Updater {
                     .filter((entry) => entry.isFile())
                     .map((entry) =>
                         join(entry.parentPath, entry.name)
-                            .replace(verifyDirPath, '')
-                            .replace(/\\/g, '/'),
+                            .replace(verifyDirPath, "")
+                            .replace(/\\/g, "/"),
                     );
 
                 const whitelistedFiles = verifyFiles
                     .filter((x) => x.startsWith(verifyDir))
-                    .map((x) => x.replace(verifyDir, '').replace(/\\/g, '/'));
+                    .map((x) => x.replace(verifyDir, "").replace(/\\/g, "/"));
 
                 const excludeList = clientArgs.updateExclusions
                     .filter((x) => x.startsWith(verifyDir))
-                    .map((x) => x.replace(verifyDir, '').replace(/\\/g, '/'));
+                    .map((x) => x.replace(verifyDir, "").replace(/\\/g, "/"));
 
                 const fileRM = filesList.filter(
                     (path) =>
@@ -199,28 +203,28 @@ export class Updater {
                 }
             }
         }
-        this.gameWindow.sendToConsole('Client files loaded');
+        this.gameWindow.sendToConsole("Client files loaded");
         return hashes;
     }
 
-    private getFileUrl(
-        path: string,
-        type: 'clients' | 'libraries' | 'assets',
-    ): URL {
-        return new URL(join('files', type, path), apiConfig.web);
+    private getFileUrl(path: string, type: "clients" | "libraries" | "assets"): URL {
+        return new URL(join("files", type, path), apiConfig.web);
     }
 
     private async validateAndDownloadFile(
         path: string,
         sha1: string,
         rootDir: string,
-        type: 'clients' | 'libraries' | 'assets',
+        type: "clients" | "libraries" | "assets",
+        verifyExisting = true,
     ): Promise<void> {
         const filePath = join(rootDir, path);
         const fileUrl = this.getFileUrl(path, type);
 
+        if (!verifyExisting && existsSync(filePath)) return;
+
         try {
-            if (await HashHelper.compareFileHash(filePath, 'sha1', sha1)) {
+            if (await HashHelper.compareFileHash(filePath, "sha1", sha1.toLowerCase())) {
                 return;
             }
         } catch {
@@ -228,36 +232,19 @@ export class Updater {
         }
 
         try {
-            await HttpHelper.downloadFile(fileUrl, filePath);
-        } catch {
-            throw new Error(`file ${fileUrl} not found`);
+            await retry(() => HttpHelper.downloadSafeFile(fileUrl, filePath, { sha1 }), 3, 1000);
+        } catch (error) {
+            throw new Error(`Failed to update ${path}`, { cause: error });
         }
     }
 
-    private async checkAndDownloadFile(
-        path: string,
-        rootDir: string,
-        type: 'clients' | 'libraries' | 'assets',
-    ): Promise<void> {
-        const filePath = join(rootDir, path);
-        const fileUrl = this.getFileUrl(path, type);
-
-        if (existsSync(filePath)) return;
-
-        try {
-            await HttpHelper.downloadSafeFile(fileUrl, filePath);
-        } catch {
-            throw new Error(`file ${fileUrl} not found`);
-        }
-    }
-
-    private createProgressUpdater(total: number, type: LoadProgress['type']) {
+    private createProgressUpdater(total: number, type: LoadProgress["type"]) {
         let loaded = 0;
 
         return (size?: number) => {
             this.gameWindow.sendProgress({
                 total,
-                loaded: (loaded += size || 1),
+                loaded: (loaded += size ?? 1),
                 type,
             });
         };
