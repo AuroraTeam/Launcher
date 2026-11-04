@@ -1,4 +1,5 @@
 import { Server } from "@aurora-launcher/core";
+import { Settings } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -93,39 +94,43 @@ export default function ServerPanel() {
 
     return (
         <div className={classes.window}>
-            <div className={classes.info}>
-                <div className={classes.title}>{selectedServer?.title}</div>
-                <div className={classes.status}>
-                    <div className={classes.gamers}>
-                        {t("serverPanel.pingInfo1")}
-                        <br />
-                        {t("serverPanel.pingInfo2")}
-                    </div>
-                    <div className={classes.line}></div>
-                    <div className={classes.count}>
-                        {players.online}
-                        <div className={classes.total}>из {players.max}</div>
+            <If state={!gameStarted}>
+                <div className={classes.info}>
+                    <div className={classes.title}>{selectedServer?.title}</div>
+                    <div className={classes.status}>
+                        <div className={classes.gamers}>
+                            {t("serverPanel.pingInfo1")}
+                            <br />
+                            {t("serverPanel.pingInfo2")}
+                        </div>
+                        <div className={classes.line}></div>
+                        <div className={classes.count}>
+                            {players.online}
+                            <div className={classes.total}>из {players.max}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className={classes.content}>
-                <If state={showProgress}>
-                    <>
-                        <div className={classes.progress}>
-                            <div className={classes["progress-line"]} ref={progressLine}></div>
-                        </div>
-                        <div className={classes["progress-info"]} ref={progressInfo}></div>
-                    </>
-                </If>
-                <If state={showConsole}>
-                    <pre className={classes.console} ref={consoleRef}></pre>
-                </If>
-            </div>
-            <div className={classes.buttons}>
-                <button onClick={startGame} disabled={gameStarted}>
-                    {t("serverPanel.startGame")}
-                </button>
-            </div>
+                <div className={classes.buttons}>
+                    <button className={classes.start} onClick={startGame} disabled={gameStarted}>
+                        {t("serverPanel.startGame")}
+                    </button>
+                    <button className={classes.settings} onClick={() => {}} disabled={gameStarted}>
+                        <Settings />
+                    </button>
+                </div>
+            </If>
+            <If state={showProgress}>
+                <div className={classes.progressOverlay}>
+                    <div className={classes["progress-title"]}>Загрузка файлов игры</div>
+                    <div className={classes.progress}>
+                        <div className={classes["progress-line"]} ref={progressLine}></div>
+                    </div>
+                    <div className={classes["progress-info"]} ref={progressInfo}></div>
+                </div>
+            </If>
+            <If state={showConsole}>
+                <pre className={classes.console} ref={consoleRef}></pre>
+            </If>
         </div>
     );
 }
