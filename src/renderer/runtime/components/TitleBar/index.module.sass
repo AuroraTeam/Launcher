@@ -6,16 +6,26 @@
     gap: 0.75rem
 
 .titlebar
-    padding: 8px
+    padding: 8px 12px
     -webkit-app-region: drag
     justify-content: space-between
-    background: var(--background-color)
-    box-shadow: var(--default-shadow)
+    background-color: var(--background-color)
     button
         -webkit-app-region: no-drag
         cursor: pointer
+        display: flex
+        align-items: center
+        justify-content: center
         height: 24px
+        width: 24px
         filter: drop-shadow(var(--default-shadow))
+        background-color: #292929
+        border-radius: 50%
+        svg
+            width: 16px
+            height: 16px
+            path, circle
+                color: #999
 
 button:hover path
     color: #ccc

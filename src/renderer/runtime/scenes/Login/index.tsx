@@ -1,5 +1,5 @@
 import { window } from "@config";
-import { FormEvent, useEffect } from "react";
+import { SubmitEvent, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +23,7 @@ export default function Login() {
         });
     }, []);
 
-    async function auth(event: FormEvent<HTMLFormElement>) {
+    async function auth(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);

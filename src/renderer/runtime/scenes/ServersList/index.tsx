@@ -30,11 +30,16 @@ export default function ServersList() {
 
     return (
         <div className={classes.window}>
-            <div className={classes.skinView}>{/* <SkinView /> */}</div>
             <div className={classes.serverList}>
-                {servers.map((server, i) => (
-                    <ServerButton key={i} server={server} onClick={() => selectServer(server)} />
-                ))}
+                <div>
+                    {servers.map((server, i) => (
+                        <ServerButton
+                            key={i}
+                            server={server}
+                            onClick={() => selectServer(server)}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
