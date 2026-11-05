@@ -1,6 +1,6 @@
 import { existsSync, readdirSync } from "fs";
 import { mkdir, mkdtemp, rename, rm, writeFile } from "fs/promises";
-import { dirname, extname, join } from "path";
+import { dirname, extname, join, resolve } from "path";
 
 import {
     HashHelper,
@@ -131,6 +131,25 @@ export class Updater {
         const files = await this.api.getUpdates(clientArgs.clientDir);
         if (!Array.isArray(files)) throw new Error("Invalid client files response");
 
+        const normalizePath = (path: string) => {
+            const absolute = resolve(path.replace(/\\/g, "/"));
+            return process.platform === "win32" ? absolute.toLowerCase() : absolute;
+        };
+
+        const gameJarPath = clientArgs.gameJar
+            ? normalizePath(
+                  join(StorageHelper.clientsDir, clientArgs.clientDir, clientArgs.gameJar),
+              )
+            : undefined;
+
+        const isGameJar = (path: string) =>
+            gameJarPath !== undefined &&
+            normalizePath(join(StorageHelper.clientsDir, path)) === gameJarPath;
+
+        if (gameJarPath && !files.some((file) => isGameJar(file.path))) {
+            throw new Error(`Game JAR not found in client file manifest: ${clientArgs.gameJar}`);
+        }
+
         const hashes = [...files].sort((a, b) => b.size - a.size);
         const total = hashes.reduce((prev, cur) => prev + cur.size, 0);
         const updateProgress = this.createProgressUpdater(total, "size");
@@ -147,8 +166,9 @@ export class Updater {
                     .replace(`/${clientArgs.clientDir}/`, "");
 
                 const verifyExisting = Boolean(
-                    verifyArray.find((u) => filteredPath.startsWith(u)) &&
-                    !clientArgs.updateExclusions.find((u) => filteredPath.startsWith(u)),
+                    isGameJar(hash.path) ||
+                    (verifyArray.find((u) => filteredPath.startsWith(u)) &&
+                        !clientArgs.updateExclusions.find((u) => filteredPath.startsWith(u))),
                 );
                 if (verifyExisting) {
                     verifyFiles.push(filteredPath);

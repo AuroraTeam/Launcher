@@ -227,6 +227,48 @@ it.each([false, true])(
         expect(fixtures.download).toHaveBeenCalledTimes(protectedFile ? 1 : 0);
     },
 );
+it.each([
+    { gameJar: "minecraft.jar", path: "/test/minecraft.jar" },
+    { gameJar: "bin/custom.jar", path: "/test/bin/custom.jar" },
+    { gameJar: "bin/custom.jar", path: "\\test\\bin\\custom.jar" },
+])(
+    "repairs the declared game JAR outside update lists and despite exclusions (%s)",
+    async ({ gameJar, path: manifestPath }) => {
+        const { updater, api } = makeUpdater();
+        const file = { path: manifestPath, sha1: sha1("verified"), size: 8 };
+        api.getUpdates.mockResolvedValue([file]);
+        const path = join(fixtures.storage.clientsDir, manifestPath);
+        await put(path, "broken JAR");
+        replyWith("verified");
+        await updater.validateGameFiles(profile({ gameJar, updateExclusions: [gameJar] }));
+        expect(await readFile(path, "utf8")).toBe("verified");
+        expect(fixtures.download).toHaveBeenCalledExactlyOnceWith(expect.any(URL), path, {
+            sha1: file.sha1,
+        });
+    },
+);
+
+it("reuses a verified game JAR without downloading and preserves other JARs", async () => {
+    const { updater, api } = makeUpdater();
+    const game = { path: "/test/minecraft.jar", sha1: sha1("valid"), size: 5 };
+    const other = { path: "/test/other.jar", sha1: sha1("server"), size: 6 };
+    api.getUpdates.mockResolvedValue([game, other]);
+    await put(join(fixtures.storage.clientsDir, game.path), "valid");
+    await put(join(fixtures.storage.clientsDir, other.path), "user data");
+    await updater.validateGameFiles(profile({ gameJar: "minecraft.jar" }));
+    expect(fixtures.download).not.toHaveBeenCalled();
+    expect(await readFile(join(fixtures.storage.clientsDir, other.path), "utf8")).toBe("user data");
+});
+
+it("rejects a declared game JAR absent from the manifest before reporting success", async () => {
+    const { updater, api, window } = makeUpdater();
+    api.getUpdates.mockResolvedValue([]);
+    await expect(updater.validateGameFiles(profile({ gameJar: "minecraft.jar" }))).rejects.toThrow(
+        "Game JAR not found in client file manifest",
+    );
+    expect(window.sendToConsole).not.toHaveBeenCalledWith("Client files loaded");
+});
+
 it("preserves excluded files and verifies missing client files even outside protected paths", async () => {
     const { updater, api } = makeUpdater();
     const excluded = { path: "/test/config.json", sha1: sha1("config"), size: 6 };
