@@ -7,18 +7,20 @@ import { parse } from "yaml";
 
 import { api } from "../config";
 
-const regex = new RegExp(`latest(\\.|-mac\\.|-linux\\.)yml|zip$|dmg$|AppImage$|rpm$|deb$|exe$`);
-const dir = readdirSync("./dist").filter((file) => regex.exec(file));
+const regex = /(?:^latest(?:-[\w-]+)?\.yml$|\.(?:zip|dmg|AppImage|rpm|deb|exe|blockmap)$)/;
+const dir = readdirSync("./dist")
+    .filter((file) => regex.test(file))
+    .sort((a, b) => Number(a.endsWith(".yml")) - Number(b.endsWith(".yml")));
 let globalToken: Buffer;
 
 if (await checkVersion()) {
     await authorization();
     for (const file of dir) {
         console.log(`Uploading ${file}`);
-        upload(join("./dist", file));
+        await upload(join("./dist", file));
     }
+    console.info("Uploading versions completed!!!");
 }
-console.info("Uploading versions completed!!!");
 
 async function upload(path: string) {
     const formData = new FormData();
@@ -61,11 +63,30 @@ async function checkVersion(): Promise<boolean> {
     );
 
     console.log("response received", statusCode);
-    if (statusCode == 200 || statusCode == 404) {
+    if (statusCode === 404) {
+        await body.text();
+        const local: YamlFile = parse(
+            readFileSync(join("./dist", confignameYml)).toString("utf-8"),
+        );
+        if (!local || typeof local.version !== "string" || !local.version)
+            throw new Error("Invalid local release metadata");
+        return true;
+    }
+    if (statusCode === 200) {
         const file: YamlFile = parse(await body.text());
         const localFile: YamlFile = parse(
             readFileSync(join("./dist", confignameYml)).toString("utf-8"),
         );
+        if (
+            !file ||
+            typeof file.version !== "string" ||
+            !file.version ||
+            !localFile ||
+            typeof localFile.version !== "string" ||
+            !localFile.version
+        ) {
+            throw new Error("Invalid release metadata");
+        }
         if (file.version == localFile.version) {
             console.info("The versions are identical. Upload canceled");
             return false;
@@ -85,10 +106,12 @@ async function authorization() {
     });
 
     console.log("response received", statusCode);
-    if (statusCode !== 200)
+    if (statusCode !== 200) {
+        await body.text();
         throw new Error(
             "It seems you are using the wrong version of LauncherServer. Please update to 0.0.5",
         );
+    }
     const token = (await body.json()) as BodyAuthorization;
     try {
         globalToken = publicDecrypt(api.publicKey, Buffer.from(token.token, "hex"));
